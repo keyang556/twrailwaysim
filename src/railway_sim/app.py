@@ -22,6 +22,10 @@ __all__ = ["build_session", "main"]
 #: 預設車次（區間車，停靠成功站）。
 DEFAULT_SERVICE = "2701"
 
+# Keep Chinese CLI output usable when a Windows process inherits a western code
+# page (for example, a frozen executable run by GitHub Actions).
+_UNICODE_OUTPUT_PROBE = "臺灣鐵路人員模擬器（司機員模式）：區間車 2701 次＋§"
+
 
 @dataclass(frozen=True)
 class Scenario:
@@ -77,6 +81,37 @@ def build_session(
     return session
 
 
+def _configure_text_stream(stream: object | None) -> None:
+    """Use UTF-8 when *stream* cannot encode the application's CLI text.
+
+    A Windows console using a Chinese code page can retain its native encoding,
+    while redirected streams with a western code page are switched to UTF-8.
+    This prevents status and diagnostic output from terminating the process.
+    """
+    if stream is None:
+        return
+
+    encoding = getattr(stream, "encoding", None)
+    if encoding:
+        try:
+            _UNICODE_OUTPUT_PROBE.encode(encoding)
+        except (LookupError, UnicodeEncodeError):
+            pass
+        else:
+            return
+
+    reconfigure = getattr(stream, "reconfigure", None)
+    if not callable(reconfigure):
+        return
+
+    try:
+        reconfigure(encoding="utf-8")
+    except (OSError, TypeError, ValueError):
+        # Some IDE and test-capture streams intentionally do not support
+        # reconfiguration. Preserve their existing behaviour in that case.
+        return
+
+
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="railway-sim",
@@ -104,12 +139,32 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--list-scenarios", action="store_true", help="列出可用情境後結束。"
     )
+    parser.add_argument(
+        "--check-gui",
+        action="store_true",
+        help="Check that the wx user interface can be imported without opening a window.",
+    )
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     """程式進入點。回傳結束碼。"""
+    _configure_text_stream(sys.stdout)
+    _configure_text_stream(sys.stderr)
     args = _build_parser().parse_args(argv)
+
+    if args.check_gui:
+        try:
+            import wx
+            from railway_sim.ui.wx_app import run_wx
+        except ImportError:
+            print("wxPython is not available.", file=sys.stderr)
+            return 2
+        # Referencing the import keeps static analysers from treating it as a
+        # disposable import while avoiding a window in automated smoke tests.
+        _ = run_wx
+        print(f"wxPython {wx.version()} is available.")
+        return 0
 
     if args.list_scenarios:
         for scenario in SCENARIOS.values():

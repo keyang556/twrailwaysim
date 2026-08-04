@@ -6,10 +6,13 @@
 
 from __future__ import annotations
 
+import io
+
 import pytest
 from conftest import drive_to, make_session
 
 from railway_sim.accessibility.announcer import Announcer, Priority
+from railway_sim import app
 from railway_sim.app import SCENARIOS, build_session, main
 from railway_sim.data_loader import GameData
 from railway_sim.input.keyboard import KeyDispatcher
@@ -342,6 +345,38 @@ class TestCommandLine:
     def test_list_scenarios(self, capsys: pytest.CaptureFixture[str]) -> None:
         assert main(["--list-scenarios"]) == 0
         assert "區間車 2701 次" in capsys.readouterr().out
+
+    @pytest.mark.parametrize(
+        ("arguments", "expected"),
+        [
+            (["--check"], "資料驗證通過"),
+            (["--list-scenarios"], "區間車 2701 次"),
+        ],
+    )
+    def test_cli_reconfigures_incompatible_stdout(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        arguments: list[str],
+        expected: str,
+    ) -> None:
+        output = io.BytesIO()
+        stdout = io.TextIOWrapper(output, encoding="cp1252")
+        monkeypatch.setattr(app.sys, "stdout", stdout)
+
+        assert main(arguments) == 0
+
+        stdout.flush()
+        assert expected in output.getvalue().decode("utf-8")
+
+    def test_cli_reconfigures_incompatible_stderr(self, monkeypatch, tmp_path) -> None:
+        output = io.BytesIO()
+        stderr = io.TextIOWrapper(output, encoding="cp1252")
+        monkeypatch.setattr(app.sys, "stderr", stderr)
+
+        assert main(["--check", "--data-dir", str(tmp_path)]) == 2
+
+        stderr.flush()
+        assert "資料載入失敗" in output.getvalue().decode("utf-8")
 
     def test_missing_data_dir_returns_error(self, tmp_path) -> None:
         assert main(["--check", "--data-dir", str(tmp_path)]) == 2
