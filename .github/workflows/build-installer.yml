@@ -52,7 +52,7 @@ jobs:
 
       - name: Install Inno Setup
         shell: pwsh
-        run: choco install innosetup --yes --no-progress --limit-output
+        run: choco install innosetup --version=6.7.1 --source=https://community.chocolatey.org/api/v2/ --yes --no-progress --limit-output
 
       - name: Build and smoke-test installer
         shell: pwsh
