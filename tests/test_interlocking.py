@@ -19,6 +19,7 @@ def make_request(
     train_id: str,
     from_node: str,
     to_node: str,
+    entry_signal_id: str | None = None,
 ) -> RouteRequest:
     return RouteRequest(
         id=request_id,
@@ -26,6 +27,7 @@ def make_request(
         route=session.route,
         from_node_id=from_node,
         to_node_id=to_node,
+        entry_signal_id=entry_signal_id,
     )
 
 
@@ -126,6 +128,101 @@ class TestConflictingRoutes:
             local_session, "RT2", "T_B", "BND_TAICHUNG_S", "STA_WURI"
         )
         assert interlocking.conflicts_with_active(overlapping) == ["RT1"]
+
+
+class TestEntrySignal:
+    """未鎖閉道岔不可開放號誌（規格 §13.2）。"""
+
+    #: 成功站南方分歧至彰化北方咽喉的閉塞，其防護號誌位於成功至分歧進路之外。
+    UNRELATED_SIGNAL = "SIG_BLK_JCT_CHENGZHUI_JCT_CHANGHUA_N"
+
+    def test_entry_signal_cleared_when_it_protects_the_route(
+        self, local_session: DriverSession, interlocking: Interlocking
+    ) -> None:
+        signal_id = "SIG_BLK_STA_CHENGGONG_JCT_CHENGZHUI"
+        interlocking.signals.signal(signal_id).forced_stop = True
+        request = make_request(
+            local_session,
+            "RT1",
+            "T2701",
+            "STA_CHENGGONG",
+            "JCT_CHENGZHUI",
+            entry_signal_id=signal_id,
+        )
+        assert interlocking.request_route(request).granted
+        assert interlocking.signals.signal(signal_id).forced_stop is False
+
+    def test_unrelated_entry_signal_is_rejected(
+        self, local_session: DriverSession, interlocking: Interlocking
+    ) -> None:
+        """號誌防護的閉塞不在進路鎖定範圍內時不得開放。"""
+        interlocking.signals.signal(self.UNRELATED_SIGNAL).forced_stop = True
+        request = make_request(
+            local_session,
+            "RT1",
+            "T2701",
+            "STA_CHENGGONG",
+            "JCT_CHENGZHUI",
+            entry_signal_id=self.UNRELATED_SIGNAL,
+        )
+        result = interlocking.request_route(request)
+
+        assert not result.granted
+        assert "不在進路" in str(result.reason)
+        assert interlocking.signals.signal(self.UNRELATED_SIGNAL).forced_stop is True
+        assert interlocking.active_route_ids() == []
+
+    def test_missing_entry_signal_is_rejected_without_leaving_a_lock(
+        self, local_session: DriverSession, interlocking: Interlocking
+    ) -> None:
+        """不存在的號誌必須回傳失敗，且不可留下已建立的鎖。"""
+        request = make_request(
+            local_session,
+            "RT1",
+            "T2701",
+            "STA_CHENGGONG",
+            "JCT_CHENGZHUI",
+            entry_signal_id="SIG_DOES_NOT_EXIST",
+        )
+        result = interlocking.request_route(request)
+
+        assert not result.granted
+        assert "不存在" in str(result.reason)
+        assert interlocking.active_route_ids() == []
+
+    def test_rejected_request_leaves_the_switch_available(
+        self, local_session: DriverSession, interlocking: Interlocking
+    ) -> None:
+        """被拒絕的申請不可占住資源，後續合法申請仍應成功。"""
+        interlocking.request_route(
+            make_request(
+                local_session,
+                "RT1",
+                "T2701",
+                "STA_CHENGGONG",
+                "JCT_CHENGZHUI",
+                entry_signal_id="SIG_DOES_NOT_EXIST",
+            )
+        )
+        assert interlocking.request_route(
+            make_request(local_session, "RT2", "T_B", "STA_CHENGGONG", "JCT_CHENGZHUI")
+        ).granted
+
+    def test_release_restores_the_entry_signal_to_stop(
+        self, local_session: DriverSession, interlocking: Interlocking
+    ) -> None:
+        signal_id = "SIG_BLK_STA_CHENGGONG_JCT_CHENGZHUI"
+        request = make_request(
+            local_session,
+            "RT1",
+            "T2701",
+            "STA_CHENGGONG",
+            "JCT_CHENGZHUI",
+            entry_signal_id=signal_id,
+        )
+        interlocking.request_route(request)
+        interlocking.release_route("RT1", train_rear_m=12000.0)
+        assert interlocking.signals.signal(signal_id).forced_stop is True
 
 
 class TestSwitchProtection:

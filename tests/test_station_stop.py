@@ -173,6 +173,65 @@ class TestMissedStop:
             local_session.tick(0.1)
         assert local_session.train.position_m >= position_after_miss
 
+    def test_stopped_past_the_window_is_still_a_miss(
+        self, game_data: GameData
+    ) -> None:
+        """列車停在停車範圍外側同樣屬於應停未停（規格 §9.2）。
+
+        單一步長內列車可能同時越過停車範圍並停妥（例如緊急制軔），判定不可
+        取決於列車剛好在越站前或越站後停下。
+        """
+        session = make_session(game_data, "2701")
+        daging = session.route.stop_for_station("DAGING")
+        assert daging is not None
+
+        session.train.position_m = daging.position_m + STOP_WINDOW_M + 1.0
+        session.train.current_speed_kmh = 0.0
+        session.tick(0.1)
+        session.announcer.flush()
+
+        progress = next(p for p in session.stations if p.station_id == "DAGING")
+        assert progress.missed
+        assert not progress.served
+        assert session.incidents.count_of("missed_stop") == 1
+        assert any("應停未停" in t for t in session.announcer.texts())
+
+    def test_missed_stop_verdict_matches_whether_moving_or_stopped(
+        self, game_data: GameData
+    ) -> None:
+        """同一位置的行駛中與停止列車必須得到相同判定。"""
+        verdicts = []
+        for speed in (0.0, 40.0):
+            session = make_session(game_data, "2701")
+            daging = session.route.stop_for_station("DAGING")
+            assert daging is not None
+            session.train.position_m = daging.position_m + STOP_WINDOW_M + 1.0
+            session.train.current_speed_kmh = speed
+            session.tick(0.1)
+            progress = next(p for p in session.stations if p.station_id == "DAGING")
+            verdicts.append(progress.missed)
+        assert verdicts == [True, True]
+
+    def test_emergency_stop_just_past_the_window_is_a_miss(
+        self, game_data: GameData
+    ) -> None:
+        """緊急制軔在越過停車範圍的同時停妥，仍須判定應停未停。"""
+        session = make_session(game_data, "2701")
+        daging = session.route.stop_for_station("DAGING")
+        assert daging is not None
+
+        session.train.position_m = daging.position_m + STOP_WINDOW_M - 2.0
+        session.train.current_speed_kmh = 12.0
+        session.emergency_brake()
+        for _ in range(300):
+            session.tick(0.1)
+
+        progress = next(p for p in session.stations if p.station_id == "DAGING")
+        assert session.train.is_stopped
+        assert session.train.position_m > daging.position_m + STOP_WINDOW_M
+        assert progress.missed
+        assert not progress.served
+
     def test_stopping_within_window_is_not_a_miss(
         self, game_data: GameData
     ) -> None:

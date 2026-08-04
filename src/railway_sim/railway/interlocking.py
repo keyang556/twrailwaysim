@@ -179,12 +179,32 @@ class Interlocking:
                     + "、".join(sorted(shared)),
                 )
 
+        # 5. 入口號誌必須存在，且其防護的閉塞確實屬於本進路。
+        #
+        # 這項檢查必須在提交鎖定「之前」完成：若留到之後才查，不存在的號誌
+        # 會擲出例外而留下一個已建立卻無人解除的鎖；不相干的號誌則會被開放
+        # 到本進路未鎖定的區間上，違反 §13.2「未鎖閉道岔不可開放號誌」。
+        entry_signal = None
+        if request.entry_signal_id:
+            try:
+                entry_signal = self.signals.signal(request.entry_signal_id)
+            except KeyError:
+                return RouteResult(
+                    False, reason=f"入口號誌不存在：{request.entry_signal_id}"
+                )
+            if f"block:{entry_signal.protected_block_id}" not in resources:
+                return RouteResult(
+                    False,
+                    reason=f"號誌 {entry_signal.id} 防護的閉塞 "
+                    f"{entry_signal.protected_block_id} 不在進路 {request.id} "
+                    "的鎖定範圍內，不可開放",
+                )
+
+        # 全部檢查通過後才提交鎖定，並在道岔鎖閉後開放號誌（§13.2）。
         lock = RouteLock(request=request, resources=resources, start_m=start_m, end_m=end_m)
         self.locks[lock.id] = lock
-
-        # §13.2：道岔鎖閉後才可開放號誌
-        if request.entry_signal_id:
-            self.signals.signal(request.entry_signal_id).forced_stop = False
+        if entry_signal is not None:
+            entry_signal.forced_stop = False
         return RouteResult(True, lock=lock)
 
     #: 判斷道岔是否被占用時，道岔前後視為同一區域的容許誤差（公尺）。
@@ -232,9 +252,15 @@ class Interlocking:
             return RouteResult(False, reason=f"沒有進路 {lock_id}")
         if train_rear_m is not None and not self.can_release(lock_id, train_rear_m):
             return RouteResult(False, reason="列車尚未完全通過，不可解除進路")
-        del self.locks[lock_id]
+
+        # 與 request_route 同理：先取得號誌再移除鎖定，避免中途失敗時鎖已
+        # 消失而號誌仍開放。號誌在申請時已驗證存在，此處只是保險。
+        entry_signal = None
         if lock.request.entry_signal_id:
-            self.signals.signal(lock.request.entry_signal_id).forced_stop = True
+            entry_signal = self.signals.signal(lock.request.entry_signal_id)
+        del self.locks[lock_id]
+        if entry_signal is not None:
+            entry_signal.forced_stop = True
         return RouteResult(True, lock=lock)
 
     # ------------------------------------------------------------------

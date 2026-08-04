@@ -334,12 +334,11 @@ class DriverSession:
         if self.finished:
             return
 
-        was_moving = not self.train.is_stopped
         physics_step(self.train, self.spec, dt_s)
         self.clock.elapsed_s += dt_s
 
         self._update_occupancy()
-        self._handle_stations(was_moving)
+        self._handle_stations()
         self._refresh_stop_target()
 
         state, events = self.atp.evaluate(self.train, dt_s)
@@ -398,7 +397,7 @@ class DriverSession:
             label=f"{target.name_zh_tw}站停車位置",
         )
 
-    def _handle_stations(self, was_moving: bool) -> None:
+    def _handle_stations(self) -> None:
         position = self.train.position_m
         for progress in self.stations:
             if progress.served or progress.passed or progress.missed:
@@ -424,13 +423,11 @@ class DriverSession:
                     )
 
             if progress.must_stop:
-                self._handle_stop_station(progress, position, was_moving)
+                self._handle_stop_station(progress, position)
             else:
                 self._handle_pass_station(progress, position)
 
-    def _handle_stop_station(
-        self, progress: StationProgress, position: float, was_moving: bool
-    ) -> None:
+    def _handle_stop_station(self, progress: StationProgress, position: float) -> None:
         offset = position - progress.position_m
 
         # 停妥判斷
@@ -445,8 +442,13 @@ class DriverSession:
             )
             return
 
-        # 應停未停（§9.2）：完全通過停車範圍仍在行進中
-        if offset > STOP_WINDOW_M and not self.train.is_stopped:
+        # 應停未停（§9.2）：車頭完全通過停車範圍。
+        #
+        # 這裡刻意**不**檢查列車是否仍在行進。單一步長內列車可能同時越過
+        # 停車範圍並停妥（例如緊急制軔），若加上「仍在行進」的條件，該站
+        # 會既未停妥也未判定應停未停，永遠停在未處理狀態而逃過違規紀錄。
+        # 判定結果不應取決於列車剛好在越過停車範圍之前或之後停下。
+        if offset > STOP_WINDOW_M:
             progress.missed = True
             self.incidents.record_violation(
                 "missed_stop",
