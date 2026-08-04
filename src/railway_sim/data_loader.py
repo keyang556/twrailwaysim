@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -33,6 +34,11 @@ DATA_DIR_ENV = "RAILWAY_SIM_DATA_DIR"
 _REQUIRED_FILES = ("stations.json", "routes.json", "trains.json", "timetables.json", "keymap.json")
 
 
+def _contains_required_data(directory: Path) -> bool:
+    """Return whether *directory* has a complete automatic data set."""
+    return all((directory / name).is_file() for name in _REQUIRED_FILES)
+
+
 def default_data_dir() -> Path:
     """尋找 ``data`` 目錄。
 
@@ -42,10 +48,26 @@ def default_data_dir() -> Path:
     if override:
         return Path(override)
 
+    # Frozen builds may carry a complete data directory beside the executable.
+    # This supports portable deployments without masking bundled release data.
+    if getattr(sys, "frozen", False):
+        executable_data = Path(sys.executable).resolve().parent / "data"
+        if _contains_required_data(executable_data):
+            return executable_data
+
+    # PyInstaller exposes its resource directory through _MEIPASS for both
+    # one-file and one-folder builds. This fallback keeps portable builds
+    # self-contained when no user data directory exists yet.
+    bundle_root = getattr(sys, "_MEIPASS", None)
+    if bundle_root:
+        candidate = Path(bundle_root) / "data"
+        if _contains_required_data(candidate):
+            return candidate
+
     here = Path(__file__).resolve()
     for parent in here.parents:
         candidate = parent / "data"
-        if (candidate / "stations.json").is_file():
+        if _contains_required_data(candidate):
             return candidate
     raise FileNotFoundError("找不到 data 目錄，請設定環境變數 " + DATA_DIR_ENV)
 

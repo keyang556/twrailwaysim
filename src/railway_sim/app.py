@@ -104,12 +104,30 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--list-scenarios", action="store_true", help="列出可用情境後結束。"
     )
+    parser.add_argument(
+        "--check-gui",
+        action="store_true",
+        help="Check that the wx user interface can be imported without opening a window.",
+    )
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     """程式進入點。回傳結束碼。"""
     args = _build_parser().parse_args(argv)
+
+    if args.check_gui:
+        try:
+            import wx
+            from railway_sim.ui.wx_app import run_wx
+        except ImportError:
+            print("wxPython is not available.", file=sys.stderr)
+            return 2
+        # Referencing the import keeps static analysers from treating it as a
+        # disposable import while avoiding a window in automated smoke tests.
+        _ = run_wx
+        print(f"wxPython {wx.version()} is available.")
+        return 0
 
     if args.list_scenarios:
         for scenario in SCENARIOS.values():

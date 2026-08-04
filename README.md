@@ -82,7 +82,7 @@ python -m railway_sim --ui wx
 
 ## 快捷鍵
 
-鍵位由 [`data/keymap.json`](data/keymap.json) 載入，可直接修改，程式不硬編碼按鍵。
+鍵位由 [`data/keymap.json`](data/keymap.json) 載入，可直接修改，程式不硬編碼按鍵。安裝版要自訂鍵位時，請複製整個 `data` 資料夾並透過 `--data-dir` 或 `RAILWAY_SIM_DATA_DIR` 指定它。
 遊戲中按 **F1** 隨時查詢。
 
 ### 駕駛操作
@@ -267,7 +267,7 @@ src/railway_sim/
 - **列車長模式**（§16）、**車站運轉員模式**（§17）、**行車調度員模式**（§18）、**售票員模式**（§19）
 - **音效系統**（§20）
 - **全臺路網與完整時刻表** — 目前只有臺中地區山線與海線南段
-- **Windows 封裝**
+- **Windows 封裝** — 請見 [`docs/windows-installer.md`](docs/windows-installer.md)
 - 真實月台／股道資料、真實速限、真實制動性能、真實 ATP 曲線（§27：無可靠來源前不得補齊）
 
 ### 已知限制

@@ -14,6 +14,10 @@ dependencies = []
 [project.optional-dependencies]
 gui = ["wxPython>=4.2"]
 dev = ["pytest>=8.0"]
+installer = [
+    "pyinstaller==6.21.0",
+    "wxPython==4.3.1",
+]
 
 [project.scripts]
 railway-sim = "railway_sim.app:main"
