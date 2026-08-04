@@ -1,0 +1,94 @@
+{
+  "meta": {
+    "description": "第一階段測試班次。",
+    "data_policy": "依開發規格 §27：完整時刻表與特殊車次停靠規則無可靠公開來源，本檔車次號碼與時刻皆為第一版測試資料，標記 test_data，不代表臺鐵實際班次。停靠規則本身依 chat.md「成功站資料修正」建立。",
+    "stop_rule_note": "停靠與通過一律以本班次的停靠表為準，不得由「列車行駛於這條路線」推論（規格 §9.1）。"
+  },
+  "services": [
+    {
+      "train_number": "2701",
+      "name_zh_tw": "區間車2701次",
+      "train_type": "local",
+      "rolling_stock_id": "EMU900",
+      "route_id": "R_MT_SB_TAICHUNG_CHANGHUA",
+      "stop_station_ids": ["TAICHUNG", "DAGING", "WURI", "XINWURI", "CHENGGONG", "CHANGHUA"],
+      "pass_station_ids": [],
+      "departure_times": {
+        "TAICHUNG": "08:00",
+        "DAGING": "08:04",
+        "WURI": "08:08",
+        "XINWURI": "08:11",
+        "CHENGGONG": "08:15"
+      },
+      "arrival_times": {
+        "DAGING": "08:03",
+        "WURI": "08:07",
+        "XINWURI": "08:10",
+        "CHENGGONG": "08:14",
+        "CHANGHUA": "08:22"
+      },
+      "verification_status": "test_data"
+    },
+    {
+      "train_number": "121",
+      "name_zh_tw": "自強號121次",
+      "train_type": "tze_chiang",
+      "rolling_stock_id": "EMU3000",
+      "route_id": "R_MT_SB_TAICHUNG_CHANGHUA",
+      "stop_station_ids": ["TAICHUNG", "CHANGHUA"],
+      "pass_station_ids": ["DAGING", "WURI", "XINWURI", "CHENGGONG"],
+      "departure_times": { "TAICHUNG": "08:30" },
+      "arrival_times": { "CHANGHUA": "08:42" },
+      "verification_status": "test_data",
+      "note": "自強號不停靠成功站（規格 §25.7、chat.md 成功站資料修正）。"
+    },
+    {
+      "train_number": "3702",
+      "name_zh_tw": "區間車3702次",
+      "train_type": "local",
+      "rolling_stock_id": "EMU900",
+      "route_id": "R_CO_SB_DAJIA_CHANGHUA",
+      "stop_station_ids": [
+        "DAJIA",
+        "TAICHUNGGANG",
+        "CINGSHUI",
+        "SHALU",
+        "LONGJING",
+        "DADU",
+        "ZHUIFEN",
+        "CHANGHUA"
+      ],
+      "pass_station_ids": [],
+      "departure_times": { "DAJIA": "09:00" },
+      "arrival_times": { "CHANGHUA": "09:35" },
+      "verification_status": "test_data",
+      "note": "海線往彰化，經追分直接進彰化，不經成功（規格 §10.2）。"
+    },
+    {
+      "train_number": "3711",
+      "name_zh_tw": "區間車3711次",
+      "train_type": "local",
+      "rolling_stock_id": "EMU900",
+      "route_id": "R_CO_TO_TAICHUNG",
+      "stop_station_ids": [
+        "DAJIA",
+        "TAICHUNGGANG",
+        "CINGSHUI",
+        "SHALU",
+        "LONGJING",
+        "DADU",
+        "ZHUIFEN",
+        "CHENGGONG",
+        "XINWURI",
+        "WURI",
+        "DAGING",
+        "TAICHUNG"
+      ],
+      "pass_station_ids": [],
+      "departure_times": { "DAJIA": "10:00" },
+      "arrival_times": { "TAICHUNG": "10:45" },
+      "verification_status": "test_data",
+      "note": "海線往臺中，經追分轉成追線進臺中地區，不經彰化（規格 §10.3）。"
+    }
+  ]
+}

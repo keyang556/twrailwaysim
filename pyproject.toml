@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "railway-sim"
+version = "0.1.0"
+description = "臺灣鐵路人員模擬器（無障礙優先）"
+readme = "README.md"
+requires-python = ">=3.13"
+license = { text = "MIT" }
+dependencies = []
+
+[project.optional-dependencies]
+gui = ["wxPython>=4.2"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+railway-sim = "railway_sim.app:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+railway_sim = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
