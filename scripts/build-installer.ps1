@@ -21,6 +21,21 @@ function Invoke-NativeChecked {
     }
 }
 
+function Assert-InstallerDependencies {
+    param([Parameter(Mandatory = $true)][string]$PythonExecutable)
+
+    $dependencyCheck = @'
+import PyInstaller
+import wx
+
+print(f'PyInstaller {PyInstaller.__version__}; wxPython {wx.version()} is available.')
+'@
+    & $PythonExecutable "-c" $dependencyCheck
+    if ($LASTEXITCODE -ne 0) {
+        throw "Installer builds require the Python environment supplied with -Python to have .[installer] installed (PyInstaller and wxPython)."
+    }
+}
+
 function Get-ProjectVersion {
     param([Parameter(Mandatory = $true)][string]$ProjectFile)
 
@@ -79,6 +94,8 @@ if ($resolvedVersion -ne $projectVersion) {
     throw "The requested installer version ($resolvedVersion) does not match pyproject.toml ($projectVersion)."
 }
 
+Assert-InstallerDependencies -PythonExecutable $Python
+
 New-Item -ItemType Directory -Force -Path $installerOutputDirectory | Out-Null
 
 Invoke-NativeChecked $Python @(
@@ -92,6 +109,15 @@ Invoke-NativeChecked $Python @(
     $workDirectory,
     $specFile
 )
+
+$pyInstallerWarningFile = Join-Path $workDirectory "twrailwaysim\warn-twrailwaysim.txt"
+if (-not (Test-Path -LiteralPath $pyInstallerWarningFile -PathType Leaf)) {
+    throw "PyInstaller did not produce its dependency warning report: $pyInstallerWarningFile"
+}
+$missingWxWarnings = @(Select-String -LiteralPath $pyInstallerWarningFile -Pattern "missing module named wx" -SimpleMatch)
+if ($missingWxWarnings.Count -gt 0) {
+    throw "PyInstaller reported a missing wx module. Recreate the build environment with .[installer] before packaging a release."
+}
 
 $consoleExecutable = Join-Path $applicationDirectory "twrailwaysim-console.exe"
 $guiExecutable = Join-Path $applicationDirectory "twrailwaysim.exe"
