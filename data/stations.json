@@ -1,0 +1,270 @@
+{
+  "meta": {
+    "description": "臺中地區（山線）與海線南段車站資料，供第一階段司機員模式使用。",
+    "data_policy": "依開發規格 §22 與 §27：站名與所屬線別取自臺鐵官方公開路線圖與車站資訊；月台數、股道配置、月台長度無可靠公開來源，一律為 null 並標記 unknown，不得自行推測。",
+    "station_name_source": "臺鐵官方路線圖與車站資訊（公開資料）",
+    "scope_note": "本檔僅涵蓋第一階段所需範圍，非全臺路網。"
+  },
+  "stations": [
+    {
+      "id": "FONGYUAN",
+      "name_zh_tw": "豐原",
+      "line_ids": ["mountain"],
+      "stop_rules": {
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true,
+        "chu_kuang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+    },
+    {
+      "id": "TANZIH",
+      "name_zh_tw": "潭子",
+      "line_ids": ["mountain"],
+      "stop_rules": {
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false,
+        "chu_kuang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+    },
+    {
+      "id": "TAIYUAN",
+      "name_zh_tw": "太原",
+      "line_ids": ["mountain"],
+      "stop_rules": {
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false,
+        "chu_kuang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+    },
+    {
+      "id": "TAICHUNG",
+      "name_zh_tw": "臺中",
+      "line_ids": ["mountain"],
+      "stop_rules": {
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true,
+        "chu_kuang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": true,
+      "verification_status": "official",
+      "source": "臺鐵官方路線圖與車站資訊（公開資料）",
+      "notes": "臺中地區主要車站。股道與月台配置無可靠公開來源，未建立。"
+    },
+    {
+      "id": "DAGING",
+      "name_zh_tw": "大慶",
+      "line_ids": ["mountain"],
+      "stop_rules": {
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false,
+        "chu_kuang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+    },
+    {
+      "id": "WURI",
+      "name_zh_tw": "烏日",
+      "line_ids": ["mountain"],
+      "stop_rules": {
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false,
+        "chu_kuang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+    },
+    {
+      "id": "XINWURI",
+      "name_zh_tw": "新烏日",
+      "line_ids": ["mountain"],
+      "stop_rules": {
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false,
+        "chu_kuang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+    },
+    {
+      "id": "CHENGGONG",
+      "name_zh_tw": "成功",
+      "line_ids": ["mountain"],
+      "stop_rules": {
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false,
+        "chu_kuang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": true,
+      "verification_status": "official",
+      "source": "臺鐵官方路線圖與車站資訊（公開資料）；停靠規則依 chat.md「成功站資料修正」與開發規格 §10.1",
+      "notes": "山線車站，位於彰化以北。僅辦理區間車停靠；區間快依班次設定，一般通過。自強號（含 EMU3000、PP）一律通過（規格 §25.7）。莒光號預設通過，待正式時刻表確認。同時是臺中地區往海線的聯絡節點，但不是海線列車必經站。"
+    },
+    {
+      "id": "CHANGHUA",
+      "name_zh_tw": "彰化",
+      "line_ids": ["mountain", "coast"],
+      "stop_rules": {
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true,
+        "chu_kuang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": true,
+      "verification_status": "official",
+      "source": "臺鐵官方路線圖與車站資訊（公開資料）",
+      "notes": "山線與海線匯合站。"
+    },
+    {
+      "id": "DAJIA",
+      "name_zh_tw": "大甲",
+      "line_ids": ["coast"],
+      "stop_rules": {
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true,
+        "chu_kuang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+    },
+    {
+      "id": "TAICHUNGGANG",
+      "name_zh_tw": "臺中港",
+      "line_ids": ["coast"],
+      "stop_rules": {
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true,
+        "chu_kuang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+    },
+    {
+      "id": "CINGSHUI",
+      "name_zh_tw": "清水",
+      "line_ids": ["coast"],
+      "stop_rules": {
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true,
+        "chu_kuang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+    },
+    {
+      "id": "SHALU",
+      "name_zh_tw": "沙鹿",
+      "line_ids": ["coast"],
+      "stop_rules": {
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true,
+        "chu_kuang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+    },
+    {
+      "id": "LONGJING",
+      "name_zh_tw": "龍井",
+      "line_ids": ["coast"],
+      "stop_rules": {
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false,
+        "chu_kuang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+    },
+    {
+      "id": "DADU",
+      "name_zh_tw": "大肚",
+      "line_ids": ["coast"],
+      "stop_rules": {
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false,
+        "chu_kuang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+    },
+    {
+      "id": "ZHUIFEN",
+      "name_zh_tw": "追分",
+      "line_ids": ["coast", "chengzhui"],
+      "stop_rules": {
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false,
+        "chu_kuang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": true,
+      "verification_status": "official",
+      "source": "臺鐵官方路線圖與車站資訊（公開資料）；運轉定位依 chat.md v1.5-14",
+      "notes": "海線與臺中地區的聯絡線節點。成追線由此接往成功站南方分歧。"
+    }
+  ]
+}

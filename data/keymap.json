@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "meta": {
+    "description": "預設鍵位。可直接修改本檔調整鍵位，程式不會硬編碼按鍵（規格 §7）。",
+    "conflict_policy": "快捷鍵不得互相衝突（規格 §2.1、§7.1）。tests/test_keymap.py 會強制檢查每個模式合併 global 之後沒有一鍵多用。",
+    "source_policy": "開發規格 §7.1 的鍵位表與 chat.md 的結論一致；依使用者指示，若兩者衝突一律以 chat.md 為準。每個鍵位的 source 欄位記錄其依據。"
+  },
+  "profiles": {
+    "global": {
+      "show_help": {
+        "keys": ["F1"],
+        "label": "開啟快捷鍵說明",
+        "category": "system",
+        "source": "規格 §7.1"
+      },
+      "repeat_last": {
+        "keys": ["F2"],
+        "label": "重複播報最近一則訊息",
+        "category": "system",
+        "source": "規格 §2.1 重要訊息需支援重複播報"
+      },
+      "pause_menu": {
+        "keys": ["ESC"],
+        "label": "開啟暫停選單（含離開遊戲）",
+        "category": "system",
+        "source": "規格 §7.1"
+      }
+    },
+    "driver": {
+      "power_up": {
+        "keys": ["D"],
+        "label": "增加電門段位",
+        "category": "driving",
+        "source": "chat.md：保持 D 鍵電門（與規格 §7.1 一致）"
+      },
+      "brake_up": {
+        "keys": ["A"],
+        "label": "增加常用制軔段位",
+        "category": "driving",
+        "source": "chat.md：保持 A 鍵制軔（與規格 §7.1 一致）"
+      },
+      "notch_down": {
+        "keys": ["S"],
+        "label": "回到惰行或降低控制段位",
+        "category": "driving",
+        "source": "規格 §7.1"
+      },
+      "emergency_brake": {
+        "keys": ["SPACE"],
+        "label": "緊急制軔",
+        "category": "driving",
+        "source": "chat.md：緊急制軔使用獨立按鍵；規格 §7.1 指定為 Space"
+      },
+      "release_emergency": {
+        "keys": ["E"],
+        "label": "解除緊急制軔（須列車停妥）",
+        "category": "driving",
+        "source": "規格 §8.3 必須有明確解除流程"
+      },
+      "release_brake": {
+        "keys": ["R"],
+        "label": "鬆軔",
+        "category": "driving",
+        "source": "規格 §7.1、§8.4"
+      },
+      "horn": {
+        "keys": ["H"],
+        "label": "鳴笛",
+        "category": "driving",
+        "source": "規格 §7.1"
+      },
+      "announce_speed": {
+        "keys": ["V"],
+        "label": "播報目前速度與允許速度",
+        "category": "query",
+        "source": "規格 §7.1"
+      },
+      "announce_position": {
+        "keys": ["P"],
+        "label": "播報目前位置",
+        "category": "query",
+        "source": "規格 §7.1"
+      },
+      "announce_next_station": {
+        "keys": ["N"],
+        "label": "播報下一站與停靠別",
+        "category": "query",
+        "source": "規格 §7.1"
+      },
+      "announce_signal": {
+        "keys": ["G"],
+        "label": "播報前方號誌",
+        "category": "query",
+        "source": "規格 §7.1"
+      },
+      "announce_train_status": {
+        "keys": ["T"],
+        "label": "播報列車狀態",
+        "category": "query",
+        "source": "規格 §7.1"
+      }
+    }
+  }
+}

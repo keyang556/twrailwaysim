@@ -1,0 +1,219 @@
+{
+  "meta": {
+    "description": "臺中地區路網拓撲與行駛路徑。依開發規格 §10.5 建立車站節點、分歧節點、聯絡線節點與方向性連線，不使用線性車站清單。",
+    "data_policy": "節點關係與線別取自臺鐵官方公開路線圖；區間長度（length_m）與速限（max_speed_kmh）無可靠公開來源，一律標記 test_data，屬第一版明確標示的測試資料（規格 §27），不得視為臺鐵實際數值。",
+    "topology_source": "開發規格 §10 與 chat.md v1.5-14「成功站／追分分歧」修正",
+    "chengzhui_note": "成追線由成功站南方（彰化以北）的分歧 JCT_CHENGZHUI 倒插接入山線，方向朝成功。因此追分方向的列車進入該分歧後只能往成功，不能直接轉往彰化；此限制以 allowed_transitions 表達。"
+  },
+  "lines": {
+    "mountain": { "name_zh_tw": "山線", "verification_status": "official" },
+    "coast": { "name_zh_tw": "海線", "verification_status": "official" },
+    "chengzhui": { "name_zh_tw": "成追線", "verification_status": "official" }
+  },
+  "region_rules": {
+    "chenggong_station_id": "CHENGGONG",
+    "zhuifen_station_id": "ZHUIFEN",
+    "changhua_station_id": "CHANGHUA",
+    "coast_line_id": "coast",
+    "mountain_line_id": "mountain",
+    "connector_line_id": "chengzhui",
+    "taichung_area_station_ids": [
+      "TAICHUNG",
+      "DAGING",
+      "WURI",
+      "XINWURI",
+      "TAIYUAN",
+      "TANZIH",
+      "FONGYUAN"
+    ]
+  },
+  "nodes": [
+    { "id": "STA_FONGYUAN", "node_type": "station", "station_id": "FONGYUAN", "line_ids": ["mountain"] },
+    { "id": "STA_TANZIH", "node_type": "station", "station_id": "TANZIH", "line_ids": ["mountain"] },
+    { "id": "STA_TAIYUAN", "node_type": "station", "station_id": "TAIYUAN", "line_ids": ["mountain"] },
+    { "id": "STA_TAICHUNG", "node_type": "station", "station_id": "TAICHUNG", "line_ids": ["mountain"] },
+    { "id": "BND_TAICHUNG_S", "node_type": "block_boundary", "station_id": null, "line_ids": ["mountain"] },
+    { "id": "STA_DAGING", "node_type": "station", "station_id": "DAGING", "line_ids": ["mountain"] },
+    { "id": "STA_WURI", "node_type": "station", "station_id": "WURI", "line_ids": ["mountain"] },
+    { "id": "STA_XINWURI", "node_type": "station", "station_id": "XINWURI", "line_ids": ["mountain"] },
+    { "id": "STA_CHENGGONG", "node_type": "station", "station_id": "CHENGGONG", "line_ids": ["mountain"] },
+
+    {
+      "id": "JCT_CHENGZHUI",
+      "node_type": "junction",
+      "station_id": null,
+      "line_ids": ["mountain", "chengzhui"],
+      "conflict_group": "SW_CHENGZHUI",
+      "note": "成功站南方、彰化以北的成追線分歧。成追線朝成功方向倒插，故追分與彰化之間不得經由本分歧直通。",
+      "allowed_transitions": [
+        { "from": "STA_CHENGGONG", "to": "JCT_CHANGHUA_N", "note": "山線南下 成功→彰化" },
+        { "from": "JCT_CHANGHUA_N", "to": "STA_CHENGGONG", "note": "山線北上 彰化→成功" },
+        { "from": "STA_CHENGGONG", "to": "STA_ZHUIFEN", "note": "臺中地區往海線 成功→追分" },
+        { "from": "STA_ZHUIFEN", "to": "STA_CHENGGONG", "note": "海線往臺中 追分→成功" }
+      ]
+    },
+    {
+      "id": "JCT_CHANGHUA_N",
+      "node_type": "junction",
+      "station_id": null,
+      "line_ids": ["mountain", "coast"],
+      "conflict_group": "SW_CHANGHUA_N",
+      "note": "彰化站北方咽喉，山線與海線在此匯合。兩線進路共用同一組道岔，不得同時開放。",
+      "allowed_transitions": [
+        { "from": "JCT_CHENGZHUI", "to": "STA_CHANGHUA", "note": "山線南下進彰化" },
+        { "from": "STA_CHANGHUA", "to": "JCT_CHENGZHUI", "note": "彰化往山線北上" },
+        { "from": "STA_ZHUIFEN", "to": "STA_CHANGHUA", "note": "海線往彰化" },
+        { "from": "STA_CHANGHUA", "to": "STA_ZHUIFEN", "note": "彰化往海線" }
+      ]
+    },
+
+    { "id": "STA_CHANGHUA", "node_type": "station", "station_id": "CHANGHUA", "line_ids": ["mountain", "coast"] },
+    { "id": "STA_ZHUIFEN", "node_type": "station", "station_id": "ZHUIFEN", "line_ids": ["coast", "chengzhui"] },
+    { "id": "STA_DADU", "node_type": "station", "station_id": "DADU", "line_ids": ["coast"] },
+    { "id": "STA_LONGJING", "node_type": "station", "station_id": "LONGJING", "line_ids": ["coast"] },
+    { "id": "STA_SHALU", "node_type": "station", "station_id": "SHALU", "line_ids": ["coast"] },
+    { "id": "STA_CINGSHUI", "node_type": "station", "station_id": "CINGSHUI", "line_ids": ["coast"] },
+    { "id": "STA_TAICHUNGGANG", "node_type": "station", "station_id": "TAICHUNGGANG", "line_ids": ["coast"] },
+    { "id": "STA_DAJIA", "node_type": "station", "station_id": "DAJIA", "line_ids": ["coast"] }
+  ],
+  "links": [
+    { "from": "STA_FONGYUAN", "to": "STA_TANZIH", "length_m": 6000, "line_id": "mountain", "max_speed_kmh": 110, "verification_status": "test_data" },
+    { "from": "STA_TANZIH", "to": "STA_TAIYUAN", "length_m": 4000, "line_id": "mountain", "max_speed_kmh": 110, "verification_status": "test_data" },
+    { "from": "STA_TAIYUAN", "to": "STA_TAICHUNG", "length_m": 3000, "line_id": "mountain", "max_speed_kmh": 100, "verification_status": "test_data" },
+    { "from": "STA_TAICHUNG", "to": "BND_TAICHUNG_S", "length_m": 1500, "line_id": "mountain", "max_speed_kmh": 85, "verification_status": "test_data" },
+    { "from": "BND_TAICHUNG_S", "to": "STA_DAGING", "length_m": 2000, "line_id": "mountain", "max_speed_kmh": 110, "verification_status": "test_data" },
+    { "from": "STA_DAGING", "to": "STA_WURI", "length_m": 3000, "line_id": "mountain", "max_speed_kmh": 110, "verification_status": "test_data" },
+    { "from": "STA_WURI", "to": "STA_XINWURI", "length_m": 1500, "line_id": "mountain", "max_speed_kmh": 100, "verification_status": "test_data" },
+    { "from": "STA_XINWURI", "to": "STA_CHENGGONG", "length_m": 2500, "line_id": "mountain", "max_speed_kmh": 110, "verification_status": "test_data" },
+    { "from": "STA_CHENGGONG", "to": "JCT_CHENGZHUI", "length_m": 1200, "line_id": "mountain", "max_speed_kmh": 90, "verification_status": "test_data" },
+    { "from": "JCT_CHENGZHUI", "to": "JCT_CHANGHUA_N", "length_m": 4000, "line_id": "mountain", "max_speed_kmh": 110, "verification_status": "test_data" },
+    { "from": "JCT_CHANGHUA_N", "to": "STA_CHANGHUA", "length_m": 1000, "line_id": "mountain", "max_speed_kmh": 60, "verification_status": "test_data" },
+
+    { "from": "JCT_CHENGZHUI", "to": "STA_ZHUIFEN", "length_m": 2500, "line_id": "chengzhui", "max_speed_kmh": 60, "verification_status": "test_data" },
+
+    { "from": "STA_ZHUIFEN", "to": "JCT_CHANGHUA_N", "length_m": 5000, "line_id": "coast", "max_speed_kmh": 100, "verification_status": "test_data" },
+    { "from": "STA_DADU", "to": "STA_ZHUIFEN", "length_m": 3000, "line_id": "coast", "max_speed_kmh": 110, "verification_status": "test_data" },
+    { "from": "STA_LONGJING", "to": "STA_DADU", "length_m": 4000, "line_id": "coast", "max_speed_kmh": 110, "verification_status": "test_data" },
+    { "from": "STA_SHALU", "to": "STA_LONGJING", "length_m": 3500, "line_id": "coast", "max_speed_kmh": 110, "verification_status": "test_data" },
+    { "from": "STA_CINGSHUI", "to": "STA_SHALU", "length_m": 4000, "line_id": "coast", "max_speed_kmh": 110, "verification_status": "test_data" },
+    { "from": "STA_TAICHUNGGANG", "to": "STA_CINGSHUI", "length_m": 3000, "line_id": "coast", "max_speed_kmh": 110, "verification_status": "test_data" },
+    { "from": "STA_DAJIA", "to": "STA_TAICHUNGGANG", "length_m": 6000, "line_id": "coast", "max_speed_kmh": 110, "verification_status": "test_data" }
+  ],
+  "routes": [
+    {
+      "id": "R_MT_SB_TAICHUNG_CHANGHUA",
+      "name_zh_tw": "山線南下 臺中至彰化",
+      "line_id": "mountain",
+      "direction": "southbound",
+      "node_ids": [
+        "STA_TAICHUNG",
+        "BND_TAICHUNG_S",
+        "STA_DAGING",
+        "STA_WURI",
+        "STA_XINWURI",
+        "STA_CHENGGONG",
+        "JCT_CHENGZHUI",
+        "JCT_CHANGHUA_N",
+        "STA_CHANGHUA"
+      ]
+    },
+    {
+      "id": "R_MT_NB_CHANGHUA_FONGYUAN",
+      "name_zh_tw": "山線北上 彰化至豐原",
+      "line_id": "mountain",
+      "direction": "northbound",
+      "node_ids": [
+        "STA_CHANGHUA",
+        "JCT_CHANGHUA_N",
+        "JCT_CHENGZHUI",
+        "STA_CHENGGONG",
+        "STA_XINWURI",
+        "STA_WURI",
+        "STA_DAGING",
+        "BND_TAICHUNG_S",
+        "STA_TAICHUNG",
+        "STA_TAIYUAN",
+        "STA_TANZIH",
+        "STA_FONGYUAN"
+      ]
+    },
+    {
+      "id": "R_CO_SB_DAJIA_CHANGHUA",
+      "name_zh_tw": "海線南下 大甲至彰化",
+      "line_id": "coast",
+      "direction": "southbound",
+      "node_ids": [
+        "STA_DAJIA",
+        "STA_TAICHUNGGANG",
+        "STA_CINGSHUI",
+        "STA_SHALU",
+        "STA_LONGJING",
+        "STA_DADU",
+        "STA_ZHUIFEN",
+        "JCT_CHANGHUA_N",
+        "STA_CHANGHUA"
+      ]
+    },
+    {
+      "id": "R_CO_TO_TAICHUNG",
+      "name_zh_tw": "海線往臺中 大甲至臺中",
+      "line_id": "coast",
+      "direction": "southbound",
+      "node_ids": [
+        "STA_DAJIA",
+        "STA_TAICHUNGGANG",
+        "STA_CINGSHUI",
+        "STA_SHALU",
+        "STA_LONGJING",
+        "STA_DADU",
+        "STA_ZHUIFEN",
+        "JCT_CHENGZHUI",
+        "STA_CHENGGONG",
+        "STA_XINWURI",
+        "STA_WURI",
+        "STA_DAGING",
+        "BND_TAICHUNG_S",
+        "STA_TAICHUNG"
+      ]
+    },
+    {
+      "id": "R_TAICHUNG_TO_COAST",
+      "name_zh_tw": "臺中往海線 臺中至大甲",
+      "line_id": "mountain",
+      "direction": "northbound",
+      "node_ids": [
+        "STA_TAICHUNG",
+        "BND_TAICHUNG_S",
+        "STA_DAGING",
+        "STA_WURI",
+        "STA_XINWURI",
+        "STA_CHENGGONG",
+        "JCT_CHENGZHUI",
+        "STA_ZHUIFEN",
+        "STA_DADU",
+        "STA_LONGJING",
+        "STA_SHALU",
+        "STA_CINGSHUI",
+        "STA_TAICHUNGGANG",
+        "STA_DAJIA"
+      ]
+    },
+    {
+      "id": "R_CHANGHUA_TO_COAST",
+      "name_zh_tw": "彰化往海線 彰化至大甲",
+      "line_id": "coast",
+      "direction": "northbound",
+      "node_ids": [
+        "STA_CHANGHUA",
+        "JCT_CHANGHUA_N",
+        "STA_ZHUIFEN",
+        "STA_DADU",
+        "STA_LONGJING",
+        "STA_SHALU",
+        "STA_CINGSHUI",
+        "STA_TAICHUNGGANG",
+        "STA_DAJIA"
+      ]
+    }
+  ]
+}
