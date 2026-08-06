@@ -3,7 +3,14 @@
 from __future__ import annotations
 
 import pytest
-from conftest import drive_to, make_session
+from conftest import (
+    LOCAL_SERVICE,
+    block_midpoint,
+    drive_to,
+    make_session,
+    signal_position,
+    slowest_segment,
+)
 
 from railway_sim.data_loader import GameData
 from railway_sim.railway.block import Block, BlockSystem
@@ -16,7 +23,7 @@ class TestBlockOccupancy:
 
     def test_blocks_are_built_from_route_nodes(self, local_session: DriverSession) -> None:
         blocks = local_session.blocks.blocks
-        assert len(blocks) == 8
+        assert len(blocks) == len(local_session.route.node_ids) - 1
         assert blocks[0].start_m == 0.0
         assert blocks[-1].end_m == pytest.approx(local_session.route.length_m)
 
@@ -80,7 +87,9 @@ class TestSignalAspects:
     def test_stop_when_protected_block_occupied(
         self, local_session: DriverSession
     ) -> None:
-        local_session.add_obstruction("T_OTHER", 12500.0)
+        local_session.add_obstruction(
+            "T_OTHER", block_midpoint(local_session, "BLK_JCT_CHENGZHUI_JCT_CHANGHUA_N")
+        )
         signal = local_session.signals.signal("SIG_BLK_JCT_CHENGZHUI_JCT_CHANGHUA_N")
         assert local_session.signals.aspect_of(
             signal, ignore_train_id=local_session.train.id
@@ -89,7 +98,9 @@ class TestSignalAspects:
     def test_caution_when_the_block_beyond_is_occupied(
         self, local_session: DriverSession
     ) -> None:
-        local_session.add_obstruction("T_OTHER", 12500.0)
+        local_session.add_obstruction(
+            "T_OTHER", block_midpoint(local_session, "BLK_JCT_CHENGZHUI_JCT_CHANGHUA_N")
+        )
         signal = local_session.signals.signal("SIG_BLK_STA_CHENGGONG_JCT_CHENGZHUI")
         assert local_session.signals.aspect_of(
             signal, ignore_train_id=local_session.train.id
@@ -117,31 +128,34 @@ class TestSignalProtection:
     def test_atp_reduces_permitted_speed_before_a_stop_signal(
         self, game_data: GameData
     ) -> None:
-        session = make_session(game_data, "2701")
-        session.add_obstruction("T_FAULT", 12500.0)
+        session = make_session(game_data, LOCAL_SERVICE)
+        session.add_obstruction("T_FAULT", block_midpoint(session, "BLK_JCT_CHENGZHUI_JCT_CHANGHUA_N"))
+        stop_signal_m = signal_position(session, "BLK_JCT_CHENGZHUI_JCT_CHANGHUA_N")
 
         # 停在停止號誌前 200 公尺
-        session.train.position_m = 11500.0
+        session.train.position_m = stop_signal_m - 200.0
         state, _ = session.atp.evaluate(session.train, 0.0)
         assert state.next_signal_aspect is SignalAspect.STOP
         assert state.permitted_kmh < state.line_limit_kmh
 
     def test_train_can_stop_before_a_red_signal(self, game_data: GameData) -> None:
         """驗收測試第 13 項：在紅燈前停車。"""
-        session = make_session(game_data, "2701")
-        session.add_obstruction("T_FAULT", 12500.0)
+        session = make_session(game_data, LOCAL_SERVICE)
+        session.add_obstruction("T_FAULT", block_midpoint(session, "BLK_JCT_CHENGZHUI_JCT_CHANGHUA_N"))
+        stop_signal_m = signal_position(session, "BLK_JCT_CHENGZHUI_JCT_CHANGHUA_N")
 
-        drive_to(session, 11700.0, respect_stops=True, max_seconds=2400.0)
+        drive_to(session, stop_signal_m - 50.0, respect_stops=True, max_seconds=3600.0)
 
-        assert session.train.position_m <= 11700.0
+        assert session.train.position_m <= stop_signal_m
         assert session.incidents.count_of("spad") == 0
 
     def test_passing_a_stop_signal_is_a_violation(self, game_data: GameData) -> None:
-        session = make_session(game_data, "2701")
-        session.add_obstruction("T_FAULT", 12500.0)
+        session = make_session(game_data, LOCAL_SERVICE)
+        session.add_obstruction("T_FAULT", block_midpoint(session, "BLK_JCT_CHENGZHUI_JCT_CHANGHUA_N"))
+        stop_signal_m = signal_position(session, "BLK_JCT_CHENGZHUI_JCT_CHANGHUA_N")
 
         # 直接把列車放到號誌之後，模擬冒進
-        session.train.position_m = 11750.0
+        session.train.position_m = stop_signal_m + 50.0
         session.train.current_speed_kmh = 60.0
         session.tick(0.1)
         session.announcer.flush()
@@ -150,18 +164,20 @@ class TestSignalProtection:
         assert any("冒進號誌" in t for t in session.announcer.texts())
 
     def test_spad_applies_emergency_brake(self, game_data: GameData) -> None:
-        session = make_session(game_data, "2701")
-        session.add_obstruction("T_FAULT", 12500.0)
-        session.train.position_m = 11750.0
+        session = make_session(game_data, LOCAL_SERVICE)
+        session.add_obstruction("T_FAULT", block_midpoint(session, "BLK_JCT_CHENGZHUI_JCT_CHANGHUA_N"))
+        stop_signal_m = signal_position(session, "BLK_JCT_CHENGZHUI_JCT_CHANGHUA_N")
+        session.train.position_m = stop_signal_m + 50.0
         session.train.current_speed_kmh = 60.0
         session.tick(0.1)
 
         assert session.train.emergency_brake is True
 
     def test_spad_recorded_only_once(self, game_data: GameData) -> None:
-        session = make_session(game_data, "2701")
-        session.add_obstruction("T_FAULT", 12500.0)
-        session.train.position_m = 11750.0
+        session = make_session(game_data, LOCAL_SERVICE)
+        session.add_obstruction("T_FAULT", block_midpoint(session, "BLK_JCT_CHENGZHUI_JCT_CHANGHUA_N"))
+        stop_signal_m = signal_position(session, "BLK_JCT_CHENGZHUI_JCT_CHANGHUA_N")
+        session.train.position_m = stop_signal_m + 50.0
         session.train.current_speed_kmh = 60.0
         for _ in range(50):
             session.tick(0.1)
@@ -169,47 +185,59 @@ class TestSignalProtection:
 
 
 class TestOverspeed:
-    """超速處理（規格 §14.2）。"""
+    """超速處理（規格 §14.2）。
 
-    def test_warning_on_first_overspeed(self, local_session: DriverSession) -> None:
-        local_session.train.position_m = 100.0
-        local_session.train.current_speed_kmh = 95.0  # 該區間速限 85
-        local_session.tick(0.1)
-        local_session.announcer.flush()
-        assert any("超速" in t for t in local_session.announcer.texts())
+    測試在路線上速限最低的區間進行：山線速限與 EMU900 的最高速度同為 110，
+    在那裡列車根本開不到超速。成追線這類低速區間才有超速的空間。
+    """
+
+    def test_warning_on_first_overspeed(
+        self, chengzhui_session: DriverSession
+    ) -> None:
+        position, limit = slowest_segment(chengzhui_session)
+        chengzhui_session.train.position_m = position
+        chengzhui_session.train.current_speed_kmh = limit + 10.0
+        chengzhui_session.tick(0.1)
+        chengzhui_session.announcer.flush()
+        assert any("超速" in t for t in chengzhui_session.announcer.texts())
 
     def test_sustained_overspeed_records_violation(
-        self, local_session: DriverSession
+        self, chengzhui_session: DriverSession
     ) -> None:
-        local_session.train.position_m = 100.0
+        position, limit = slowest_segment(chengzhui_session)
+        chengzhui_session.train.position_m = position
         for _ in range(80):
-            local_session.train.current_speed_kmh = 95.0
-            local_session.tick(0.1)
-        assert local_session.incidents.count_of("overspeed") >= 1
+            chengzhui_session.train.current_speed_kmh = limit + 10.0
+            chengzhui_session.tick(0.1)
+        assert chengzhui_session.incidents.count_of("overspeed") >= 1
 
     def test_severe_overspeed_triggers_emergency_brake(
-        self, local_session: DriverSession
+        self, chengzhui_session: DriverSession
     ) -> None:
-        local_session.train.position_m = 100.0
-        local_session.train.current_speed_kmh = 105.0  # 超出 85 達 20 公里
-        local_session.tick(0.1)
-        assert local_session.train.emergency_brake is True
+        position, limit = slowest_segment(chengzhui_session)
+        chengzhui_session.train.position_m = position
+        chengzhui_session.train.current_speed_kmh = limit + 20.0
+        chengzhui_session.tick(0.1)
+        assert chengzhui_session.train.emergency_brake is True
 
-    def test_no_violation_within_limit(self, local_session: DriverSession) -> None:
-        local_session.train.position_m = 100.0
+    def test_no_violation_within_limit(
+        self, chengzhui_session: DriverSession
+    ) -> None:
+        position, limit = slowest_segment(chengzhui_session)
+        chengzhui_session.train.position_m = position
         for _ in range(100):
-            local_session.train.current_speed_kmh = 80.0
-            local_session.tick(0.1)
-        assert local_session.incidents.count_of("overspeed") == 0
-        assert local_session.train.emergency_brake is False
+            chengzhui_session.train.current_speed_kmh = limit - 5.0
+            chengzhui_session.tick(0.1)
+        assert chengzhui_session.incidents.count_of("overspeed") == 0
+        assert chengzhui_session.train.emergency_brake is False
 
     def test_station_stop_does_not_trigger_enforcement(
         self, local_session: DriverSession
     ) -> None:
         """營業停靠不是保安功能，ATP 不因停不下來而介入（規格 §9.2）。"""
-        daging = local_session.route.stop_for_station("DAGING")
-        assert daging is not None
-        local_session.train.position_m = daging.position_m - 100.0
+        daqing = local_session.route.stop_for_station("DAQING")
+        assert daqing is not None
+        local_session.train.position_m = daqing.position_m - 100.0
         local_session.train.current_speed_kmh = 80.0
         local_session.tick(0.1)
 

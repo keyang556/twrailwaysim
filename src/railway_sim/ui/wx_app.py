@@ -30,7 +30,11 @@ _LOG_LIMIT = 300
 
 
 def _keycode_to_token(event) -> str | None:
-    """把 wx 鍵盤事件轉成鍵位表使用的按鍵代碼。"""
+    """把 wx 鍵盤事件轉成鍵位表使用的按鍵代碼。
+
+    與主控台不同，wx 收得到真正的修飾鍵狀態，因此 ``Ctrl+Shift+S`` 這類
+    與 OpenBVE 相同的鍵位在這裡是完整可用的。
+    """
     import wx
 
     code = event.GetKeyCode()
@@ -38,14 +42,29 @@ def _keycode_to_token(event) -> str | None:
         wx.WXK_SPACE: "SPACE",
         wx.WXK_ESCAPE: "ESC",
         wx.WXK_RETURN: "ENTER",
+        wx.WXK_NUMPAD_ENTER: "ENTER",
+        wx.WXK_TAB: "TAB",
+        wx.WXK_BACK: "BACKSPACE",
         wx.WXK_F1: "F1",
         wx.WXK_F2: "F2",
     }
     if code in special:
-        return special[code]
-    if 33 <= code <= 126:
-        return chr(code).upper()
-    return None
+        base = special[code]
+    elif 33 <= code <= 126:
+        base = chr(code).upper()
+    else:
+        return None
+
+    modifiers = []
+    if event.ControlDown():
+        modifiers.append("CTRL")
+    if event.ShiftDown():
+        modifiers.append("SHIFT")
+    if event.AltDown():
+        modifiers.append("ALT")
+    if not modifiers:
+        return base
+    return "+".join([*modifiers, base])
 
 
 class DriverFrame:  # pragma: no cover - 需要圖形環境

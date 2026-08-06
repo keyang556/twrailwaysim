@@ -1,270 +1,4952 @@
 {
   "meta": {
-    "description": "臺中地區（山線）與海線南段車站資料，供第一階段司機員模式使用。",
-    "data_policy": "依開發規格 §22 與 §27：站名與所屬線別取自臺鐵官方公開路線圖與車站資訊；月台數、股道配置、月台長度無可靠公開來源，一律為 null 並標記 unknown，不得自行推測。",
-    "station_name_source": "臺鐵官方路線圖與車站資訊（公開資料）",
-    "scope_note": "本檔僅涵蓋第一階段所需範圍，非全臺路網。"
+    "description": "臺鐵全線車站，依 2026-07-01 實施之時刻表產生。",
+    "data_policy": "站名與所屬線別取自臺鐵公布的列車時刻表，標記 official；stop_rules 由時刻表中實際辦客的班次統計而得，屬推導結果；月台數、股道配置、月台長度仍無公開來源，一律為 null 並標記 unknown（規格 §22、§27）。",
+    "stop_rules_policy": "stop_rules 表示「該車種在本站至少有一班列車辦理停靠」，不是臺鐵另行公布的停靠規則。某一班次停或不停一律以該班次的停靠表為準（規格 §9.1）。",
+    "provenance": {
+      "effective_date": "2026-07-01",
+      "generated_at": "2026-08-06T12:31:57Z",
+      "generator": "python -m railway_sim.dataset",
+      "sources": [
+        {
+          "file": "BaduToSuao20260701.ods",
+          "sha256": "e1dc9cb7f7fc54035953c15072a02491bd2d5c0a098630316855e9aa1e09a560",
+          "bytes": 13364
+        },
+        {
+          "file": "ChanghuaToChiayi20260701.ods",
+          "sha256": "6c25adb60704af721596f3fd42c6877c111278d34205d2ee1a992a49922bd845",
+          "bytes": 11519
+        },
+        {
+          "file": "ChanghuaToHsinchu20260701.ods",
+          "sha256": "821da0f6043e450ae293497bfcecec939914c7ab736f90e4e1248adf9f37f365",
+          "bytes": 19425
+        },
+        {
+          "file": "ChaozhouToKeelung20260701.ods",
+          "sha256": "94f2ccc0bae18332f2c40f361b9016f9008b06e518dfbd8bba9626220a7602d0",
+          "bytes": 108534
+        },
+        {
+          "file": "ChiayiToChanghua20260701.ods",
+          "sha256": "e6e07186fb6daab72bf6f279b054acd0a9ff6ae0ddc828cd399bab5d1f4684c8",
+          "bytes": 11389
+        },
+        {
+          "file": "ChiayiToKaohsiung20260701.ods",
+          "sha256": "0d4ab2125a623c041d34d6054669131da5e877a71ddc6c71796066caf88ca688",
+          "bytes": 16324
+        },
+        {
+          "file": "FangliaoToXinzuoying20260701.ods",
+          "sha256": "d50281bc1ad32b6614c2e4a04b38eeca48284cd6db8da092f9b8417ce819a8ae",
+          "bytes": 77201
+        },
+        {
+          "file": "HsinchuToChanghua20260701.ods",
+          "sha256": "1cb5452c92876ffde7332dd15dfb23fb989dbdd2272af8f5a0be4371f43e830f",
+          "bytes": 19006
+        },
+        {
+          "file": "HsinchuToKeelung20260701.ods",
+          "sha256": "f15c9ea1539184dddbf25dbed5da7bc9cf6af943d5cf457cef3c2629e888e58c",
+          "bytes": 22063
+        },
+        {
+          "file": "JIJI20260701.ods",
+          "sha256": "a78c7cf3e1f97cfd99f4a063a62298a0fe8abdefec765e7d36e4e96b7facfb41",
+          "bytes": 7367
+        },
+        {
+          "file": "KaohsiungToChiayi20260701.ods",
+          "sha256": "0e6b5e21dcd2be495ad477456a955f4ae1e90783b9ffd5ea6399cd8076e7300f",
+          "bytes": 16580
+        },
+        {
+          "file": "KeelungToChaozhou20260701.ods",
+          "sha256": "e31a3a877dda699be61a348c6ba6a92842e7d5410ec9724324612699fa36720d",
+          "bytes": 97084
+        },
+        {
+          "file": "KeelungToHsinchu20260701.ods",
+          "sha256": "cdd4ec4180d04c2c3e29ef689073957022f829ec56fb4ceee1592ca6d31a58b1",
+          "bytes": 21241
+        },
+        {
+          "file": "Neiwan20260701.ods",
+          "sha256": "5412dd0b5317c7e27dbb6353ed93210ca5eb3b73701c96d1b81fb6dacd3e5467",
+          "bytes": 13667
+        },
+        {
+          "file": "NorthLink20260701.ods",
+          "sha256": "b04ce1e7522433db6ec7b0b522ab975c4e16239d6e486cba9d3c814d0e5c68f6",
+          "bytes": 10480
+        },
+        {
+          "file": "PingxiToShenao20260701.ods",
+          "sha256": "6de60a2845c5cdc2806f3213c70fe7daaebe8b532b2653c5c25d318b5b08922a",
+          "bytes": 10610
+        },
+        {
+          "file": "Shalun2026070.ods",
+          "sha256": "55c3d5ae09cfc9565c6ad4af0819441d3c6c27d686d17a914f5d87edd830231a",
+          "bytes": 10235
+        },
+        {
+          "file": "ShulinToTaitung20260701.ods",
+          "sha256": "d28e0e649ae062470732d50edb9fe0e9c7ac0ed43e1347bff43992e94bd84251",
+          "bytes": 61086
+        },
+        {
+          "file": "SuaoToBadu20260701.ods",
+          "sha256": "6d863292a0711632384cc0b3985445bc448f2cef9f4eaf140865e0ccadcb2b22",
+          "bytes": 13261
+        },
+        {
+          "file": "Taitung20250626.ods",
+          "sha256": "f9832fea55621140c7a77a9dda42428354cfeb16fd74b0be2197f48524c9dbc2",
+          "bytes": 11428
+        },
+        {
+          "file": "TaitungToShulin20260701.ods",
+          "sha256": "689578b179ced62148a742977247f214d7dd56db6d1454f97f15a5355e96244e",
+          "bytes": 27262
+        },
+        {
+          "file": "XinzuoyingToFangliao20260701.ods",
+          "sha256": "655ff9a8a7ddd56fa6d6aeb2e17969f7fdafe8bc82f5d8d64ced8055b9528640",
+          "bytes": 74251
+        },
+        {
+          "file": "XinzuoyingToFangliaoToTaitung20260701.ods",
+          "sha256": "9c069a8b8863d313926da405e4354c8f799d0045e15b34585ef00ae484f1f07a",
+          "bytes": 52822
+        },
+        {
+          "file": "南迴線(台東→枋寮→新左營)-20260701.ods",
+          "sha256": "1981510925b0e259525bfead95c31755692e0dfbaf3cf208669c308cf9c9104d",
+          "bytes": 51681
+        }
+      ]
+    }
   },
   "stations": [
     {
-      "id": "FONGYUAN",
-      "name_zh_tw": "豐原",
-      "line_ids": ["mountain"],
+      "id": "QIDU",
+      "name_zh_tw": "七堵",
+      "name_en": "Qidu",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
       "stop_rules": {
+        "chu_kuang": true,
         "local": true,
         "local_express": true,
-        "tze_chiang": true,
-        "chu_kuang": true
+        "tze_chiang": true
       },
       "platforms": [],
       "platform_count": null,
       "is_operational_node": false,
       "verification_status": "official",
-      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
     },
     {
-      "id": "TANZIH",
-      "name_zh_tw": "潭子",
-      "line_ids": ["mountain"],
+      "id": "SANKENG",
+      "name_zh_tw": "三坑",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_north"
+      ],
       "stop_rules": {
+        "chu_kuang": false,
         "local": true,
-        "local_express": true,
-        "tze_chiang": false,
-        "chu_kuang": false
+        "local_express": false,
+        "tze_chiang": false
       },
       "platforms": [],
       "platform_count": null,
       "is_operational_node": false,
       "verification_status": "official",
-      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
     },
     {
-      "id": "TAIYUAN",
-      "name_zh_tw": "太原",
-      "line_ids": ["mountain"],
+      "id": "SANKUAICUO",
+      "name_zh_tw": "三塊厝",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
       "stop_rules": {
+        "chu_kuang": false,
         "local": true,
         "local_express": true,
-        "tze_chiang": false,
-        "chu_kuang": false
+        "tze_chiang": false
       },
       "platforms": [],
       "platform_count": null,
       "is_operational_node": false,
       "verification_status": "official",
-      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
     },
     {
-      "id": "TAICHUNG",
-      "name_zh_tw": "臺中",
-      "line_ids": ["mountain"],
+      "id": "SANXINGQIAO",
+      "name_zh_tw": "三姓橋",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_north"
+      ],
       "stop_rules": {
+        "chu_kuang": false,
         "local": true,
-        "local_express": true,
-        "tze_chiang": true,
-        "chu_kuang": true
+        "local_express": false,
+        "tze_chiang": false
       },
       "platforms": [],
       "platform_count": null,
-      "is_operational_node": true,
+      "is_operational_node": false,
       "verification_status": "official",
-      "source": "臺鐵官方路線圖與車站資訊（公開資料）",
-      "notes": "臺中地區主要車站。股道與月台配置無可靠公開來源，未建立。"
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
     },
     {
-      "id": "DAGING",
+      "id": "SANMIN",
+      "name_zh_tw": "三民",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SANYI",
+      "name_zh_tw": "三義",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SANDIAOLING",
+      "name_zh_tw": "三貂嶺",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingxi",
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SHANGYUAN",
+      "name_zh_tw": "上員",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "neiwan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ZHONGLI",
+      "name_zh_tw": "中壢",
+      "name_en": "Zhongli",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ZHONGZHOU",
+      "name_zh_tw": "中洲",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "shalun",
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ZHONGLI_YL",
+      "name_zh_tw": "中里",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "JIUQUTANG",
+      "name_zh_tw": "九曲堂",
+      "name_en": "Jiuqutang",
+      "name_en_verification": "official",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "JIUZANTOU",
+      "name_zh_tw": "九讚頭",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "neiwan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ERSHUI",
+      "name_zh_tw": "二水",
+      "name_en": "Ershui",
+      "name_en_verification": "official",
+      "line_ids": [
+        "jiji",
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ERJIE",
+      "name_zh_tw": "二結",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "WUDU",
+      "name_zh_tw": "五堵",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "WUQUAN",
+      "name_zh_tw": "五權",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "RENDE",
+      "name_zh_tw": "仁德",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "JIADONG",
+      "name_zh_tw": "佳冬",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "BAOAN",
+      "name_zh_tw": "保安",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "GUANGFU",
+      "name_zh_tw": "光復",
+      "name_en": "Guangfu",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "NEILI",
+      "name_zh_tw": "內壢",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "NEIWEI",
+      "name_zh_tw": "內惟",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "NEIWAN",
+      "name_zh_tw": "內灣",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "neiwan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "NEISHI",
+      "name_zh_tw": "內獅",
+      "name_en": "Neishi",
+      "name_en_verification": "official",
+      "line_ids": [
+        "south_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": false,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "BADU",
+      "name_zh_tw": "八堵",
+      "name_en": "Badu",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north",
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "BADOUZI",
+      "name_zh_tw": "八斗子",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingxi"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LIUKUAICUO",
+      "name_zh_tw": "六塊厝",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LIUJIA",
+      "name_zh_tw": "六家",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "neiwan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "DONGSHAN",
+      "name_zh_tw": "冬山",
+      "name_en": "Dongshan",
+      "name_en_verification": "official",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "JIALU",
+      "name_zh_tw": "加祿",
+      "name_en": "Jialu",
+      "name_en_verification": "official",
+      "line_ids": [
+        "south_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "BEIPU",
+      "name_zh_tw": "北埔",
+      "name_en": "Beipu",
+      "name_en_verification": "official",
+      "line_ids": [
+        "north_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "BEIXINZHU",
+      "name_zh_tw": "北新竹",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "neiwan",
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "BEIHU",
+      "name_zh_tw": "北湖",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SHIFEN",
+      "name_zh_tw": "十分",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingxi"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "QIANJIA",
+      "name_zh_tw": "千甲",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "neiwan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "NANSHI",
+      "name_zh_tw": "南勢",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "NANZHOU",
+      "name_zh_tw": "南州",
+      "name_en": "Nanzhou",
+      "name_en_verification": "official",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "NANPING",
+      "name_zh_tw": "南平",
+      "name_en": "Nanping",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "NANSHULIN",
+      "name_zh_tw": "南樹林",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "NANGANG",
+      "name_zh_tw": "南港",
+      "name_en": "Nangang",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "NANAO",
+      "name_zh_tw": "南澳",
+      "name_en": "Nan'ao",
+      "name_en_verification": "official",
+      "line_ids": [
+        "north_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "NANKE",
+      "name_zh_tw": "南科",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "NANJING",
+      "name_zh_tw": "南靖",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "HEXING",
+      "name_zh_tw": "合興",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "neiwan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "JIAN",
+      "name_zh_tw": "吉安",
+      "name_en": "Ji'an",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "HOULI",
+      "name_zh_tw": "后里",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "HEREN",
+      "name_zh_tw": "和仁",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "north_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "HEPING",
+      "name_zh_tw": "和平",
+      "name_en": "Heping",
+      "name_en_verification": "official",
+      "line_ids": [
+        "north_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "YUANLIN",
+      "name_zh_tw": "員林",
+      "name_en": "Yuanlin",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SHANHUA",
+      "name_zh_tw": "善化",
+      "name_en": "Shanhua",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "JIABEI",
+      "name_zh_tw": "嘉北",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "CHIAYI",
+      "name_zh_tw": "嘉義",
+      "name_en": "Chiayi",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SICHENG",
+      "name_zh_tw": "四城",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SIJIAOTING",
+      "name_zh_tw": "四腳亭",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingxi",
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "PUXIN",
+      "name_zh_tw": "埔心",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "KEELUNG",
+      "name_zh_tw": "基隆",
+      "name_en": "Keelung",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SHOUFENG",
+      "name_zh_tw": "壽豐",
+      "name_en": "Shoufeng",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "WAIAO",
+      "name_zh_tw": "外澳",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "DAFU",
+      "name_zh_tw": "大富",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "DASHAN",
+      "name_zh_tw": "大山",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "coast"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "DAQING",
       "name_zh_tw": "大慶",
-      "line_ids": ["mountain"],
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
       "stop_rules": {
+        "chu_kuang": false,
         "local": true,
         "local_express": true,
-        "tze_chiang": false,
-        "chu_kuang": false
+        "tze_chiang": false
       },
       "platforms": [],
       "platform_count": null,
       "is_operational_node": false,
       "verification_status": "official",
-      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
     },
     {
-      "id": "WURI",
-      "name_zh_tw": "烏日",
-      "line_ids": ["mountain"],
+      "id": "DACUN",
+      "name_zh_tw": "大村",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
       "stop_rules": {
+        "chu_kuang": false,
         "local": true,
-        "local_express": true,
-        "tze_chiang": false,
-        "chu_kuang": false
+        "local_express": false,
+        "tze_chiang": false
       },
       "platforms": [],
       "platform_count": null,
       "is_operational_node": false,
       "verification_status": "official",
-      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
     },
     {
-      "id": "XINWURI",
-      "name_zh_tw": "新烏日",
-      "line_ids": ["mountain"],
+      "id": "DALIN",
+      "name_zh_tw": "大林",
+      "name_en": "Dalin",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
       "stop_rules": {
+        "chu_kuang": true,
         "local": true,
         "local_express": true,
-        "tze_chiang": false,
-        "chu_kuang": false
+        "tze_chiang": true
       },
       "platforms": [],
       "platform_count": null,
       "is_operational_node": false,
       "verification_status": "official",
-      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
     },
     {
-      "id": "CHENGGONG",
-      "name_zh_tw": "成功",
-      "line_ids": ["mountain"],
+      "id": "DAQIAO",
+      "name_zh_tw": "大橋",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
       "stop_rules": {
+        "chu_kuang": false,
         "local": true,
-        "local_express": true,
-        "tze_chiang": false,
-        "chu_kuang": false
+        "local_express": false,
+        "tze_chiang": false
       },
       "platforms": [],
       "platform_count": null,
-      "is_operational_node": true,
+      "is_operational_node": false,
       "verification_status": "official",
-      "source": "臺鐵官方路線圖與車站資訊（公開資料）；停靠規則依 chat.md「成功站資料修正」與開發規格 §10.1",
-      "notes": "山線車站，位於彰化以北。僅辦理區間車停靠；區間快依班次設定，一般通過。自強號（含 EMU3000、PP）一律通過（規格 §25.7）。莒光號預設通過，待正式時刻表確認。同時是臺中地區往海線的聯絡節點，但不是海線列車必經站。"
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
     },
     {
-      "id": "CHANGHUA",
-      "name_zh_tw": "彰化",
-      "line_ids": ["mountain", "coast"],
+      "id": "DAWU",
+      "name_zh_tw": "大武",
+      "name_en": "Dawu",
+      "name_en_verification": "official",
+      "line_ids": [
+        "south_link"
+      ],
       "stop_rules": {
-        "local": true,
+        "chu_kuang": true,
+        "local": false,
         "local_express": true,
-        "tze_chiang": true,
-        "chu_kuang": true
+        "tze_chiang": true
       },
       "platforms": [],
       "platform_count": null,
-      "is_operational_node": true,
+      "is_operational_node": false,
       "verification_status": "official",
-      "source": "臺鐵官方路線圖與車站資訊（公開資料）",
-      "notes": "山線與海線匯合站。"
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "DAHU",
+      "name_zh_tw": "大湖",
+      "name_en": "Dahu",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "DAXI",
+      "name_zh_tw": "大溪",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
     },
     {
       "id": "DAJIA",
       "name_zh_tw": "大甲",
-      "line_ids": ["coast"],
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "coast"
+      ],
       "stop_rules": {
+        "chu_kuang": true,
         "local": true,
         "local_express": true,
-        "tze_chiang": true,
-        "chu_kuang": true
+        "tze_chiang": true
       },
       "platforms": [],
       "platform_count": null,
       "is_operational_node": false,
       "verification_status": "official",
-      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
-    },
-    {
-      "id": "TAICHUNGGANG",
-      "name_zh_tw": "臺中港",
-      "line_ids": ["coast"],
-      "stop_rules": {
-        "local": true,
-        "local_express": true,
-        "tze_chiang": true,
-        "chu_kuang": true
-      },
-      "platforms": [],
-      "platform_count": null,
-      "is_operational_node": false,
-      "verification_status": "official",
-      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
-    },
-    {
-      "id": "CINGSHUI",
-      "name_zh_tw": "清水",
-      "line_ids": ["coast"],
-      "stop_rules": {
-        "local": true,
-        "local_express": true,
-        "tze_chiang": true,
-        "chu_kuang": true
-      },
-      "platforms": [],
-      "platform_count": null,
-      "is_operational_node": false,
-      "verification_status": "official",
-      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
-    },
-    {
-      "id": "SHALU",
-      "name_zh_tw": "沙鹿",
-      "line_ids": ["coast"],
-      "stop_rules": {
-        "local": true,
-        "local_express": true,
-        "tze_chiang": true,
-        "chu_kuang": true
-      },
-      "platforms": [],
-      "platform_count": null,
-      "is_operational_node": false,
-      "verification_status": "official",
-      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
-    },
-    {
-      "id": "LONGJING",
-      "name_zh_tw": "龍井",
-      "line_ids": ["coast"],
-      "stop_rules": {
-        "local": true,
-        "local_express": false,
-        "tze_chiang": false,
-        "chu_kuang": false
-      },
-      "platforms": [],
-      "platform_count": null,
-      "is_operational_node": false,
-      "verification_status": "official",
-      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
     },
     {
       "id": "DADU",
       "name_zh_tw": "大肚",
-      "line_ids": ["coast"],
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "coast"
+      ],
       "stop_rules": {
+        "chu_kuang": false,
         "local": true,
-        "local_express": false,
-        "tze_chiang": false,
-        "chu_kuang": false
+        "local_express": true,
+        "tze_chiang": true
       },
       "platforms": [],
       "platform_count": null,
       "is_operational_node": false,
       "verification_status": "official",
-      "source": "臺鐵官方路線圖與車站資訊（公開資料）"
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
     },
     {
-      "id": "ZHUIFEN",
-      "name_zh_tw": "追分",
-      "line_ids": ["coast", "chengzhui"],
+      "id": "DAHUA",
+      "name_zh_tw": "大華",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingxi"
+      ],
       "stop_rules": {
+        "chu_kuang": false,
         "local": true,
         "local_express": false,
-        "tze_chiang": false,
-        "chu_kuang": false
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "DALI",
+      "name_zh_tw": "大里",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "TAIYUAN",
+      "name_zh_tw": "太原",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "TAIMALI",
+      "name_zh_tw": "太麻里",
+      "name_en": "Taimali",
+      "name_en_verification": "official",
+      "line_ids": [
+        "south_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": false,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "YILAN",
+      "name_zh_tw": "宜蘭",
+      "name_en": "Yilan",
+      "name_en_verification": "official",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "FUGANG",
+      "name_zh_tw": "富岡",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "FUYUAN",
+      "name_zh_tw": "富源",
+      "name_en": "Fuyuan",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "FUGUI",
+      "name_zh_tw": "富貴",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "neiwan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "FULI",
+      "name_zh_tw": "富里",
+      "name_en": "Fuli",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "PINGTUNG",
+      "name_zh_tw": "屏東",
+      "name_en": "Pingtung",
+      "name_en_verification": "official",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SHANJIA",
+      "name_zh_tw": "山佳",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SHANLI",
+      "name_zh_tw": "山里",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "GANGSHAN",
+      "name_zh_tw": "岡山",
+      "name_en": "Gangshan",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "KANDING",
+      "name_zh_tw": "崁頂",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "CHONGDE",
+      "name_zh_tw": "崇德",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "north_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "QIDING",
+      "name_zh_tw": "崎頂",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LINGJIAO",
+      "name_zh_tw": "嶺腳",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingxi"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ZUOYING",
+      "name_zh_tw": "左營",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "PINGHE",
+      "name_zh_tw": "平和",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "PINGXI",
+      "name_zh_tw": "平溪",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingxi"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "KANGLE",
+      "name_zh_tw": "康樂",
+      "name_en": "Kangle",
+      "name_en_verification": "official",
+      "line_ids": [
+        "south_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": false,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "CHANGHUA",
+      "name_zh_tw": "彰化",
+      "name_en": "Changhua",
+      "name_en_verification": "official",
+      "line_ids": [
+        "coast",
+        "mountain",
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
       },
       "platforms": [],
       "platform_count": null,
       "is_operational_node": true,
       "verification_status": "official",
-      "source": "臺鐵官方路線圖與車站資訊（公開資料）；運轉定位依 chat.md v1.5-14",
-      "notes": "海線與臺中地區的聯絡線節點。成追線由此接往成功站南方分歧。"
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "HOUBI",
+      "name_zh_tw": "後壁",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "HOUZHUANG",
+      "name_zh_tw": "後庄",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "HOULONG",
+      "name_zh_tw": "後龍",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "coast"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ZHIXUE",
+      "name_zh_tw": "志學",
+      "name_en": "Zhixue",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "CHENGGONG",
+      "name_zh_tw": "成功",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": true,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "BALIN",
+      "name_zh_tw": "拔林",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "DOULIU",
+      "name_zh_tw": "斗六",
+      "name_en": "Douliu",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "DOUNAN",
+      "name_zh_tw": "斗南",
+      "name_en": "Dounan",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "XINCHENG",
+      "name_zh_tw": "新城",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "north_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "XINPU",
+      "name_zh_tw": "新埔",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "coast"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "XINFU",
+      "name_zh_tw": "新富",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "XINZUOYING",
+      "name_zh_tw": "新左營",
+      "name_en": "Xinzuoying",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "XINSHI",
+      "name_zh_tw": "新市",
+      "name_en": "Xinshi",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "XINWURI",
+      "name_zh_tw": "新烏日",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "XINYING",
+      "name_zh_tw": "新營",
+      "name_en": "Xinying",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "HSINCHU",
+      "name_zh_tw": "新竹",
+      "name_en": "Hsinchu",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "XINZHUANG",
+      "name_zh_tw": "新莊",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "neiwan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "XINFENG",
+      "name_zh_tw": "新豐",
+      "name_en": "Xinfeng",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "XINMA",
+      "name_zh_tw": "新馬",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": false,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "RINAN",
+      "name_zh_tw": "日南",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "coast"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "JINGMEI",
+      "name_zh_tw": "景美",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "north_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "NUANNUAN",
+      "name_zh_tw": "暖暖",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "WANGGU",
+      "name_zh_tw": "望古",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingxi"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "DONGHAI",
+      "name_zh_tw": "東海",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "DONGAO",
+      "name_zh_tw": "東澳",
+      "name_en": "Dong'ao",
+      "name_en_verification": "official",
+      "line_ids": [
+        "north_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "DONGZHU",
+      "name_zh_tw": "東竹",
+      "name_en": "Dongzhu",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "DONGLI",
+      "name_zh_tw": "東里",
+      "name_en": "Dongli",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SONGSHAN",
+      "name_zh_tw": "松山",
+      "name_en": "Songshan",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SONGZHU",
+      "name_zh_tw": "松竹",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "BANQIAO",
+      "name_zh_tw": "板橋",
+      "name_en": "Banqiao",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "FANGLIAO",
+      "name_zh_tw": "枋寮",
+      "name_en": "Fangliao",
+      "name_en_verification": "official",
+      "line_ids": [
+        "pingtung",
+        "south_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "FANGSHAN",
+      "name_zh_tw": "枋山",
+      "name_en": "Fangshan",
+      "name_en_verification": "official",
+      "line_ids": [
+        "south_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": false,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LINNEI",
+      "name_zh_tw": "林內",
+      "name_en": "Linnei",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LINRONGSHINKONG",
+      "name_zh_tw": "林榮新光",
+      "name_en": "LinrongShinKong",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LINBIAN",
+      "name_zh_tw": "林邊",
+      "name_en": "Linbian",
+      "name_en_verification": "official",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LINFENGYING",
+      "name_zh_tw": "林鳳營",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LIUYING",
+      "name_zh_tw": "柳營",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LILIN",
+      "name_zh_tw": "栗林",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "TAOYUAN",
+      "name_zh_tw": "桃園",
+      "name_en": "Taoyuan",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "YANGMEI",
+      "name_zh_tw": "楊梅",
+      "name_en": "Yangmei",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "NANZI",
+      "name_zh_tw": "楠梓",
+      "name_en": "Nanzi",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "RONGHUA",
+      "name_zh_tw": "榮華",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "neiwan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SHULIN",
+      "name_zh_tw": "樹林",
+      "name_en": "Shulin",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "QIAOTOU",
+      "name_zh_tw": "橋頭",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "HENGSHAN",
+      "name_zh_tw": "橫山",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "neiwan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ZHENGYI",
+      "name_zh_tw": "正義",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "WUTA",
+      "name_zh_tw": "武塔",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "north_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "GUILAI",
+      "name_zh_tw": "歸來",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "MINZU",
+      "name_zh_tw": "民族",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "MINXIONG",
+      "name_zh_tw": "民雄",
+      "name_en": "Minxiong",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SHUISHANG",
+      "name_zh_tw": "水上",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SHUILI",
+      "name_zh_tw": "水里",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "jiji"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "YONGKANG",
+      "name_zh_tw": "永康",
+      "name_en": "Yongkang",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "YONGLE",
+      "name_zh_tw": "永樂",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "north_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "YONGJING",
+      "name_zh_tw": "永靖",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "XIZHI",
+      "name_zh_tw": "汐止",
+      "name_en": "Xizhi",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "XIKE",
+      "name_zh_tw": "汐科",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "CHISHANG",
+      "name_zh_tw": "池上",
+      "name_en": "Chishang",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SHALUN",
+      "name_zh_tw": "沙崙",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "shalun"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SHALU",
+      "name_zh_tw": "沙鹿",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "coast"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "TAIAN",
+      "name_zh_tw": "泰安",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "FUZHOU",
+      "name_zh_tw": "浮洲",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "HAIKEGUAN",
+      "name_zh_tw": "海科館",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingxi"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "HAIDUAN",
+      "name_zh_tw": "海端",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "QINGSHUI",
+      "name_zh_tw": "清水",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "coast"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "HUKOU",
+      "name_zh_tw": "湖口",
+      "name_en": "Hukou",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "YUANQUAN",
+      "name_zh_tw": "源泉",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "jiji"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "HANBEN",
+      "name_zh_tw": "漢本",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "north_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "TANZI",
+      "name_zh_tw": "潭子",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "CHAOZHOU",
+      "name_zh_tw": "潮州",
+      "name_en": "Chaozhou",
+      "name_en_verification": "official",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ZHUOSHUI",
+      "name_zh_tw": "濁水",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "jiji"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LONGXI",
+      "name_zh_tw": "瀧溪",
+      "name_en": "Longxi",
+      "name_en_verification": "official",
+      "line_ids": [
+        "south_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": false,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "WURI",
+      "name_zh_tw": "烏日",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "MUDAN",
+      "name_zh_tw": "牡丹",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "HOUTONG",
+      "name_zh_tw": "猴硐",
+      "name_en": "Houtong",
+      "name_en_verification": "official",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "YULI",
+      "name_zh_tw": "玉里",
+      "name_en": "Yuli",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "RUIHE",
+      "name_zh_tw": "瑞和",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "RUIYUAN",
+      "name_zh_tw": "瑞源",
+      "name_en": "Ruiyuan",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "RUISUI",
+      "name_zh_tw": "瑞穗",
+      "name_en": "Ruisui",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "RUIFANG",
+      "name_zh_tw": "瑞芳",
+      "name_en": "Ruifang",
+      "name_en_verification": "official",
+      "line_ids": [
+        "pingxi",
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "TIANZHONG",
+      "name_zh_tw": "田中",
+      "name_en": "Tianzhong",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "BAISHATUN",
+      "name_zh_tw": "白沙屯",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "coast"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "BAIFU",
+      "name_zh_tw": "百福",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ZHIBEN",
+      "name_zh_tw": "知本",
+      "name_en": "Zhiben",
+      "name_en_verification": "official",
+      "line_ids": [
+        "south_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": false,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SHICHENG",
+      "name_zh_tw": "石城",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SHILIU",
+      "name_zh_tw": "石榴",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SHIGUI",
+      "name_zh_tw": "石龜",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "JIAOXI",
+      "name_zh_tw": "礁溪",
+      "name_en": "Jiaoxi",
+      "name_en_verification": "official",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SHETOU",
+      "name_zh_tw": "社頭",
+      "name_en": "Shetou",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "FULONG",
+      "name_zh_tw": "福隆",
+      "name_en": "Fulong",
+      "name_en_verification": "official",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "KEGONGGUAN",
+      "name_zh_tw": "科工館",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ZHUZHONG",
+      "name_zh_tw": "竹中",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "neiwan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ZHUBEI",
+      "name_zh_tw": "竹北",
+      "name_en": "Zhubei",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ZHUNAN",
+      "name_zh_tw": "竹南",
+      "name_en": "Zhunan",
+      "name_en_verification": "official",
+      "line_ids": [
+        "coast",
+        "mountain",
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ZHUDONG",
+      "name_zh_tw": "竹東",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "neiwan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ZHUTIAN",
+      "name_zh_tw": "竹田",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "JINGWU",
+      "name_zh_tw": "精武",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LUODONG",
+      "name_zh_tw": "羅東",
+      "name_en": "Luodong",
+      "name_en_verification": "official",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "MEISHUGUAN",
+      "name_zh_tw": "美術館",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "TAICHUNG",
+      "name_zh_tw": "臺中",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "TAICHUNGGANG",
+      "name_zh_tw": "臺中港",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "coast"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "TAIPEI",
+      "name_zh_tw": "臺北",
+      "name_en": "Taipei",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "TAINAN",
+      "name_zh_tw": "臺南",
+      "name_en": "Tainan",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "TAITUNG",
+      "name_zh_tw": "臺東",
+      "name_en": "Taitung",
+      "name_en_verification": "official",
+      "line_ids": [
+        "south_link",
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "HUATAN",
+      "name_zh_tw": "花壇",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "HUALIEN",
+      "name_zh_tw": "花蓮",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "north_link",
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "YUANLI",
+      "name_zh_tw": "苑裡",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "coast"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "MIAOLI",
+      "name_zh_tw": "苗栗",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "JINGTONG",
+      "name_zh_tw": "菁桐",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingxi"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "WANRONG",
+      "name_zh_tw": "萬榮",
+      "name_en": "Wanrong",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "WANHUA",
+      "name_zh_tw": "萬華",
+      "name_en": "Wanhua",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SUAO",
+      "name_zh_tw": "蘇澳",
+      "name_en": "Su'ao",
+      "name_en_verification": "official",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SUAOXIN",
+      "name_zh_tw": "蘇澳新",
+      "name_en": "Su'aoxin",
+      "name_en_verification": "official",
+      "line_ids": [
+        "north_link",
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "XISHI",
+      "name_zh_tw": "西勢",
+      "name_en": "Xishi",
+      "name_en_verification": "official",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "TANWEN",
+      "name_zh_tw": "談文",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "coast"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "FENGYUAN",
+      "name_zh_tw": "豐原",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "FENGFU",
+      "name_zh_tw": "豐富",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "FENGTIAN",
+      "name_zh_tw": "豐田",
+      "name_en": "Fengtian",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "GONGLIAO",
+      "name_zh_tw": "貢寮",
+      "name_en": "Gongliao",
+      "name_en_verification": "official",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LUZHU",
+      "name_zh_tw": "路竹",
+      "name_en": "Luzhu",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "CHECHENG",
+      "name_zh_tw": "車埕",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "jiji"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ZHUIFEN",
+      "name_zh_tw": "追分",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "coast"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": true,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "TONGXIAO",
+      "name_zh_tw": "通霄",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "coast"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ZAOQIAO",
+      "name_zh_tw": "造橋",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "JINLUN",
+      "name_zh_tw": "金崙",
+      "name_en": "Jinlun",
+      "name_en_verification": "official",
+      "line_ids": [
+        "south_link"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": false,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "TONGLUO",
+      "name_zh_tw": "銅鑼",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "ZHENAN",
+      "name_zh_tw": "鎮安",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "CHANGRONGDAXUE",
+      "name_zh_tw": "長榮大學",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "shalun"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "GUANSHAN",
+      "name_zh_tw": "關山",
+      "name_en": "Guanshan",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LONGTIAN",
+      "name_zh_tw": "隆田",
+      "name_en": "Longtian",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "JIJI",
+      "name_zh_tw": "集集",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "jiji"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "SHUANGXI",
+      "name_zh_tw": "雙溪",
+      "name_en": "Shuangxi",
+      "name_en_verification": "official",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "DINGPU",
+      "name_zh_tw": "頂埔",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "TOUCHENG",
+      "name_zh_tw": "頭城",
+      "name_en": "Toucheng",
+      "name_en_verification": "official",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "TOUJIACUO",
+      "name_zh_tw": "頭家厝",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "mountain"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "XIANGSHAN",
+      "name_zh_tw": "香山",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "KAOHSIUNG",
+      "name_zh_tw": "高雄",
+      "name_en": "Kaohsiung",
+      "name_en_verification": "official",
+      "line_ids": [
+        "pingtung",
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "FENGSHAN",
+      "name_zh_tw": "鳳山",
+      "name_en": "Fengshan",
+      "name_en_verification": "official",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "FENGLIN",
+      "name_zh_tw": "鳳林",
+      "name_en": "Fenglin",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "FENGMING",
+      "name_zh_tw": "鳳鳴",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "YINGGE",
+      "name_zh_tw": "鶯歌",
+      "name_en": "Yingge",
+      "name_en_verification": "official",
+      "line_ids": [
+        "west_north"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LUYE",
+      "name_zh_tw": "鹿野",
+      "name_en": "Luye",
+      "name_en_verification": "official",
+      "line_ids": [
+        "taitung"
+      ],
+      "stop_rules": {
+        "chu_kuang": true,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LINLUO",
+      "name_zh_tw": "麟洛",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "pingtung"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "GUSHAN",
+      "name_zh_tw": "鼓山",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "west_south"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LONGJING",
+      "name_zh_tw": "龍井",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "coast"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LONGQUAN",
+      "name_zh_tw": "龍泉",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "jiji"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": true,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "LONGGANG",
+      "name_zh_tw": "龍港",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "coast"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
+    },
+    {
+      "id": "GUISHAN",
+      "name_zh_tw": "龜山",
+      "name_en": null,
+      "name_en_verification": "unknown",
+      "line_ids": [
+        "yilan"
+      ],
+      "stop_rules": {
+        "chu_kuang": false,
+        "local": true,
+        "local_express": false,
+        "tze_chiang": false
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "臺鐵公布之列車時刻表（見 timetables.json 的 meta.sources）"
     }
   ]
 }

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pytest
+from conftest import block_midpoint
 
 from railway_sim.railway.interlocking import Interlocking, RouteRequest
 from railway_sim.roles.driver import DriverSession
@@ -47,7 +48,10 @@ class TestRouteGranting:
     def test_route_rejected_when_block_occupied(
         self, local_session: DriverSession, interlocking: Interlocking
     ) -> None:
-        local_session.add_obstruction("T_OTHER", 12500.0)
+        local_session.add_obstruction(
+            "T_OTHER",
+            block_midpoint(local_session, "BLK_JCT_CHENGZHUI_JCT_CHANGHUA_N"),
+        )
         request = make_request(
             local_session, "RT1", "T2701", "STA_CHENGGONG", "JCT_CHANGHUA_N"
         )
@@ -112,7 +116,7 @@ class TestConflictingRoutes:
     def test_non_overlapping_routes_do_not_conflict(
         self, local_session: DriverSession, interlocking: Interlocking
     ) -> None:
-        first = make_request(local_session, "RT1", "T_A", "STA_TAICHUNG", "STA_DAGING")
+        first = make_request(local_session, "RT1", "T_A", "STA_TAICHUNG", "STA_DAQING")
         second = make_request(
             local_session, "RT2", "T_B", "STA_CHENGGONG", "JCT_CHENGZHUI"
         )
@@ -122,10 +126,10 @@ class TestConflictingRoutes:
     def test_conflicts_with_active_lists_the_blocking_route(
         self, local_session: DriverSession, interlocking: Interlocking
     ) -> None:
-        first = make_request(local_session, "RT1", "T_A", "STA_TAICHUNG", "STA_DAGING")
+        first = make_request(local_session, "RT1", "T_A", "STA_TAICHUNG", "STA_DAQING")
         interlocking.request_route(first)
         overlapping = make_request(
-            local_session, "RT2", "T_B", "BND_TAICHUNG_S", "STA_WURI"
+            local_session, "RT2", "T_B", "STA_WUQUAN", "STA_WURI"
         )
         assert interlocking.conflicts_with_active(overlapping) == ["RT1"]
 
@@ -221,7 +225,8 @@ class TestEntrySignal:
             entry_signal_id=signal_id,
         )
         interlocking.request_route(request)
-        interlocking.release_route("RT1", train_rear_m=12000.0)
+        rear_m = local_session.route.offset_of("JCT_CHENGZHUI") + 100.0
+        interlocking.release_route("RT1", train_rear_m=rear_m)
         assert interlocking.signals.signal(signal_id).forced_stop is True
 
 
@@ -232,7 +237,10 @@ class TestSwitchProtection:
         self, local_session: DriverSession, interlocking: Interlocking
     ) -> None:
         # 讓另一列車橫跨成追線分歧
-        local_session.blocks.update_occupancy("T_OTHER", 11650.0, 11750.0)
+        junction_m = local_session.route.offset_of("JCT_CHENGZHUI")
+        local_session.blocks.update_occupancy(
+            "T_OTHER", junction_m - 50.0, junction_m + 50.0
+        )
         request = make_request(
             local_session, "RT1", "T2701", "STA_CHENGGONG", "JCT_CHANGHUA_N"
         )
@@ -243,7 +251,10 @@ class TestSwitchProtection:
     def test_switch_occupier_detected_across_boundary(
         self, local_session: DriverSession, interlocking: Interlocking
     ) -> None:
-        local_session.blocks.update_occupancy("T_OTHER", 11600.0, 11699.0)
+        junction_m = local_session.route.offset_of("JCT_CHENGZHUI")
+        local_session.blocks.update_occupancy(
+            "T_OTHER", junction_m - 100.0, junction_m - 1.0
+        )
         occupier = interlocking.switch_occupier(
             local_session.route, "JCT_CHENGZHUI", ignore_train_id="T2701"
         )
@@ -271,7 +282,8 @@ class TestRouteRelease:
         )
         interlocking.request_route(request)
 
-        result = interlocking.release_route("RT1", train_rear_m=12000.0)
+        rear_m = local_session.route.offset_of("JCT_CHANGHUA_N") - 100.0
+        result = interlocking.release_route("RT1", train_rear_m=rear_m)
         assert not result.granted
         assert "尚未完全通過" in str(result.reason)
         assert interlocking.active_route_ids() == ["RT1"]
@@ -284,7 +296,8 @@ class TestRouteRelease:
         )
         interlocking.request_route(request)
 
-        assert interlocking.release_route("RT1", train_rear_m=15800.0).granted
+        rear_m = local_session.route.offset_of("JCT_CHANGHUA_N") + 100.0
+        assert interlocking.release_route("RT1", train_rear_m=rear_m).granted
         assert interlocking.active_route_ids() == []
 
     def test_released_route_frees_the_switch_for_the_other_direction(
@@ -294,7 +307,8 @@ class TestRouteRelease:
             local_session, "RT1", "T_A", "STA_CHENGGONG", "JCT_CHENGZHUI"
         )
         interlocking.request_route(first)
-        interlocking.release_route("RT1", train_rear_m=12000.0)
+        rear_m = local_session.route.offset_of("JCT_CHENGZHUI") + 100.0
+        interlocking.release_route("RT1", train_rear_m=rear_m)
 
         second = make_request(
             local_session, "RT2", "T_B", "STA_XINWURI", "JCT_CHENGZHUI"

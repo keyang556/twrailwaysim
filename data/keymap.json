@@ -1,9 +1,12 @@
 {
-  "version": 1,
+  "version": 2,
   "meta": {
     "description": "預設鍵位。可直接修改本檔調整鍵位，程式不會硬編碼按鍵（規格 §7）。",
     "conflict_policy": "快捷鍵不得互相衝突（規格 §2.1、§7.1）。tests/test_keymap.py 會強制檢查每個模式合併 global 之後沒有一鍵多用。",
-    "source_policy": "開發規格 §7.1 的鍵位表與 chat.md 的結論一致；依使用者指示，若兩者衝突一律以 chat.md 為準。每個鍵位的 source 欄位記錄其依據。"
+    "source_policy": "依使用者指示：功能相同者，快捷鍵一律與 OpenBVE 相同。對照來源為 OpenBVE 的 assets/Controls/Default.controls，欄位格式為「指令, keyboard, 鍵, 修飾鍵位元」，其中修飾鍵 Shift=1、Ctrl=2、Alt=4（見 OpenBveApi/Interface/Input/KeyboardModifier.cs）。",
+    "openbve_reference": "assets/Controls/Default.controls（Last updated 2026.01.16）",
+    "legacy_note": "profile driver_legacy 保留先前依 chat.md 訂下的 D 電門／A 制軔配置，可用 --keymap-profile driver_legacy 選用。",
+    "console_note": "終端機無法區分 Ctrl 與 Ctrl+Shift，主控台介面把控制字元一律視為 Ctrl+Shift+字母。因此每個播報動作都另外保留一個單鍵別名，任何介面都能操作。"
   },
   "profiles": {
     "global": {
@@ -11,22 +14,96 @@
         "keys": ["F1"],
         "label": "開啟快捷鍵說明",
         "category": "system",
-        "source": "規格 §7.1"
+        "source": "規格 §7.1（OpenBVE 無對應指令，F1 在 OpenBVE 為車內視角）"
       },
       "repeat_last": {
         "keys": ["F2"],
         "label": "重複播報最近一則訊息",
         "category": "system",
-        "source": "規格 §2.1 重要訊息需支援重複播報"
+        "source": "規格 §2.1 重要訊息需支援重複播報（OpenBVE 無對應指令）"
       },
       "pause_menu": {
         "keys": ["ESC"],
         "label": "開啟暫停選單（含離開遊戲）",
         "category": "system",
-        "source": "規格 §7.1"
+        "source": "OpenBVE MENU_ACTIVATE, keyboard, Escape, 0；與規格 §7.1 一致"
       }
     },
     "driver": {
+      "power_up": {
+        "keys": ["Z"],
+        "label": "增加電門段位",
+        "category": "driving",
+        "source": "OpenBVE POWER_INCREASE, keyboard, Z, 0"
+      },
+      "notch_down": {
+        "keys": ["A", "COMMA"],
+        "label": "回到惰行或降低控制段位",
+        "category": "driving",
+        "source": "OpenBVE POWER_DECREASE, keyboard, A, 0 與 BRAKE_DECREASE, keyboard, Comma, 0。本專案的減段是單一動作（降低目前作用中的控制），因此兩個鍵都對應到它。"
+      },
+      "brake_up": {
+        "keys": ["PERIOD"],
+        "label": "增加常用制軔段位",
+        "category": "driving",
+        "source": "OpenBVE BRAKE_INCREASE, keyboard, Period, 0"
+      },
+      "emergency_brake": {
+        "keys": ["SLASH"],
+        "label": "緊急制軔",
+        "category": "driving",
+        "source": "OpenBVE BRAKE_EMERGENCY, keyboard, Slash, 0（仍是獨立按鍵，符合 chat.md）"
+      },
+      "release_brake": {
+        "keys": ["R"],
+        "label": "鬆軔",
+        "category": "driving",
+        "source": "規格 §8.4。OpenBVE 只有逐段緩解（BRAKE_DECREASE），沒有一次鬆軔的指令，故沿用 R。"
+      },
+      "release_emergency": {
+        "keys": ["E"],
+        "label": "解除緊急制軔（須列車停妥）",
+        "category": "driving",
+        "source": "規格 §8.3。OpenBVE 無對應指令（其 E 為 ENGINE_START，本專案沒有這項功能）。"
+      },
+      "horn": {
+        "keys": ["ENTER"],
+        "label": "鳴笛",
+        "category": "driving",
+        "source": "OpenBVE HORN_PRIMARY, keyboard, Enter, 0"
+      },
+      "announce_speed": {
+        "keys": ["CTRL+SHIFT+S", "V"],
+        "label": "播報目前速度與允許速度",
+        "category": "query",
+        "source": "OpenBVE ACCESSIBILITY_CURRENT_SPEED, keyboard, S, 3（Shift+Ctrl）；V 為主控台可用的單鍵別名"
+      },
+      "announce_signal": {
+        "keys": ["CTRL+SHIFT+A", "G"],
+        "label": "播報前方號誌",
+        "category": "query",
+        "source": "OpenBVE ACCESSIBILITY_NEXT_SIGNAL, keyboard, A, 3（Shift+Ctrl）；G 為單鍵別名"
+      },
+      "announce_next_station": {
+        "keys": ["CTRL+SHIFT+T", "N"],
+        "label": "播報下一站與停靠別",
+        "category": "query",
+        "source": "OpenBVE ACCESSIBILITY_NEXT_STATION, keyboard, T, 3（Shift+Ctrl）；N 為單鍵別名"
+      },
+      "announce_position": {
+        "keys": ["P"],
+        "label": "播報目前位置",
+        "category": "query",
+        "source": "規格 §7.1。OpenBVE 最接近的 MISC_DIST_NEXT_STATION（Ctrl+D）報的是距下一站的距離，與本功能不同，故不沿用。"
+      },
+      "announce_train_status": {
+        "keys": ["T"],
+        "label": "播報列車狀態",
+        "category": "query",
+        "source": "規格 §7.1（OpenBVE 無對應指令）"
+      }
+    },
+    "driver_legacy": {
       "power_up": {
         "keys": ["D"],
         "label": "增加電門段位",

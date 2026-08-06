@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from conftest import drive_to, make_session
+from conftest import LOCAL_SERVICE, TZE_CHIANG_SERVICE, drive_to, make_session
 
 from railway_sim.data_loader import GameData
 from railway_sim.roles.driver import STOP_WINDOW_M, DriverSession
@@ -14,13 +14,13 @@ class TestStopKindResolution:
     """停靠判斷一律依班次停靠表，不得由路線推論（規格 §9.1）。"""
 
     def test_local_stops_at_chenggong(self, game_data: GameData) -> None:
-        service = game_data.service("2701")
+        service = game_data.service(LOCAL_SERVICE)
         station = game_data.stations["CHENGGONG"]
         assert resolve_stop_kind(service, station) == "stop"
 
     def test_tze_chiang_passes_chenggong(self, game_data: GameData) -> None:
         """自強號不停靠成功站（規格 §25.7）。"""
-        service = game_data.service("121")
+        service = game_data.service(TZE_CHIANG_SERVICE)
         station = game_data.stations["CHENGGONG"]
         assert resolve_stop_kind(service, station) == "pass"
 
@@ -37,24 +37,46 @@ class TestStopKindResolution:
         service = Service(
             train_number="TEST",
             train_type="local",
-            route_id="R_MT_SB_TAICHUNG_CHANGHUA",
+            route_id="R_TEST",
             rolling_stock_id="EMU900",
             stop_station_ids=("TAICHUNG", "CHANGHUA"),
         )
-        assert resolve_stop_kind(service, game_data.stations["DAGING"]) == "pass"
+        assert resolve_stop_kind(service, game_data.stations["LILIN"]) == "pass"
 
     def test_conditional_kept_when_not_resolved(self, game_data: GameData) -> None:
-        """區間快在成功站屬依班次判斷（chat.md：一般通過，特定班次才停靠）。"""
+        """車站辦理該車種、但班次未列出時，屬「依班次判斷」。
+
+        未收斂時保留 ``conditional`` 供資料檢查與播報使用，收斂後預設通過。
+        """
         service = Service(
             train_number="TEST",
-            train_type="local_express",
-            route_id="R_MT_SB_TAICHUNG_CHANGHUA",
+            train_type="local",
+            route_id="R_TEST",
             rolling_stock_id="EMU900",
             stop_station_ids=("TAICHUNG",),
         )
-        station = game_data.stations["CHENGGONG"]
+        station = game_data.stations["LILIN"]
+        assert station.allows_train_type("local")
         assert resolve_stop_kind(service, station, resolve_conditional=False) == "conditional"
         assert resolve_stop_kind(service, station) == "pass"
+
+    def test_local_express_does_not_serve_chenggong(self, game_data: GameData) -> None:
+        """115 年 7 月 1 日的時刻表中沒有任何區間快停靠成功站。
+
+        規格與 chat.md 當時寫的是「區間快依班次設定，一般通過」；實際時刻表
+        匯入後可以確定為完全不停，因此在本站不是「依班次判斷」而是通過。
+        """
+        station = game_data.stations["CHENGGONG"]
+        assert not station.allows_train_type("local_express")
+
+        service = Service(
+            train_number="TEST",
+            train_type="local_express",
+            route_id="R_TEST",
+            rolling_stock_id="EMU900",
+            stop_station_ids=("TAICHUNG",),
+        )
+        assert resolve_stop_kind(service, station, resolve_conditional=False) == "pass"
 
 
 class TestServiceValidation:
@@ -66,7 +88,7 @@ class TestServiceValidation:
         bad = Service(
             train_number="999",
             train_type="tze_chiang",
-            route_id="R_MT_SB_TAICHUNG_CHANGHUA",
+            route_id="R_TEST",
             rolling_stock_id="EMU3000",
             stop_station_ids=("TAICHUNG", "CHENGGONG", "CHANGHUA"),
         )
@@ -83,10 +105,10 @@ class TestServiceValidation:
         bad = Service(
             train_number="998",
             train_type="local",
-            route_id="R_MT_SB_TAICHUNG_CHANGHUA",
+            route_id="R_TEST",
             rolling_stock_id="EMU900",
-            stop_station_ids=("DAGING",),
-            pass_station_ids=("DAGING",),
+            stop_station_ids=("LILIN",),
+            pass_station_ids=("LILIN",),
         )
         assert validate_service(bad, game_data.stations) != []
 
@@ -108,7 +130,7 @@ class TestSessionStopPattern:
 
     def test_origin_station_starts_served(self, local_session: DriverSession) -> None:
         origin = local_session.stations[0]
-        assert origin.station_id == "TAICHUNG"
+        assert origin.station_id == local_session.route.station_ids[0]
         assert origin.served
 
 
@@ -136,7 +158,14 @@ class TestPassingStation:
         chenggong = express_session.route.stop_for_station("CHENGGONG")
         assert chenggong is not None
         drive_to(express_session, chenggong.position_m + 200)
-        assert express_session.incidents.count_of("missed_stop") == 0
+
+        progress = next(
+            p for p in express_session.stations if p.station_id == "CHENGGONG"
+        )
+        assert not progress.missed
+        assert all(
+            "成功" not in v.description for v in express_session.incidents.violations
+        )
 
 
 class TestMissedStop:
@@ -181,16 +210,16 @@ class TestMissedStop:
         單一步長內列車可能同時越過停車範圍並停妥（例如緊急制軔），判定不可
         取決於列車剛好在越站前或越站後停下。
         """
-        session = make_session(game_data, "2701")
-        daging = session.route.stop_for_station("DAGING")
-        assert daging is not None
+        session = make_session(game_data, LOCAL_SERVICE)
+        lilin = session.route.stop_for_station("LILIN")
+        assert lilin is not None
 
-        session.train.position_m = daging.position_m + STOP_WINDOW_M + 1.0
+        session.train.position_m = lilin.position_m + STOP_WINDOW_M + 1.0
         session.train.current_speed_kmh = 0.0
         session.tick(0.1)
         session.announcer.flush()
 
-        progress = next(p for p in session.stations if p.station_id == "DAGING")
+        progress = next(p for p in session.stations if p.station_id == "LILIN")
         assert progress.missed
         assert not progress.served
         assert session.incidents.count_of("missed_stop") == 1
@@ -202,13 +231,13 @@ class TestMissedStop:
         """同一位置的行駛中與停止列車必須得到相同判定。"""
         verdicts = []
         for speed in (0.0, 40.0):
-            session = make_session(game_data, "2701")
-            daging = session.route.stop_for_station("DAGING")
-            assert daging is not None
-            session.train.position_m = daging.position_m + STOP_WINDOW_M + 1.0
+            session = make_session(game_data, LOCAL_SERVICE)
+            lilin = session.route.stop_for_station("LILIN")
+            assert lilin is not None
+            session.train.position_m = lilin.position_m + STOP_WINDOW_M + 1.0
             session.train.current_speed_kmh = speed
             session.tick(0.1)
-            progress = next(p for p in session.stations if p.station_id == "DAGING")
+            progress = next(p for p in session.stations if p.station_id == "LILIN")
             verdicts.append(progress.missed)
         assert verdicts == [True, True]
 
@@ -216,19 +245,19 @@ class TestMissedStop:
         self, game_data: GameData
     ) -> None:
         """緊急制軔在越過停車範圍的同時停妥，仍須判定應停未停。"""
-        session = make_session(game_data, "2701")
-        daging = session.route.stop_for_station("DAGING")
-        assert daging is not None
+        session = make_session(game_data, LOCAL_SERVICE)
+        lilin = session.route.stop_for_station("LILIN")
+        assert lilin is not None
 
-        session.train.position_m = daging.position_m + STOP_WINDOW_M - 2.0
+        session.train.position_m = lilin.position_m + STOP_WINDOW_M - 2.0
         session.train.current_speed_kmh = 12.0
         session.emergency_brake()
         for _ in range(300):
             session.tick(0.1)
 
-        progress = next(p for p in session.stations if p.station_id == "DAGING")
+        progress = next(p for p in session.stations if p.station_id == "LILIN")
         assert session.train.is_stopped
-        assert session.train.position_m > daging.position_m + STOP_WINDOW_M
+        assert session.train.position_m > lilin.position_m + STOP_WINDOW_M
         assert progress.missed
         assert not progress.served
 
@@ -236,28 +265,28 @@ class TestMissedStop:
         self, game_data: GameData
     ) -> None:
         """在停車範圍內停妥即為正常到站。"""
-        session = make_session(game_data, "2701")
-        daging = session.route.stop_for_station("DAGING")
-        assert daging is not None
+        session = make_session(game_data, LOCAL_SERVICE)
+        lilin = session.route.stop_for_station("LILIN")
+        assert lilin is not None
 
-        session.train.position_m = daging.position_m - 10.0
+        session.train.position_m = lilin.position_m - 10.0
         session.train.current_speed_kmh = 0.0
         session.tick(0.1)
 
-        progress = next(p for p in session.stations if p.station_id == "DAGING")
+        progress = next(p for p in session.stations if p.station_id == "LILIN")
         assert progress.served
         assert not progress.missed
         assert session.incidents.count_of("missed_stop") == 0
 
     def test_arrival_reports_stop_offset(self, game_data: GameData) -> None:
-        session = make_session(game_data, "2701")
-        daging = session.route.stop_for_station("DAGING")
-        assert daging is not None
+        session = make_session(game_data, LOCAL_SERVICE)
+        lilin = session.route.stop_for_station("LILIN")
+        assert lilin is not None
 
-        session.train.position_m = daging.position_m + 20.0
+        session.train.position_m = lilin.position_m + 20.0
         session.tick(0.1)
         session.announcer.flush()
 
-        progress = next(p for p in session.stations if p.station_id == "DAGING")
+        progress = next(p for p in session.stations if p.station_id == "LILIN")
         assert progress.stop_offset_m == 20.0
         assert any("超出停車位置" in t for t in session.announcer.texts())
