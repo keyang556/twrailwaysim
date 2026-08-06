@@ -14,7 +14,13 @@ from pathlib import Path
 
 import pytest
 
-from railway_sim.data_loader import GameData, default_data_dir
+from railway_sim.data_loader import (
+    IMPORT_STAGING_PREFIX,
+    GameData,
+    default_data_dir,
+    heal_interrupted_import,
+    load_game_data,
+)
 from railway_sim.dataset.build import BuildResult, write_dataset
 from railway_sim.dataset.ods import OdsReadError, read_ods
 from railway_sim.dataset.registry import StationRegistry, UnknownStationError
@@ -130,6 +136,72 @@ class TestCorruptOdsFiles:
         path = tmp_path / "corrupt.ods"
         path.write_bytes(b"garbage")
         with pytest.raises(ValueError):
+            read_ods(path)
+
+
+class TestOdsResourceBounds:
+    """``content.xml`` 沒有大小或深度上限，一個刻意或不慎做出的病態檔案
+    就能把匯入行程的記憶體或 CPU 榨乾（zip bomb／XML 巢狀炸彈）。
+
+    真正的臺鐵時刻表 content.xml 最大約 475 KB、巢狀深度個位數，這裡的
+    上限給了數十倍餘裕，同時要能明確擋下病態情形。
+    """
+
+    def test_oversized_content_xml_is_rejected(self, tmp_path: Path) -> None:
+        """解壓後大小超過上限時拒絕讀取。"""
+        path = tmp_path / "oversized.ods"
+        with zipfile.ZipFile(path, "w") as archive:
+            archive.writestr("content.xml", b"<a>" + b" " * (9 * 1024 * 1024) + b"</a>")
+        with pytest.raises(OdsReadError, match="oversized.ods"):
+            read_ods(path)
+
+    def test_high_compression_ratio_zip_bomb_is_rejected(self, tmp_path: Path) -> None:
+        """重現實際回報的情境：16,459 位元組壓縮，解壓後 16,777,237 位元組。
+
+        ``zipfile`` 寫入的成員一律會如實記錄解壓後大小，因此上面那個測試
+        與這裡都會先在 :func:`~railway_sim.dataset.ods._read_bounded_member`
+        的宣告值快速檢查被擋下；真正無法繞過的防線是邊解壓邊累計實際
+        位元組數的串流迴圈——宣告值理論上可以被惡意偽造，但邊讀邊算的
+        實際位元組數不行。這裡用高壓縮比（大量重複空白）重現實際回報的
+        情境，確認整條防線（含快速檢查與串流檢查）行為一致。
+        """
+        path = tmp_path / "bomb.ods"
+        with zipfile.ZipFile(
+            path, "w", zipfile.ZIP_DEFLATED, compresslevel=9
+        ) as archive:
+            archive.writestr(
+                "content.xml", b"<a>" + b" " * (16 * 1024 * 1024) + b"</a>"
+            )
+        # 壓縮比極高，來源檔案本身仍然很小。
+        assert path.stat().st_size < 20_000
+        with pytest.raises(OdsReadError, match="bomb.ods"):
+            read_ods(path)
+
+    def test_deeply_nested_xml_is_rejected(self, tmp_path: Path) -> None:
+        """重現實際回報的情境：20,000 層巢狀的 XML 仍然解析成功。"""
+        path = tmp_path / "deepnest.ods"
+        deep = b"<a>" * 20_000 + b"</a>" * 20_000
+        with zipfile.ZipFile(path, "w") as archive:
+            archive.writestr("content.xml", deep)
+        with pytest.raises(OdsReadError, match="deepnest.ods"):
+            read_ods(path)
+
+    def test_deep_nesting_aborts_quickly_without_building_the_whole_tree(
+        self, tmp_path: Path
+    ) -> None:
+        """深度超標時應該邊解析邊中止，不是先把病態巢狀整棵樹建完才發現。
+
+        巢狀層數（一萬層）遠超過深度上限，但總位元組數刻意留在大小上限
+        之內，確保觸發的是深度檢查本身，而不是先被大小上限擋下。如果
+        實作退化成先呼叫 ``ET.fromstring`` 把整棵樹建完才事後檢查深度，
+        這個測試會因為時間拉長而逾時；只有真正邊解析邊中止才能瞬間通過。
+        """
+        path = tmp_path / "extreme_deepnest.ods"
+        deep = b"<a>" * 10_000 + b"</a>" * 10_000
+        assert len(deep) < 8 * 1024 * 1024, "payload 必須留在大小上限之內"
+        with zipfile.ZipFile(path, "w") as archive:
+            archive.writestr("content.xml", deep)
+        with pytest.raises(OdsReadError, match="巢狀深度超過上限"):
             read_ods(path)
 
 
@@ -570,7 +642,7 @@ class TestWriteDatasetIsAtomic:
         leftovers = [
             p.name
             for p in isolated_data_dir.iterdir()
-            if p.name.startswith(".import-staging") or p.name.endswith(".bak")
+            if p.name.startswith(IMPORT_STAGING_PREFIX) or p.name.endswith(".bak")
         ]
         assert leftovers == []
 
@@ -613,9 +685,88 @@ class TestWriteDatasetIsAtomic:
         leftovers = [
             p.name
             for p in isolated_data_dir.iterdir()
-            if p.name.startswith(".import-staging") or p.name.endswith(".bak")
+            if p.name.startswith(IMPORT_STAGING_PREFIX) or p.name.endswith(".bak")
         ]
         assert leftovers == []
+
+
+class TestSelfHealsAfterInterruption:
+    """行程在逐檔取代中途被強制中止（kill -9、斷電）時的復原。
+
+    ``write_dataset`` 內部的 ``try/except`` 只能攔到 Python 例外，攔不到
+    行程被整個砍掉——如果中止點剛好落在「第一個檔案已經取代成功、第二
+    個還沒開始」的縫隙之間，正式目錄理論上會停在一半新一半舊的狀態。
+
+    這裡不模擬「怎麼砍掉行程」（那沒辦法用 pytest 可靠重現），而是直接
+    在磁碟上重建那個縫隙會留下的殘留樣子：一個沒被清掉的暫存目錄，裡面
+    有一個檔案的備份、正式目錄裡那個檔案已經是新內容，其餘檔案沒有備份
+    （代表它們的取代根本還沒開始）。驗證下一次讀取或匯入都能自動修復。
+    """
+
+    @pytest.fixture
+    def isolated_data_dir(self, tmp_path: Path) -> Path:
+        target = tmp_path / "data"
+        shutil.copytree(default_data_dir(), target)
+        return target
+
+    def _simulate_kill_after_first_replace(self, data_dir: Path) -> dict[str, str]:
+        """重現「第一個檔案取代成功、行程隨即被砍掉」會留下的殘留狀態。"""
+        before = {
+            name: (data_dir / name).read_text(encoding="utf-8")
+            for name in ("stations.json", "routes.json", "timetables.json")
+        }
+        staging = data_dir / f"{IMPORT_STAGING_PREFIX}deadbeef"
+        staging.mkdir()
+        # stations.json 已經被取代成「新」內容，備份留在暫存目錄裡；
+        # routes.json／timetables.json 都還沒動，因此沒有備份——這正是
+        # write_dataset 逐檔取代迴圈跑到一半被砍掉會留下的樣子。
+        shutil.copyfile(data_dir / "stations.json", staging / "stations.json.bak")
+        (data_dir / "stations.json").write_text(
+            '{"meta": {}, "stations": []}', encoding="utf-8"
+        )
+        return before
+
+    def test_load_game_data_heals_before_reading(self, isolated_data_dir: Path) -> None:
+        """對應「下一次遊戲啟動無法載入資料」的回報情境。"""
+        before = self._simulate_kill_after_first_replace(isolated_data_dir)
+
+        data = load_game_data(isolated_data_dir)
+
+        assert data.issues == []
+        assert (isolated_data_dir / "stations.json").read_text(
+            encoding="utf-8"
+        ) == before["stations.json"]
+        assert list(isolated_data_dir.glob(f"{IMPORT_STAGING_PREFIX}*")) == []
+
+    def test_write_dataset_heals_a_prior_interruption_before_importing(
+        self, isolated_data_dir: Path
+    ) -> None:
+        """對應「下一次重新執行匯入」的情境：先自我修復，再開始新的匯入。"""
+        self._simulate_kill_after_first_replace(isolated_data_dir)
+
+        written = write_dataset(_minimal_build_result(), isolated_data_dir)
+
+        assert {p.name for p in written} == {
+            "stations.json",
+            "routes.json",
+            "timetables.json",
+        }
+        assert list(isolated_data_dir.glob(f"{IMPORT_STAGING_PREFIX}*")) == []
+
+    def test_heal_is_idempotent_with_no_staging_directory(
+        self, isolated_data_dir: Path
+    ) -> None:
+        """沒有殘留的正常情形（絕大多數呼叫）必須是無害的無操作。"""
+        before = (isolated_data_dir / "stations.json").read_text(encoding="utf-8")
+
+        heal_interrupted_import(isolated_data_dir)
+
+        assert (isolated_data_dir / "stations.json").read_text(
+            encoding="utf-8"
+        ) == before
+
+    def test_heal_tolerates_a_missing_directory(self, tmp_path: Path) -> None:
+        heal_interrupted_import(tmp_path / "does-not-exist")
 
 
 class TestCliHandlesCorruptSource:

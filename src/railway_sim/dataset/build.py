@@ -37,7 +37,11 @@ from datetime import UTC, datetime
 from itertools import pairwise
 from pathlib import Path
 
-from railway_sim.data_loader import load_game_data
+from railway_sim.data_loader import (
+    IMPORT_STAGING_PREFIX,
+    heal_interrupted_import,
+    load_game_data,
+)
 from railway_sim.dataset.registry import StationRegistry, UnknownStationError
 from railway_sim.dataset.tra_parser import (
     ParsedService,
@@ -896,14 +900,27 @@ def write_dataset(result: BuildResult, data_dir: str | Path) -> list[Path]:
     驗證失敗，正式目錄裡已經是壞掉的資料——原本可啟動的遊戲就這樣被
     一次失敗的匯入毀了。因此這裡改成：
 
-    1. 先把三個檔案連同既有、未受本次匯入影響的 ``trains.json``／
+    1. 開始之前先呼叫 :func:`~railway_sim.data_loader.heal_interrupted_import`，
+       修復任何上一次匯入殘留的中斷狀態，確保是從一致的版本開始。
+    2. 把三個檔案連同既有、未受本次匯入影響的 ``trains.json``／
        ``keymap.json`` 一起寫進正式目錄底下的暫存子目錄。
-    2. 用遊戲本身的載入器驗證這個暫存目錄的完整資料集；沒通過就直接
+    3. 用遊戲本身的載入器驗證這個暫存目錄的完整資料集；沒通過就直接
        擲出例外，**完全不動正式目錄**。
-    3. 只有驗證通過，才逐檔以 :func:`os.replace` 取代正式檔案——同一
+    4. 只有驗證通過，才逐檔以 :func:`os.replace` 取代正式檔案——同一
        檔案系統內的原子操作，取代前會先備份舊檔。若中途有任何一檔取代
-       失敗，會把已經取代過的檔案全部還原，避免留下一半新一半舊的
-       混合狀態。
+       失敗（Python 例外可以攔到的情形），會把已經取代過的檔案全部還原，
+       避免留下一半新一半舊的混合狀態。
+
+    第 4 步仍有一個 ``try/except`` 攔不到的殘餘風險：如果整個行程在
+    ``os.replace`` 之間被強制中止（斷電、kill -9），沒有任何 Python 程式
+    碼還在執行，無法觸發還原。這不是「每個檔案各自獨立取代」能單靠例外
+    處理完全避免的問題；因此改用另一層防線——:func:`~railway_sim.data_loader.load_game_data`
+    在每次載入資料前都會自動呼叫 :func:`~railway_sim.data_loader.heal_interrupted_import`，
+    本函式在**開始**時也會呼叫。取代前的備份就留在暫存目錄裡，直到正常
+    結束才清掉；因此無論是下一次啟動遊戲、還是下一次重新執行匯入，都會
+    先偵測到殘留的暫存目錄並把備份還原回去，讓資料回到「上一次成功
+    匯入」的一致狀態。整個「多檔提交」因此是一次可復原的版本切換，而不是
+    讓每一次個別取代的中間狀態直接暴露給下一個讀取者。
 
     Raises:
         FileNotFoundError: 正式目錄缺少驗證所需、本次匯入不會改動的
@@ -914,6 +931,8 @@ def write_dataset(result: BuildResult, data_dir: str | Path) -> list[Path]:
             還原才重新拋出。
     """
     data_path = Path(data_dir)
+    heal_interrupted_import(data_path)
+
     payloads = {
         "stations.json": result.stations,
         "routes.json": result.routes,
@@ -922,7 +941,7 @@ def write_dataset(result: BuildResult, data_dir: str | Path) -> list[Path]:
 
     # 暫存目錄建在正式目錄底下，確保與目的檔案在同一個檔案系統，
     # 之後的 os.replace() 才能保證是同一裝置內的原子操作。
-    staging = Path(tempfile.mkdtemp(prefix=".import-staging-", dir=data_path))
+    staging = Path(tempfile.mkdtemp(prefix=IMPORT_STAGING_PREFIX, dir=data_path))
     try:
         for name, payload in payloads.items():
             text = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"

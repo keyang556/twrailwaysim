@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -26,12 +27,27 @@ from railway_sim.simulation.train import TrainType
 from railway_sim.timetable.service import Service
 from railway_sim.timetable.stop_pattern import validate_service
 
-__all__ = ["GameData", "default_data_dir", "load_game_data"]
+__all__ = [
+    "IMPORT_STAGING_PREFIX",
+    "GameData",
+    "default_data_dir",
+    "heal_interrupted_import",
+    "load_game_data",
+]
 
 #: 可用環境變數覆寫資料目錄，方便測試與封裝。
 DATA_DIR_ENV = "RAILWAY_SIM_DATA_DIR"
 
 _REQUIRED_FILES = ("stations.json", "routes.json", "trains.json", "timetables.json", "keymap.json")
+
+#: ``railway_sim.dataset.build.write_dataset`` 匯入時使用的暫存目錄前綴。
+#:
+#: 兩邊必須用同一個常數：匯入過程逐檔以 ``os.replace`` 取代正式檔案時，
+#: 如果整個行程被強制中止（斷電、kill -9），Python 的 ``try/except`` 完全
+#: 攔不到——正式目錄可能停在「部分檔案已是新版、部分仍是舊版」的狀態。
+#: :func:`heal_interrupted_import` 就是用這個前綴找出這類殘留，在下一次
+#: 讀取或匯入時自動修復回一致的舊版本。
+IMPORT_STAGING_PREFIX = ".import-staging-"
 
 
 def _contains_required_data(directory: Path) -> bool:
@@ -74,6 +90,33 @@ def default_data_dir() -> Path:
 
 def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def heal_interrupted_import(directory: Path) -> None:
+    """還原任何殘留的匯入暫存目錄，讓 ``directory`` 回到一致的狀態。
+
+    ``write_dataset`` 逐檔取代正式資料前，會先把舊檔備份到暫存目錄裡的
+    ``<檔名>.bak``，正常結束時會清掉暫存目錄。只有行程在「已取代部分
+    檔案、尚未清理」的狹窄視窗中被強制中止（斷電、kill -9）才會殘留——
+    此時 ``directory`` 可能一半是新版、一半是舊版，導致下次啟動遊戲時
+    載入器回報一長串看似資料本身損壞的驗證問題，但其實只是匯入沒有
+    跑完善後流程。
+
+    找到殘留的暫存目錄時，把裡面的備份檔全部還原即可恢復一致：備份只
+    在對應檔案被取代**之前**才會建立，因此還原永遠是安全、冪等的操作——
+    無論當時取代動作實際上有沒有完成，複製備份回去的結果都一樣正確。
+    每次載入資料或每次匯入開始前都會呼叫本函式，因此不管是下一次啟動
+    遊戲、還是下一次重新執行匯入，都會自動修復。
+    """
+    if not directory.is_dir():
+        return
+    for staging in sorted(directory.glob(f"{IMPORT_STAGING_PREFIX}*")):
+        if not staging.is_dir():
+            continue
+        for backup in staging.glob("*.bak"):
+            target = directory / backup.name[: -len(".bak")]
+            shutil.copyfile(backup, target)
+        shutil.rmtree(staging, ignore_errors=True)
 
 
 @dataclass
@@ -124,8 +167,14 @@ class GameData:
 
 
 def load_game_data(data_dir: str | Path | None = None) -> GameData:
-    """載入 ``data`` 目錄下的所有資料檔並執行驗證。"""
+    """載入 ``data`` 目錄下的所有資料檔並執行驗證。
+
+    讀取前一律先呼叫 :func:`heal_interrupted_import`，修復任何殘留的
+    中斷匯入，因此即使上一次 ``railway_sim.dataset`` 匯入在寫入正式檔案
+    的過程中被強制中止，這裡仍然能載入到一致的（回復成匯入前的）資料。
+    """
     directory = Path(data_dir) if data_dir is not None else default_data_dir()
+    heal_interrupted_import(directory)
     missing = [name for name in _REQUIRED_FILES if not (directory / name).is_file()]
     if missing:
         raise FileNotFoundError(f"{directory} 缺少資料檔：{'、'.join(missing)}")
