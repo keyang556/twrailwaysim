@@ -969,8 +969,20 @@ def write_dataset(result: BuildResult, data_dir: str | Path) -> list[Path]:
                 target = data_path / name
                 backup: Path | None = None
                 if target.is_file():
+                    # 不能直接把備份寫成 <name>.bak：heal_interrupted_import
+                    # 認得這個檔名，一旦寫到一半就被中止（斷電、kill -9），
+                    # 會留下一個「檔名看起來完整、內容其實截斷」的備份。
+                    # 下次修復流程找到它時，會把這份殘缺內容當成正確備份
+                    # 覆寫回正式檔案，反而毀掉原本完好的資料。
+                    #
+                    # 因此先複製到修復流程認不得的暫存檔名，寫完整了才用
+                    # os.replace() 原子發布成 .bak；如果連複製本身都被
+                    # 中止，只會留下一個修復流程會忽略、之後隨暫存目錄
+                    # 一併清掉的半成品，不會污染到 .bak。
+                    backup_tmp = staging / f"{name}.bak.tmp"
+                    shutil.copyfile(target, backup_tmp)
                     backup = staging / f"{name}.bak"
-                    shutil.copyfile(target, backup)
+                    os.replace(backup_tmp, backup)
                 os.replace(staging / name, target)
                 replaced.append((target, backup))
                 written.append(target)

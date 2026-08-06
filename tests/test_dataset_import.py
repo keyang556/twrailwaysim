@@ -205,6 +205,161 @@ class TestOdsResourceBounds:
             read_ods(path)
 
 
+_TABLE_NS = "urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+_TEXT_NS = "urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+
+
+def _repeated_content_xml(
+    row_elements: int, row_repeat: int, cell_repeat: int
+) -> bytes:
+    """組出 ``row_elements`` 個列元素，各自宣告列與儲存格的 repeat 屬性。
+
+    每個 repeat 值本身都在 ``_MAX_REPEAT``（512）之內，因此 :func:`_read_row`
+    與單一列的檢查都不會單獨擋下任何一個屬性；只有跨整份文件累計才會
+    暴露出乘出來的展開量。
+    """
+    row_xml = (
+        f'<table:table-row xmlns:table="{_TABLE_NS}" '
+        f'table:number-rows-repeated="{row_repeat}">'
+        f'<table:table-cell xmlns:table="{_TABLE_NS}" '
+        f'table:number-columns-repeated="{cell_repeat}"/>'
+        "</table:table-row>"
+    )
+    return (
+        "<office:document-content "
+        'xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" '
+        f'xmlns:table="{_TABLE_NS}">'
+        "<office:body><office:spreadsheet>"
+        '<table:table table:name="s">' + row_xml * row_elements + "</table:table>"
+        "</office:spreadsheet></office:body></office:document-content>"
+    ).encode("utf-8")
+
+
+class TestCumulativeExpansionBudget:
+    """單一列或單一儲存格的 repeat 值各自合法，疊加起來仍可能展開成
+    天文數字的輸出——``_MAX_REPEAT`` 只擋得住「單一宣告」，擋不住
+    「大量各自合法的宣告疊加」，因此需要跨整份文件累計的預算。
+
+    重現實際回報的情境：326 KB、巢狀深度 5 的檔案能展開成
+    1,048,576 列、512 欄（536,870,912 個可存取儲存格）。
+    """
+
+    def test_many_row_level_repeats_are_rejected(self, tmp_path: Path) -> None:
+        """許多各自 512 的列重複疊加，遠超過累計列數上限。"""
+        path = tmp_path / "row_expansion.ods"
+        # 2048 個列元素 × row_repeat=512 = 1,048,576 列，與實際回報的情境
+        # 規模一致；cell_repeat 同樣維持在單一上限之內。
+        content = _repeated_content_xml(
+            row_elements=2048, row_repeat=512, cell_repeat=512
+        )
+        assert len(content) < 8 * 1024 * 1024, "payload 必須留在大小上限之內"
+        with zipfile.ZipFile(path, "w") as archive:
+            archive.writestr("content.xml", content)
+        with pytest.raises(OdsReadError, match="列數超過上限"):
+            read_ods(path)
+
+    def test_expansion_is_rejected_before_building_the_oversized_list(
+        self, tmp_path: Path
+    ) -> None:
+        """必須在超限當下就中止，不能先把展開後的巨大清單建出來。
+
+        如果實作退化成「展開完才檢查總數」，這裡會因為要配置數億個
+        字串參照而耗費大量時間與記憶體；只有邊展開邊檢查才能瞬間中止。
+        """
+        path = tmp_path / "row_expansion_large.ods"
+        content = _repeated_content_xml(
+            row_elements=2048, row_repeat=512, cell_repeat=512
+        )
+        with zipfile.ZipFile(path, "w") as archive:
+            archive.writestr("content.xml", content)
+        with pytest.raises(OdsReadError):
+            read_ods(path)
+
+    def test_many_distinct_cells_within_a_single_row_are_rejected(
+        self, tmp_path: Path
+    ) -> None:
+        """單一列裡塞進大量各自獨立宣告 repeat 的儲存格，不靠列層級重複
+        也能展開成天文數字，必須在 ``_read_row`` 自己的迴圈裡就擋下。
+        """
+        path = tmp_path / "single_row_expansion.ods"
+        cells_xml = "".join(
+            f'<table:table-cell xmlns:table="{_TABLE_NS}" '
+            'table:number-columns-repeated="512"/>'
+            for _ in range(6000)
+        )
+        content = (
+            "<office:document-content "
+            'xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" '
+            f'xmlns:table="{_TABLE_NS}">'
+            "<office:body><office:spreadsheet>"
+            f'<table:table table:name="s">'
+            f'<table:table-row xmlns:table="{_TABLE_NS}">{cells_xml}</table:table-row>'
+            "</table:table></office:spreadsheet></office:body></office:document-content>"
+        ).encode()
+        assert len(content) < 8 * 1024 * 1024, "payload 必須留在大小上限之內"
+        with zipfile.ZipFile(path, "w") as archive:
+            archive.writestr("content.xml", content)
+        with pytest.raises(OdsReadError, match="儲存格總數超過上限"):
+            read_ods(path)
+
+    def test_budget_accumulates_across_multiple_tables(self, tmp_path: Path) -> None:
+        """預算跨整份文件（可能有多張工作表）累計，不是每張表各自歸零。
+
+        否則只要把同樣的展開量拆成好幾張表格，就能繞過單一表格的預算。
+
+        儲存格內容刻意給非空文字：內容全空的儲存格會被既有的「去除列尾
+        空白儲存格」邏輯裁掉，裁掉後實際占用的記憶體確實很小，不構成
+        威脅；真正需要擋下的是內容不會被裁掉、確實會被完整展開的情形。
+        """
+        table_xml = (
+            f'<table:table-row xmlns:table="{_TABLE_NS}" '
+            'table:number-rows-repeated="512">'
+            f'<table:table-cell xmlns:table="{_TABLE_NS}" '
+            f'xmlns:text="{_TEXT_NS}" table:number-columns-repeated="512">'
+            "<text:p>x</text:p></table:table-cell>"
+            "</table:table-row>"
+        )
+        # 每張表格單獨看都在預算之內（512 列 x 512 格＝262,144 格，
+        # 低於 2,000,000 的上限），但 20 張加起來就會超過。
+        tables = "".join(
+            f'<table:table table:name="s{i}">{table_xml}</table:table>'
+            for i in range(20)
+        )
+        content = (
+            "<office:document-content "
+            'xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" '
+            f'xmlns:table="{_TABLE_NS}">'
+            f"<office:body><office:spreadsheet>{tables}</office:spreadsheet></office:body>"
+            "</office:document-content>"
+        ).encode()
+        path = tmp_path / "multi_table_expansion.ods"
+        with zipfile.ZipFile(path, "w") as archive:
+            archive.writestr("content.xml", content)
+        with pytest.raises(OdsReadError, match="儲存格總數超過上限"):
+            read_ods(path)
+
+    def test_real_files_stay_well_within_the_budget(self, tmp_path: Path) -> None:
+        """真正的時刻表檔案最多不到 200 列、幾千格——上限本身沒有訂得
+        太緊，不會誤傷正常檔案（用既有的排版 A 測試樣本間接驗證）。
+        """
+        table = (
+            '<table:table table:name="s">'
+            + _row(_cell("車") + _cell("次") + _cell("站\n名\n間") + _cell("二"))
+            + _row(
+                _cell(covered=True)
+                + _cell(covered=True)
+                + _cell(covered=True)
+                + _cell("水")
+            )
+            + _row(
+                _cell("區間車") + _cell("2705") + _cell("二水－車埕") + _cell("08:00")
+            )
+            + "</table:table>"
+        )
+        sheets = read_ods(_write_ods(tmp_path / "small.ods", table))
+        assert sheets
+
+
 class TestNameNormalisation:
     @pytest.mark.parametrize(
         ("raw", "expected"),
@@ -767,6 +922,81 @@ class TestSelfHealsAfterInterruption:
 
     def test_heal_tolerates_a_missing_directory(self, tmp_path: Path) -> None:
         heal_interrupted_import(tmp_path / "does-not-exist")
+
+
+class TestBackupCreationIsCrashSafe:
+    """建立備份的過程本身也可能被中止，不能讓半成品污染到 ``.bak``。
+
+    ``heal_interrupted_import`` 把任何名為 ``<檔名>.bak`` 的檔案都當成
+    「取代前的完整備份」直接信任並還原。如果備份是直接寫成這個檔名，
+    寫到一半被中止（斷電、kill -9）就會留下一個檔名看起來完整、內容
+    其實截斷的檔案；下次修復流程會把這份殘缺內容當成正確備份，覆寫回
+    正式檔案，反而毀掉原本完好的資料。``write_dataset`` 因此改成先寫到
+    修復流程認不得的暫存檔名，完整寫完才原子發布成 ``.bak``。
+    """
+
+    @pytest.fixture
+    def isolated_data_dir(self, tmp_path: Path) -> Path:
+        target = tmp_path / "data"
+        shutil.copytree(default_data_dir(), target)
+        return target
+
+    def test_a_truncated_dot_bak_dot_tmp_is_never_trusted(
+        self, isolated_data_dir: Path
+    ) -> None:
+        """重現「備份複製到一半被中止」會留下的樣子：stations.json 已經
+        取代完成（有完整備份），routes.json 的備份還在複製中——這種
+        殘留必須用不會被復原流程辨識的暫存檔名，模擬出來的截斷內容
+        才不會被誤認成完整備份。
+        """
+        before_stations = (isolated_data_dir / "stations.json").read_text(
+            encoding="utf-8"
+        )
+        before_routes = (isolated_data_dir / "routes.json").read_text(encoding="utf-8")
+
+        staging = isolated_data_dir / f"{IMPORT_STAGING_PREFIX}deadbeef"
+        staging.mkdir()
+        shutil.copyfile(
+            isolated_data_dir / "stations.json", staging / "stations.json.bak"
+        )
+        (isolated_data_dir / "stations.json").write_text(
+            '{"meta": {}, "stations": []}', encoding="utf-8"
+        )
+        # routes.json 的備份複製到一半就被中止：內容截斷，且檔名不是
+        # write_dataset 實際會產生的「.bak」，而是複製完成前的暫存名稱。
+        (staging / "routes.json.bak.tmp").write_bytes(
+            before_routes.encode("utf-8")[:100]
+        )
+        # routes.json 本身從未被動過——它自己的取代步驟根本還沒開始。
+
+        data = load_game_data(isolated_data_dir)
+
+        assert data.issues == []
+        assert (isolated_data_dir / "stations.json").read_text(
+            encoding="utf-8"
+        ) == before_stations
+        assert (isolated_data_dir / "routes.json").read_text(
+            encoding="utf-8"
+        ) == before_routes, "截斷的暫存備份不得覆寫仍然完好的正式檔案"
+        assert list(isolated_data_dir.glob(f"{IMPORT_STAGING_PREFIX}*")) == []
+
+    def test_write_dataset_never_writes_directly_to_a_dot_bak_name(
+        self, isolated_data_dir: Path
+    ) -> None:
+        """成功匯入之後，過程中不應該出現任何殘留的 ``.bak.tmp``。
+
+        這不直接證明「寫入 .bak 本身是原子的」，但確認正常流程走完後
+        沒有半成品殘留，且最終資料仍然正確——搭配上一個測試（直接偽造
+        半成品、驗證修復流程不會信任它）一起構成完整證據鏈。
+        """
+        write_dataset(_minimal_build_result(), isolated_data_dir)
+
+        leftovers = [
+            p.name
+            for p in isolated_data_dir.iterdir()
+            if p.name.startswith(IMPORT_STAGING_PREFIX) or ".bak" in p.name
+        ]
+        assert leftovers == []
 
 
 class TestCliHandlesCorruptSource:
