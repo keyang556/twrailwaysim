@@ -8,7 +8,9 @@
     { "id": "local", "name_zh_tw": "區間車" },
     { "id": "local_express", "name_zh_tw": "區間快" },
     { "id": "tze_chiang", "name_zh_tw": "自強號" },
-    { "id": "chu_kuang", "name_zh_tw": "莒光號" }
+    { "id": "chu_kuang", "name_zh_tw": "莒光號" },
+    { "id": "fu_hsing", "name_zh_tw": "復興號" },
+    { "id": "ordinary", "name_zh_tw": "普快車" }
   ],
   "train_types": [
     {

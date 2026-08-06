@@ -9,10 +9,10 @@ from __future__ import annotations
 import io
 
 import pytest
-from conftest import drive_to, make_session
+from conftest import LOCAL_SERVICE, TZE_CHIANG_SERVICE, drive_to, make_session
 
-from railway_sim.accessibility.announcer import Announcer, Priority
 from railway_sim import app
+from railway_sim.accessibility.announcer import Announcer, Priority
 from railway_sim.app import SCENARIOS, build_session, main
 from railway_sim.data_loader import GameData
 from railway_sim.input.keyboard import KeyDispatcher
@@ -44,7 +44,7 @@ class TestKeyboardOnlyOperation:
         self, dispatcher: KeyDispatcher, local_session: DriverSession
     ) -> None:
         """驗收第 5 項：加速。"""
-        assert dispatcher.dispatch("D").handled
+        assert dispatcher.dispatch("Z").handled
         assert local_session.train.power_notch == 1
         assert "電門一段。" in spoken(local_session)
 
@@ -52,7 +52,7 @@ class TestKeyboardOnlyOperation:
         self, dispatcher: KeyDispatcher, local_session: DriverSession
     ) -> None:
         """驗收第 6 項：減速。"""
-        assert dispatcher.dispatch("A").handled
+        assert dispatcher.dispatch(".").handled
         assert local_session.train.brake_notch == 1
         assert "制軔一段。" in spoken(local_session)
 
@@ -60,7 +60,7 @@ class TestKeyboardOnlyOperation:
         self, dispatcher: KeyDispatcher, local_session: DriverSession
     ) -> None:
         """驗收第 7 項：鳴笛。"""
-        assert dispatcher.dispatch("H").handled
+        assert dispatcher.dispatch("ENTER").handled
         assert "鳴笛。" in spoken(local_session)
 
     def test_query_speed_by_key(
@@ -75,14 +75,14 @@ class TestKeyboardOnlyOperation:
     ) -> None:
         """驗收第 9 項：查詢位置。"""
         dispatcher.dispatch("P")
-        assert any("臺中至大慶間" in t for t in spoken(local_session))
+        assert any("豐原至栗林間" in t for t in spoken(local_session))
 
     def test_query_next_station_by_key(
         self, dispatcher: KeyDispatcher, local_session: DriverSession
     ) -> None:
         """驗收第 10 項：查詢前方車站。"""
         dispatcher.dispatch("N")
-        assert any("前方車站大慶" in t for t in spoken(local_session))
+        assert any("前方車站栗林" in t for t in spoken(local_session))
 
     def test_query_signal_by_key(
         self, dispatcher: KeyDispatcher, local_session: DriverSession
@@ -94,21 +94,21 @@ class TestKeyboardOnlyOperation:
         self, dispatcher: KeyDispatcher, local_session: DriverSession
     ) -> None:
         dispatcher.dispatch("T")
-        assert any("區間車2701次" in t for t in spoken(local_session))
+        assert any("區間車2115次" in t for t in spoken(local_session))
 
     def test_emergency_brake_by_key(
         self, dispatcher: KeyDispatcher, local_session: DriverSession
     ) -> None:
         """驗收第 14 項：使用緊急制軔。"""
-        assert dispatcher.dispatch("SPACE").handled
+        assert dispatcher.dispatch("/").handled
         assert local_session.train.emergency_brake is True
         assert "緊急制軔。" in spoken(local_session)
 
     def test_release_brake_by_key(
         self, dispatcher: KeyDispatcher, local_session: DriverSession
     ) -> None:
-        dispatcher.dispatch("A")
-        dispatcher.dispatch("A")
+        dispatcher.dispatch(".")
+        dispatcher.dispatch(".")
         dispatcher.dispatch("R")
         assert local_session.train.brake_notch == 0
         assert "制軔緩解。" in spoken(local_session)
@@ -116,16 +116,16 @@ class TestKeyboardOnlyOperation:
     def test_notch_down_by_key(
         self, dispatcher: KeyDispatcher, local_session: DriverSession
     ) -> None:
-        dispatcher.dispatch("D")
-        dispatcher.dispatch("D")
-        dispatcher.dispatch("S")
+        dispatcher.dispatch("Z")
+        dispatcher.dispatch("Z")
+        dispatcher.dispatch("A")
         assert local_session.train.power_notch == 1
 
     def test_every_key_press_produces_feedback(
         self, dispatcher: KeyDispatcher, local_session: DriverSession
     ) -> None:
         """規格 §7.2：每次按鍵都應提供文字回饋。"""
-        for key in ("D", "A", "S", "R", "H", "V", "P", "N", "G", "T", "SPACE"):
+        for key in ("Z", ".", "A", "R", "ENTER", "V", "P", "N", "G", "T", "/"):
             local_session.announcer.clear_history()
             dispatcher.dispatch(key)
             assert spoken(local_session), f"按鍵 {key} 沒有任何文字回饋"
@@ -145,10 +145,10 @@ class TestEmergencyBrakeFlow:
         self, dispatcher: KeyDispatcher, local_session: DriverSession
     ) -> None:
         local_session.train.current_speed_kmh = 80.0
-        dispatcher.dispatch("SPACE")
+        dispatcher.dispatch("/")
         local_session.announcer.clear_history()
 
-        dispatcher.dispatch("D")
+        dispatcher.dispatch("Z")
         assert local_session.train.power_notch == 0
         assert any("無法加電門" in t for t in spoken(local_session))
 
@@ -156,7 +156,7 @@ class TestEmergencyBrakeFlow:
         self, dispatcher: KeyDispatcher, local_session: DriverSession
     ) -> None:
         local_session.train.current_speed_kmh = 80.0
-        dispatcher.dispatch("SPACE")
+        dispatcher.dispatch("/")
 
         dispatcher.dispatch("E")
         assert local_session.train.emergency_brake is True
@@ -174,7 +174,7 @@ class TestFullServiceRun:
     def test_local_service_stops_at_every_scheduled_station(
         self, game_data: GameData
     ) -> None:
-        session = make_session(game_data, "2701")
+        session = make_session(game_data, LOCAL_SERVICE)
         drive_to(session, session.route.length_m, respect_stops=True, max_seconds=3600.0)
 
         unserved = [p.name_zh_tw for p in session.stations if p.must_stop and not p.served]
@@ -183,7 +183,7 @@ class TestFullServiceRun:
 
     def test_local_service_stops_at_chenggong(self, game_data: GameData) -> None:
         """成功站僅停靠區間車（chat.md 成功站資料修正）。"""
-        session = make_session(game_data, "2701")
+        session = make_session(game_data, LOCAL_SERVICE)
         drive_to(session, session.route.length_m, respect_stops=True, max_seconds=3600.0)
 
         chenggong = next(p for p in session.stations if p.station_id == "CHENGGONG")
@@ -195,7 +195,7 @@ class TestFullServiceRun:
         self, game_data: GameData
     ) -> None:
         """自強號通過成功站，停靠彰化（規格 §25.7）。"""
-        session = make_session(game_data, "121")
+        session = make_session(game_data, TZE_CHIANG_SERVICE)
         drive_to(session, session.route.length_m, respect_stops=True, max_seconds=3600.0)
 
         chenggong = next(p for p in session.stations if p.station_id == "CHENGGONG")
@@ -205,13 +205,13 @@ class TestFullServiceRun:
         assert changhua.served
 
     def test_service_completion_is_announced(self, game_data: GameData) -> None:
-        session = make_session(game_data, "2701")
+        session = make_session(game_data, LOCAL_SERVICE)
         drive_to(session, session.route.length_m, respect_stops=True, max_seconds=3600.0)
         assert session.finished
         assert any("運轉結束" in t for t in spoken(session))
 
     def test_no_violations_on_a_clean_run(self, game_data: GameData) -> None:
-        session = make_session(game_data, "2701")
+        session = make_session(game_data, LOCAL_SERVICE)
         drive_to(session, session.route.length_m, respect_stops=True, max_seconds=3600.0)
         assert session.incidents.violations == []
 
@@ -241,7 +241,9 @@ class TestStatusText:
     def test_status_marks_chenggong_as_pass_for_express(
         self, express_session: DriverSession
     ) -> None:
-        express_session.train.position_m = 10000.0
+        chenggong = express_session.route.stop_for_station("CHENGGONG")
+        assert chenggong is not None
+        express_session.train.position_m = chenggong.position_m - 1000.0
         express_session.tick(0.1)
         assert "成功（通過站）" in express_session.status_text()
 
@@ -252,9 +254,9 @@ class TestApproachAnnouncements:
     def test_approach_announced_before_a_stop_station(
         self, local_session: DriverSession
     ) -> None:
-        daging = local_session.route.stop_for_station("DAGING")
-        assert daging is not None
-        local_session.train.position_m = daging.position_m - 700.0
+        daqing = local_session.route.stop_for_station("DAQING")
+        assert daqing is not None
+        local_session.train.position_m = daqing.position_m - 700.0
         local_session.tick(0.1)
         assert any("接近大慶" in t for t in spoken(local_session))
 
@@ -262,10 +264,10 @@ class TestApproachAnnouncements:
         self, local_session: DriverSession
     ) -> None:
         """接近停車點的警告要說出地點，不可播成「前方速限零公里」。"""
-        daging = local_session.route.stop_for_station("DAGING")
-        assert daging is not None
+        daqing = local_session.route.stop_for_station("DAQING")
+        assert daqing is not None
         # 80 公里／小時的制動距離約 440 公尺，因此在 400 公尺處必定已發出警告。
-        local_session.train.position_m = daging.position_m - 400.0
+        local_session.train.position_m = daqing.position_m - 400.0
         local_session.train.current_speed_kmh = 80.0
         local_session.tick(0.1)
 
@@ -316,8 +318,10 @@ class TestScenarios:
     def test_red_signal_scenario_creates_a_stop_signal(
         self, game_data: GameData
     ) -> None:
-        session = build_session(game_data, SCENARIOS["red_signal"], Announcer())
-        session.train.position_m = 11000.0
+        scenario = SCENARIOS["red_signal"]
+        assert scenario.obstruction_at_m is not None
+        session = build_session(game_data, scenario, Announcer())
+        session.train.position_m = scenario.obstruction_at_m - 1500.0
         state, _ = session.atp.evaluate(session.train, 0.0)
         assert str(state.next_signal_aspect) == "stop"
 
@@ -344,13 +348,13 @@ class TestCommandLine:
 
     def test_list_scenarios(self, capsys: pytest.CaptureFixture[str]) -> None:
         assert main(["--list-scenarios"]) == 0
-        assert "區間車 2701 次" in capsys.readouterr().out
+        assert "區間車 2115 次" in capsys.readouterr().out
 
     @pytest.mark.parametrize(
         ("arguments", "expected"),
         [
             (["--check"], "資料驗證通過"),
-            (["--list-scenarios"], "區間車 2701 次"),
+            (["--list-scenarios"], "區間車 2115 次"),
         ],
     )
     def test_cli_reconfigures_incompatible_stdout(

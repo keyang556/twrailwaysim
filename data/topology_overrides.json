@@ -1,0 +1,170 @@
+{
+  "meta": {
+    "description": "匯入時刻表時無法從來源檔案得知、必須人工維護的路網知識。",
+    "why": "臺鐵時刻表只有站序與時刻，沒有分歧結構、倒插方向限制與線別歸屬。這些是運轉規則的一部分（規格 §10、§10.5），因此獨立成本檔，由匯入程式與自動產生的站序合併。",
+    "update_note": "改點時本檔通常不需要更動；只有實體路網或線別歸屬改變時才需要維護。"
+  },
+  "lines": {
+    "west_north": { "name_zh_tw": "縱貫線北段", "verification_status": "official" },
+    "mountain": { "name_zh_tw": "山線", "verification_status": "official" },
+    "coast": { "name_zh_tw": "海線", "verification_status": "official" },
+    "chengzhui": { "name_zh_tw": "成追線", "verification_status": "official" },
+    "west_south": { "name_zh_tw": "縱貫線南段", "verification_status": "official" },
+    "pingtung": { "name_zh_tw": "屏東線", "verification_status": "official" },
+    "south_link": { "name_zh_tw": "南迴線", "verification_status": "official" },
+    "taitung": { "name_zh_tw": "臺東線", "verification_status": "official" },
+    "north_link": { "name_zh_tw": "北迴線", "verification_status": "official" },
+    "yilan": { "name_zh_tw": "宜蘭線", "verification_status": "official" },
+    "pingxi": { "name_zh_tw": "平溪深澳線", "verification_status": "official" },
+    "neiwan": { "name_zh_tw": "內灣六家線", "verification_status": "official" },
+    "jiji": { "name_zh_tw": "集集線", "verification_status": "official" },
+    "shalun": { "name_zh_tw": "沙崙線", "verification_status": "official" }
+  },
+  "line_priority": [
+    "chengzhui",
+    "mountain",
+    "coast",
+    "west_north",
+    "west_south",
+    "pingtung",
+    "south_link",
+    "taitung",
+    "north_link",
+    "yilan",
+    "pingxi",
+    "neiwan",
+    "jiji",
+    "shalun"
+  ],
+  "line_from_title": [
+    { "match": "山線", "line_id": "mountain" },
+    { "match": "Mountain Line", "line_id": "mountain" },
+    { "match": "海線", "line_id": "coast" },
+    { "match": "Coast Line", "line_id": "coast" },
+    { "match": "集集線", "line_id": "jiji" },
+    { "match": "沙崙線", "line_id": "shalun" },
+    { "match": "內灣", "line_id": "neiwan" },
+    { "match": "平溪", "line_id": "pingxi" },
+    { "match": "北迴線", "line_id": "north_link" },
+    { "match": "台東線", "line_id": "taitung" },
+    { "match": "臺東線", "line_id": "taitung" },
+    { "match": "宜蘭線", "line_id": "yilan" },
+    { "match": "南迴線", "line_id": "south_link" },
+    { "match": "屏東線", "line_id": "pingtung" },
+    { "match": "屏 東 線", "line_id": "pingtung" },
+    { "match": "基 隆→新 竹", "line_id": "west_north" },
+    { "match": "新 竹→基 隆", "line_id": "west_north" },
+    { "match": "彰化→嘉義", "line_id": "west_south" },
+    { "match": "嘉義→彰化", "line_id": "west_south" },
+    { "match": "嘉義→高雄", "line_id": "west_south" },
+    { "match": "高雄→嘉義", "line_id": "west_south" }
+  ],
+  "adjacency_from_column_layout": [
+    {
+      "source_file": "XinzuoyingToFangliaoToTaitung20260701.ods",
+      "between": ["枋寮", "臺東"],
+      "line_id": "south_link",
+      "note": "南迴線沒有區間車時刻表可用，站序只能取自對號列車表；該表在枋寮以南列出全部車站，因此這一段可安全採用。"
+    }
+  ],
+  "line_overrides": [
+    {
+      "stations": ["新竹", "三姓橋", "香山", "崎頂", "竹南"],
+      "line_id": "west_north",
+      "note": "此段為縱貫線，山線與海線時刻表都會列出，若不指定會被歸給先出現的線別。"
+    }
+  ],
+  "junction_nodes": [
+    {
+      "id": "JCT_CHENGZHUI",
+      "node_type": "junction",
+      "line_ids": ["mountain", "chengzhui"],
+      "conflict_group": "SW_CHENGZHUI",
+      "note": "成功站南方、彰化以北的成追線分歧。成追線朝成功方向倒插，故追分與彰化之間不得經由本分歧直通。",
+      "allowed_transitions": [
+        { "from": "STA_CHENGGONG", "to": "JCT_CHANGHUA_N", "note": "山線南下 成功→彰化" },
+        { "from": "JCT_CHANGHUA_N", "to": "STA_CHENGGONG", "note": "山線北上 彰化→成功" },
+        { "from": "STA_CHENGGONG", "to": "STA_ZHUIFEN", "note": "臺中地區往海線 成功→追分" },
+        { "from": "STA_ZHUIFEN", "to": "STA_CHENGGONG", "note": "海線往臺中 追分→成功" }
+      ]
+    },
+    {
+      "id": "JCT_CHANGHUA_N",
+      "node_type": "junction",
+      "line_ids": ["mountain", "coast"],
+      "conflict_group": "SW_CHANGHUA_N",
+      "note": "彰化站北方咽喉，山線與海線在此匯合。兩線進路共用同一組道岔，不得同時開放。",
+      "allowed_transitions": [
+        { "from": "JCT_CHENGZHUI", "to": "STA_CHANGHUA", "note": "山線南下進彰化" },
+        { "from": "STA_CHANGHUA", "to": "JCT_CHENGZHUI", "note": "彰化往山線北上" },
+        { "from": "STA_ZHUIFEN", "to": "STA_CHANGHUA", "note": "海線往彰化" },
+        { "from": "STA_CHANGHUA", "to": "STA_ZHUIFEN", "note": "彰化往海線" }
+      ]
+    }
+  ],
+  "insert_junctions": [
+    {
+      "between": ["成功", "彰化"],
+      "via": ["JCT_CHENGZHUI", "JCT_CHANGHUA_N"],
+      "line_ids": ["mountain", "mountain", "mountain"],
+      "note": "山線 成功－彰化 之間穿過成追線分歧與彰化北方咽喉。"
+    },
+    {
+      "between": ["追分", "彰化"],
+      "via": ["JCT_CHANGHUA_N"],
+      "line_ids": ["coast", "coast"],
+      "note": "海線 追分－彰化 之間穿過彰化北方咽喉。"
+    }
+  ],
+  "extra_links": [
+    {
+      "from": "JCT_CHENGZHUI",
+      "to": "STA_ZHUIFEN",
+      "line_id": "chengzhui",
+      "length_m": 2500,
+      "max_speed_kmh": 60,
+      "verification_status": "test_data",
+      "note": "成追線本體。長度與速限無公開來源，沿用第一版測試值（規格 §27）。"
+    }
+  ],
+  "region_rules": {
+    "chenggong_station_id": "CHENGGONG",
+    "zhuifen_station_id": "ZHUIFEN",
+    "changhua_station_id": "CHANGHUA",
+    "coast_line_id": "coast",
+    "mountain_line_id": "mountain",
+    "connector_line_id": "chengzhui",
+    "taichung_area_station_ids": [
+      "TAICHUNG",
+      "WUQUAN",
+      "DAQING",
+      "WURI",
+      "XINWURI",
+      "JINGWU",
+      "TAIYUAN",
+      "SONGZHU",
+      "TOUJIACUO",
+      "TANZI",
+      "LILIN",
+      "FENGYUAN"
+    ],
+    "note": "臺中地區車站清單用於規格 §10.3、§10.4 的路線規則判斷，範圍為山線豐原至新烏日之間的臺中都會區車站。"
+  },
+  "default_speeds_kmh": {
+    "note": "區間速限無公開來源，依線別給定第一版測試值（規格 §27），不得視為臺鐵實際速限。",
+    "mountain": 110,
+    "coast": 110,
+    "chengzhui": 60,
+    "west_north": 110,
+    "west_south": 110,
+    "pingtung": 110,
+    "south_link": 100,
+    "taitung": 110,
+    "north_link": 100,
+    "yilan": 100,
+    "pingxi": 50,
+    "neiwan": 60,
+    "jiji": 50,
+    "shalun": 90
+  }
+}

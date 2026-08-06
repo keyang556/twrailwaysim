@@ -26,6 +26,31 @@ __all__ = ["ConsoleApp", "read_key_nonblocking"]
 #: 主迴圈的實際更新間隔（秒）。
 _LOOP_INTERVAL_S = 0.05
 
+#: 直接對應到具名按鍵的控制字元，不視為 Ctrl 組合。
+_CONTROL_CHAR_NAMES = {
+    "\r": "ENTER",
+    "\n": "ENTER",
+    "\t": "TAB",
+    "\x1b": "ESC",
+    "\x08": "BACKSPACE",
+}
+
+
+def _decode_control_char(char: str) -> str | None:
+    """把終端機收到的控制字元轉成鍵位代碼。
+
+    終端機只會送出 ``Ctrl+字母`` 的控制字元，**無法區分 Ctrl 與
+    Ctrl+Shift**。本專案的鍵位表沒有使用單獨的 ``Ctrl+字母``，因此一律
+    當成 ``CTRL+SHIFT+字母``，在本鍵位表內不會產生歧義。
+    """
+    if char in _CONTROL_CHAR_NAMES:
+        return _CONTROL_CHAR_NAMES[char]
+    code = ord(char)
+    if 1 <= code <= 26:
+        return f"CTRL+SHIFT+{chr(ord('A') + code - 1)}"
+    return None
+
+
 #: Windows 擴充鍵（0x00 / 0xE0 前綴）的掃描碼對應。
 _WINDOWS_SCANCODES = {
     ";": "F1",
@@ -61,6 +86,8 @@ def _read_key_windows() -> str | None:
     if char in ("\x00", "\xe0"):
         scan = msvcrt.getwch()
         return _WINDOWS_SCANCODES.get(scan.upper())
+    if char < " ":
+        return _decode_control_char(char)
     return char
 
 
@@ -83,6 +110,8 @@ def _read_key_posix() -> str | None:  # pragma: no cover - 非 Windows 路徑
             if rest == "OQ":
                 return "F2"
             return "ESC"
+        if char < " ":
+            return _decode_control_char(char)
         return char
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old)

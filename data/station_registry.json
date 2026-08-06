@@ -1,0 +1,1451 @@
+{
+  "meta": {
+    "description": "中文站名與內部車站代碼的對照表。匯入時刻表時用來把來源檔案裡的站名對應到遊戲資料。",
+    "id_policy": "id 是本專案內部使用的識別碼，不是臺鐵的官方車站代碼，不得對外當成官方資料引用。",
+    "name_en_policy": "name_en_status 為 official 表示來源時刻表檔案本身就印有該英文站名；derived 表示由漢語拼音推導，尚未經官方來源確認（規格 §22、§27）。",
+    "update_note": "臺鐵新增或改名車站時，只需在本檔加入或修改一筆，再重新執行 python -m railway_sim.dataset 即可。",
+    "station_count": 240
+  },
+  "stations": [
+    {
+      "name_zh_tw": "七堵",
+      "id": "QIDU",
+      "name_en": "Qidu",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "三坑",
+      "id": "SANKENG",
+      "name_en": "Sankeng",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "三塊厝",
+      "id": "SANKUAICUO",
+      "name_en": "Sankuaicuo",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "三姓橋",
+      "id": "SANXINGQIAO",
+      "name_en": "Sanxingqiao",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "三民",
+      "id": "SANMIN",
+      "name_en": "Sanmin",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "三義",
+      "id": "SANYI",
+      "name_en": "Sanyi",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "三貂嶺",
+      "id": "SANDIAOLING",
+      "name_en": "Sandiaoling",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "上員",
+      "id": "SHANGYUAN",
+      "name_en": "Shangyuan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "中壢",
+      "id": "ZHONGLI",
+      "name_en": "Zhongli",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "中洲",
+      "id": "ZHONGZHOU",
+      "name_en": "Zhongzhou",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "中里",
+      "id": "ZHONGLI_YL",
+      "name_en": "Zhongli",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "九曲堂",
+      "id": "JIUQUTANG",
+      "name_en": "Jiuqutang",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "九讚頭",
+      "id": "JIUZANTOU",
+      "name_en": "Jiuzantou",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "二水",
+      "id": "ERSHUI",
+      "name_en": "Ershui",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "二結",
+      "id": "ERJIE",
+      "name_en": "Erjie",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "五堵",
+      "id": "WUDU",
+      "name_en": "Wudu",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "五權",
+      "id": "WUQUAN",
+      "name_en": "Wuquan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "仁德",
+      "id": "RENDE",
+      "name_en": "Rende",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "佳冬",
+      "id": "JIADONG",
+      "name_en": "Jiadong",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "保安",
+      "id": "BAOAN",
+      "name_en": "Baoan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "光復",
+      "id": "GUANGFU",
+      "name_en": "Guangfu",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "內壢",
+      "id": "NEILI",
+      "name_en": "Neili",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "內惟",
+      "id": "NEIWEI",
+      "name_en": "Neiwei",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "內灣",
+      "id": "NEIWAN",
+      "name_en": "Neiwan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "內獅",
+      "id": "NEISHI",
+      "name_en": "Neishi",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "八堵",
+      "id": "BADU",
+      "name_en": "Badu",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "八斗子",
+      "id": "BADOUZI",
+      "name_en": "Badouzi",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "六塊厝",
+      "id": "LIUKUAICUO",
+      "name_en": "Liukuaicuo",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "六家",
+      "id": "LIUJIA",
+      "name_en": "Liujia",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "冬山",
+      "id": "DONGSHAN",
+      "name_en": "Dongshan",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "加祿",
+      "id": "JIALU",
+      "name_en": "Jialu",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "北埔",
+      "id": "BEIPU",
+      "name_en": "Beipu",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "北新竹",
+      "id": "BEIXINZHU",
+      "name_en": "Beixinzhu",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "北湖",
+      "id": "BEIHU",
+      "name_en": "Beihu",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "十分",
+      "id": "SHIFEN",
+      "name_en": "Shifen",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "千甲",
+      "id": "QIANJIA",
+      "name_en": "Qianjia",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "南勢",
+      "id": "NANSHI",
+      "name_en": "Nanshi",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "南州",
+      "id": "NANZHOU",
+      "name_en": "Nanzhou",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "南平",
+      "id": "NANPING",
+      "name_en": "Nanping",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "南樹林",
+      "id": "NANSHULIN",
+      "name_en": "Nanshulin",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "南港",
+      "id": "NANGANG",
+      "name_en": "Nangang",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "南澳",
+      "id": "NANAO",
+      "name_en": "Nan'ao",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "南科",
+      "id": "NANKE",
+      "name_en": "Nanke",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "南靖",
+      "id": "NANJING",
+      "name_en": "Nanjing",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "合興",
+      "id": "HEXING",
+      "name_en": "Hexing",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "吉安",
+      "id": "JIAN",
+      "name_en": "Ji'an",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "后里",
+      "id": "HOULI",
+      "name_en": "Houli",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "和仁",
+      "id": "HEREN",
+      "name_en": "Heren",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "和平",
+      "id": "HEPING",
+      "name_en": "Heping",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "員林",
+      "id": "YUANLIN",
+      "name_en": "Yuanlin",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "善化",
+      "id": "SHANHUA",
+      "name_en": "Shanhua",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "嘉北",
+      "id": "JIABEI",
+      "name_en": "Jiabei",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "嘉義",
+      "id": "CHIAYI",
+      "name_en": "Chiayi",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "四城",
+      "id": "SICHENG",
+      "name_en": "Sicheng",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "四腳亭",
+      "id": "SIJIAOTING",
+      "name_en": "Sijiaoting",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "埔心",
+      "id": "PUXIN",
+      "name_en": "Puxin",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "基隆",
+      "id": "KEELUNG",
+      "name_en": "Keelung",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "壽豐",
+      "id": "SHOUFENG",
+      "name_en": "Shoufeng",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "外澳",
+      "id": "WAIAO",
+      "name_en": "Wai'ao",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "大富",
+      "id": "DAFU",
+      "name_en": "Dafu",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "大山",
+      "id": "DASHAN",
+      "name_en": "Dashan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "大慶",
+      "id": "DAQING",
+      "name_en": "Daqing",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "大村",
+      "id": "DACUN",
+      "name_en": "Dacun",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "大林",
+      "id": "DALIN",
+      "name_en": "Dalin",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "大橋",
+      "id": "DAQIAO",
+      "name_en": "Daqiao",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "大武",
+      "id": "DAWU",
+      "name_en": "Dawu",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "大湖",
+      "id": "DAHU",
+      "name_en": "Dahu",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "大溪",
+      "id": "DAXI",
+      "name_en": "Daxi",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "大甲",
+      "id": "DAJIA",
+      "name_en": "Dajia",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "大肚",
+      "id": "DADU",
+      "name_en": "Dadu",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "大華",
+      "id": "DAHUA",
+      "name_en": "Dahua",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "大里",
+      "id": "DALI",
+      "name_en": "Dali",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "太原",
+      "id": "TAIYUAN",
+      "name_en": "Taiyuan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "太麻里",
+      "id": "TAIMALI",
+      "name_en": "Taimali",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "宜蘭",
+      "id": "YILAN",
+      "name_en": "Yilan",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "富岡",
+      "id": "FUGANG",
+      "name_en": "Fugang",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "富源",
+      "id": "FUYUAN",
+      "name_en": "Fuyuan",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "富貴",
+      "id": "FUGUI",
+      "name_en": "Fugui",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "富里",
+      "id": "FULI",
+      "name_en": "Fuli",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "屏東",
+      "id": "PINGTUNG",
+      "name_en": "Pingtung",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "山佳",
+      "id": "SHANJIA",
+      "name_en": "Shanjia",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "山里",
+      "id": "SHANLI",
+      "name_en": "Shanli",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "岡山",
+      "id": "GANGSHAN",
+      "name_en": "Gangshan",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "崁頂",
+      "id": "KANDING",
+      "name_en": "Kanding",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "崇德",
+      "id": "CHONGDE",
+      "name_en": "Chongde",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "崎頂",
+      "id": "QIDING",
+      "name_en": "Qiding",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "嶺腳",
+      "id": "LINGJIAO",
+      "name_en": "Lingjiao",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "左營",
+      "id": "ZUOYING",
+      "name_en": "Zuoying",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "平和",
+      "id": "PINGHE",
+      "name_en": "Pinghe",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "平溪",
+      "id": "PINGXI",
+      "name_en": "Pingxi",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "康樂",
+      "id": "KANGLE",
+      "name_en": "Kangle",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "彰化",
+      "id": "CHANGHUA",
+      "name_en": "Changhua",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "後壁",
+      "id": "HOUBI",
+      "name_en": "Houbi",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "後庄",
+      "id": "HOUZHUANG",
+      "name_en": "Houzhuang",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "後龍",
+      "id": "HOULONG",
+      "name_en": "Houlong",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "志學",
+      "id": "ZHIXUE",
+      "name_en": "Zhixue",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "成功",
+      "id": "CHENGGONG",
+      "name_en": "Chenggong",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "拔林",
+      "id": "BALIN",
+      "name_en": "Balin",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "斗六",
+      "id": "DOULIU",
+      "name_en": "Douliu",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "斗南",
+      "id": "DOUNAN",
+      "name_en": "Dounan",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "新城",
+      "id": "XINCHENG",
+      "name_en": "Xincheng",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "新埔",
+      "id": "XINPU",
+      "name_en": "Xinpu",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "新富",
+      "id": "XINFU",
+      "name_en": "Xinfu",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "新左營",
+      "id": "XINZUOYING",
+      "name_en": "Xinzuoying",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "新市",
+      "id": "XINSHI",
+      "name_en": "Xinshi",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "新烏日",
+      "id": "XINWURI",
+      "name_en": "Xinwuri",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "新營",
+      "id": "XINYING",
+      "name_en": "Xinying",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "新竹",
+      "id": "HSINCHU",
+      "name_en": "Hsinchu",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "新莊",
+      "id": "XINZHUANG",
+      "name_en": "Xinzhuang",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "新豐",
+      "id": "XINFENG",
+      "name_en": "Xinfeng",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "新馬",
+      "id": "XINMA",
+      "name_en": "Xinma",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "日南",
+      "id": "RINAN",
+      "name_en": "Rinan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "景美",
+      "id": "JINGMEI",
+      "name_en": "Jingmei",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "暖暖",
+      "id": "NUANNUAN",
+      "name_en": "Nuannuan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "望古",
+      "id": "WANGGU",
+      "name_en": "Wanggu",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "東海",
+      "id": "DONGHAI",
+      "name_en": "Donghai",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "東澳",
+      "id": "DONGAO",
+      "name_en": "Dong'ao",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "東竹",
+      "id": "DONGZHU",
+      "name_en": "Dongzhu",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "東里",
+      "id": "DONGLI",
+      "name_en": "Dongli",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "松山",
+      "id": "SONGSHAN",
+      "name_en": "Songshan",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "松竹",
+      "id": "SONGZHU",
+      "name_en": "Songzhu",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "板橋",
+      "id": "BANQIAO",
+      "name_en": "Banqiao",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "枋寮",
+      "id": "FANGLIAO",
+      "name_en": "Fangliao",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "枋山",
+      "id": "FANGSHAN",
+      "name_en": "Fangshan",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "林內",
+      "id": "LINNEI",
+      "name_en": "Linnei",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "林榮新光",
+      "id": "LINRONGSHINKONG",
+      "name_en": "LinrongShinKong",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "林邊",
+      "id": "LINBIAN",
+      "name_en": "Linbian",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "林鳳營",
+      "id": "LINFENGYING",
+      "name_en": "Linfengying",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "柳營",
+      "id": "LIUYING",
+      "name_en": "Liuying",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "栗林",
+      "id": "LILIN",
+      "name_en": "Lilin",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "桃園",
+      "id": "TAOYUAN",
+      "name_en": "Taoyuan",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "楊梅",
+      "id": "YANGMEI",
+      "name_en": "Yangmei",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "楠梓",
+      "id": "NANZI",
+      "name_en": "Nanzi",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "榮華",
+      "id": "RONGHUA",
+      "name_en": "Ronghua",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "樹林",
+      "id": "SHULIN",
+      "name_en": "Shulin",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "橋頭",
+      "id": "QIAOTOU",
+      "name_en": "Qiaotou",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "橫山",
+      "id": "HENGSHAN",
+      "name_en": "Hengshan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "正義",
+      "id": "ZHENGYI",
+      "name_en": "Zhengyi",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "武塔",
+      "id": "WUTA",
+      "name_en": "Wuta",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "歸來",
+      "id": "GUILAI",
+      "name_en": "Guilai",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "民族",
+      "id": "MINZU",
+      "name_en": "Minzu",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "民雄",
+      "id": "MINXIONG",
+      "name_en": "Minxiong",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "水上",
+      "id": "SHUISHANG",
+      "name_en": "Shuishang",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "水里",
+      "id": "SHUILI",
+      "name_en": "Shuili",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "永康",
+      "id": "YONGKANG",
+      "name_en": "Yongkang",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "永樂",
+      "id": "YONGLE",
+      "name_en": "Yongle",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "永靖",
+      "id": "YONGJING",
+      "name_en": "Yongjing",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "汐止",
+      "id": "XIZHI",
+      "name_en": "Xizhi",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "汐科",
+      "id": "XIKE",
+      "name_en": "Xike",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "池上",
+      "id": "CHISHANG",
+      "name_en": "Chishang",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "沙崙",
+      "id": "SHALUN",
+      "name_en": "Shalun",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "沙鹿",
+      "id": "SHALU",
+      "name_en": "Shalu",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "泰安",
+      "id": "TAIAN",
+      "name_en": "Taian",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "浮洲",
+      "id": "FUZHOU",
+      "name_en": "Fuzhou",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "海科館",
+      "id": "HAIKEGUAN",
+      "name_en": "Haikeguan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "海端",
+      "id": "HAIDUAN",
+      "name_en": "Haiduan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "清水",
+      "id": "QINGSHUI",
+      "name_en": "Qingshui",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "湖口",
+      "id": "HUKOU",
+      "name_en": "Hukou",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "源泉",
+      "id": "YUANQUAN",
+      "name_en": "Yuanquan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "漢本",
+      "id": "HANBEN",
+      "name_en": "Hanben",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "潭子",
+      "id": "TANZI",
+      "name_en": "Tanzi",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "潮州",
+      "id": "CHAOZHOU",
+      "name_en": "Chaozhou",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "濁水",
+      "id": "ZHUOSHUI",
+      "name_en": "Zhuoshui",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "瀧溪",
+      "id": "LONGXI",
+      "name_en": "Longxi",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "烏日",
+      "id": "WURI",
+      "name_en": "Wuri",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "牡丹",
+      "id": "MUDAN",
+      "name_en": "Mudan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "猴硐",
+      "id": "HOUTONG",
+      "name_en": "Houtong",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "玉里",
+      "id": "YULI",
+      "name_en": "Yuli",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "瑞和",
+      "id": "RUIHE",
+      "name_en": "Ruihe",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "瑞源",
+      "id": "RUIYUAN",
+      "name_en": "Ruiyuan",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "瑞穗",
+      "id": "RUISUI",
+      "name_en": "Ruisui",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "瑞芳",
+      "id": "RUIFANG",
+      "name_en": "Ruifang",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "田中",
+      "id": "TIANZHONG",
+      "name_en": "Tianzhong",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "白沙屯",
+      "id": "BAISHATUN",
+      "name_en": "Baishatun",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "百福",
+      "id": "BAIFU",
+      "name_en": "Baifu",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "知本",
+      "id": "ZHIBEN",
+      "name_en": "Zhiben",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "石城",
+      "id": "SHICHENG",
+      "name_en": "Shicheng",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "石榴",
+      "id": "SHILIU",
+      "name_en": "Shiliu",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "石龜",
+      "id": "SHIGUI",
+      "name_en": "Shigui",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "礁溪",
+      "id": "JIAOXI",
+      "name_en": "Jiaoxi",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "社頭",
+      "id": "SHETOU",
+      "name_en": "Shetou",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "福隆",
+      "id": "FULONG",
+      "name_en": "Fulong",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "科工館",
+      "id": "KEGONGGUAN",
+      "name_en": "Kegongguan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "竹中",
+      "id": "ZHUZHONG",
+      "name_en": "Zhuzhong",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "竹北",
+      "id": "ZHUBEI",
+      "name_en": "Zhubei",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "竹南",
+      "id": "ZHUNAN",
+      "name_en": "Zhunan",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "竹東",
+      "id": "ZHUDONG",
+      "name_en": "Zhudong",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "竹田",
+      "id": "ZHUTIAN",
+      "name_en": "Zhutian",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "精武",
+      "id": "JINGWU",
+      "name_en": "Jingwu",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "羅東",
+      "id": "LUODONG",
+      "name_en": "Luodong",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "美術館",
+      "id": "MEISHUGUAN",
+      "name_en": "Meishuguan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "臺中",
+      "id": "TAICHUNG",
+      "name_en": "Taichung",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "臺中港",
+      "id": "TAICHUNGGANG",
+      "name_en": "Taichunggang",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "臺北",
+      "id": "TAIPEI",
+      "name_en": "Taipei",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "臺南",
+      "id": "TAINAN",
+      "name_en": "Tainan",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "臺東",
+      "id": "TAITUNG",
+      "name_en": "Taitung",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "花壇",
+      "id": "HUATAN",
+      "name_en": "Huatan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "花蓮",
+      "id": "HUALIEN",
+      "name_en": "Hualien",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "苑裡",
+      "id": "YUANLI",
+      "name_en": "Yuanli",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "苗栗",
+      "id": "MIAOLI",
+      "name_en": "Miaoli",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "菁桐",
+      "id": "JINGTONG",
+      "name_en": "Jingtong",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "萬榮",
+      "id": "WANRONG",
+      "name_en": "Wanrong",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "萬華",
+      "id": "WANHUA",
+      "name_en": "Wanhua",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "蘇澳",
+      "id": "SUAO",
+      "name_en": "Su'ao",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "蘇澳新",
+      "id": "SUAOXIN",
+      "name_en": "Su'aoxin",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "西勢",
+      "id": "XISHI",
+      "name_en": "Xishi",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "談文",
+      "id": "TANWEN",
+      "name_en": "Tanwen",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "豐原",
+      "id": "FENGYUAN",
+      "name_en": "Fengyuan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "豐富",
+      "id": "FENGFU",
+      "name_en": "Fengfu",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "豐田",
+      "id": "FENGTIAN",
+      "name_en": "Fengtian",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "貢寮",
+      "id": "GONGLIAO",
+      "name_en": "Gongliao",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "路竹",
+      "id": "LUZHU",
+      "name_en": "Luzhu",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "車埕",
+      "id": "CHECHENG",
+      "name_en": "Checheng",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "追分",
+      "id": "ZHUIFEN",
+      "name_en": "Zhuifen",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "通霄",
+      "id": "TONGXIAO",
+      "name_en": "Tongxiao",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "造橋",
+      "id": "ZAOQIAO",
+      "name_en": "Zaoqiao",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "金崙",
+      "id": "JINLUN",
+      "name_en": "Jinlun",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "銅鑼",
+      "id": "TONGLUO",
+      "name_en": "Tongluo",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "鎮安",
+      "id": "ZHENAN",
+      "name_en": "Zhenan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "長榮大學",
+      "id": "CHANGRONGDAXUE",
+      "name_en": "ChangJungChristianUniversity",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "關山",
+      "id": "GUANSHAN",
+      "name_en": "Guanshan",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "隆田",
+      "id": "LONGTIAN",
+      "name_en": "Longtian",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "集集",
+      "id": "JIJI",
+      "name_en": "Jiji",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "雙溪",
+      "id": "SHUANGXI",
+      "name_en": "Shuangxi",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "頂埔",
+      "id": "DINGPU",
+      "name_en": "Dingpu",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "頭城",
+      "id": "TOUCHENG",
+      "name_en": "Toucheng",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "頭家厝",
+      "id": "TOUJIACUO",
+      "name_en": "Toujiacuo",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "香山",
+      "id": "XIANGSHAN",
+      "name_en": "Xiangshan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "高雄",
+      "id": "KAOHSIUNG",
+      "name_en": "Kaohsiung",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "鳳山",
+      "id": "FENGSHAN",
+      "name_en": "Fengshan",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "鳳林",
+      "id": "FENGLIN",
+      "name_en": "Fenglin",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "鳳鳴",
+      "id": "FENGMING",
+      "name_en": "Fengming",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "鶯歌",
+      "id": "YINGGE",
+      "name_en": "Yingge",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "鹿野",
+      "id": "LUYE",
+      "name_en": "Luye",
+      "name_en_status": "official"
+    },
+    {
+      "name_zh_tw": "麟洛",
+      "id": "LINLUO",
+      "name_en": "Linluo",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "鼓山",
+      "id": "GUSHAN",
+      "name_en": "Gushan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "龍井",
+      "id": "LONGJING",
+      "name_en": "Longjing",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "龍泉",
+      "id": "LONGQUAN",
+      "name_en": "Longquan",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "龍港",
+      "id": "LONGGANG",
+      "name_en": "Longgang",
+      "name_en_status": "derived"
+    },
+    {
+      "name_zh_tw": "龜山",
+      "id": "GUISHAN",
+      "name_en": "Guishan",
+      "name_en_status": "derived"
+    }
+  ]
+}

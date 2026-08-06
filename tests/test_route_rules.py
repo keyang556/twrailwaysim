@@ -122,8 +122,8 @@ class TestRegionRuleViolations:
                 "STA_CHENGGONG",
                 "STA_XINWURI",
                 "STA_WURI",
-                "STA_DAGING",
-                "BND_TAICHUNG_S",
+                "STA_DAQING",
+                "STA_WUQUAN",
                 "STA_TAICHUNG",
             ],
             network=game_data.network,
@@ -141,8 +141,8 @@ class TestRegionRuleViolations:
             direction="southbound",
             node_ids=[
                 "STA_TAICHUNG",
-                "BND_TAICHUNG_S",
-                "STA_DAGING",
+                "STA_WUQUAN",
+                "STA_DAQING",
                 "STA_WURI",
                 "STA_XINWURI",
                 "STA_CHENGGONG",
@@ -171,8 +171,8 @@ class TestRegionRuleViolations:
             direction="southbound",
             node_ids=[
                 "STA_TAICHUNG",
-                "BND_TAICHUNG_S",
-                "STA_DAGING",
+                "STA_WUQUAN",
+                "STA_DAQING",
                 "STA_WURI",
                 "STA_XINWURI",
                 "STA_CHENGGONG",
@@ -193,36 +193,115 @@ class TestRegionRuleViolations:
 
 
 class TestCorrectRoutesInShippedData:
-    """規格 §10 的四條正確路徑都必須存在且合法。"""
+    """規格 §10 的正確路徑必須存在於實際時刻表產生的資料中。
 
-    def test_coast_to_changhua_route(self, game_data: GameData) -> None:
-        route = game_data.route("R_CO_SB_DAJIA_CHANGHUA")
-        assert "CHENGGONG" not in route.station_ids
-        assert "ZHUIFEN" in route.station_ids
-        assert route.station_ids[-1] == "CHANGHUA"
+    這些不再是為了測試而寫的路線，而是由臺鐵時刻表匯入後實際存在的班次；
+    因此它們同時驗證了規則與匯入結果。
+    """
 
-    def test_coast_to_taichung_route(self, game_data: GameData) -> None:
-        route = game_data.route("R_CO_TO_TAICHUNG")
-        assert "CHANGHUA" not in route.station_ids
-        assert route.station_ids.index("ZHUIFEN") < route.station_ids.index("CHENGGONG")
-        assert route.station_ids[-1] == "TAICHUNG"
+    def _routes_of(self, game_data: GameData, predicate) -> list:
+        seen = {}
+        for service in game_data.services.values():
+            route = game_data.routes.get(service.route_id)
+            if route is not None and predicate(service, route):
+                seen[route.id] = route
+        return list(seen.values())
 
-    def test_taichung_to_coast_route(self, game_data: GameData) -> None:
-        route = game_data.route("R_TAICHUNG_TO_COAST")
-        assert "CHANGHUA" not in route.station_ids
-        assert route.station_ids.index("CHENGGONG") < route.station_ids.index("ZHUIFEN")
+    def test_chengzhui_services_exist(self, game_data: GameData) -> None:
+        """時刻表以車次後綴「追」標示經由成追線，這些班次必須匯入成功。"""
+        routes = self._routes_of(
+            game_data,
+            lambda s, r: "ZHUIFEN" in r.station_ids and "CHENGGONG" in r.station_ids,
+        )
+        assert routes, "找不到任何經由成追線的班次"
 
-    def test_changhua_to_coast_route(self, game_data: GameData) -> None:
-        route = game_data.route("R_CHANGHUA_TO_COAST")
-        assert "CHENGGONG" not in route.station_ids
-        assert route.station_ids[0] == "CHANGHUA"
-        assert "ZHUIFEN" in route.station_ids
+    def test_taichung_to_coast_goes_chenggong_then_zhuifen(
+        self, game_data: GameData
+    ) -> None:
+        """§10.4：臺中往海線先經成功再轉追分，且不進彰化。"""
+        routes = self._routes_of(
+            game_data,
+            lambda s, r: (
+                r.station_ids[0] in game_data.region_rules.taichung_area_station_ids
+                and "ZHUIFEN" in r.station_ids
+            ),
+        )
+        assert routes, "找不到由臺中地區開往海線的班次"
+        for route in routes:
+            ids = route.station_ids
+            assert "CHANGHUA" not in ids, route.id
+            assert ids.index("CHENGGONG") < ids.index("ZHUIFEN"), route.id
 
-    def test_mountain_route_avoids_zhuifen(self, game_data: GameData) -> None:
-        for route_id in ("R_MT_SB_TAICHUNG_CHANGHUA", "R_MT_NB_CHANGHUA_FONGYUAN"):
-            route = game_data.route(route_id)
-            assert "ZHUIFEN" not in route.station_ids
-            assert "CHENGGONG" in route.station_ids
+    def test_coast_to_taichung_avoids_changhua(self, game_data: GameData) -> None:
+        """§10.3、§25.9：海線往臺中不得經彰化。"""
+        routes = self._routes_of(
+            game_data,
+            lambda s, r: (
+                r.station_ids[-1] in game_data.region_rules.taichung_area_station_ids
+                and "ZHUIFEN" in r.station_ids
+            ),
+        )
+        assert routes, "找不到由海線開往臺中地區的班次"
+        for route in routes:
+            ids = route.station_ids
+            assert "CHANGHUA" not in ids, route.id
+            assert ids.index("ZHUIFEN") < ids.index("CHENGGONG"), route.id
+
+    def test_coast_to_changhua_avoids_chenggong(self, game_data: GameData) -> None:
+        """§10.2、§25.8：海線往彰化不得進成功站。"""
+        routes = self._routes_of(
+            game_data,
+            lambda s, r: (
+                r.station_ids[-1] == "CHANGHUA" and "ZHUIFEN" in r.station_ids
+            ),
+        )
+        assert routes, "找不到由海線開往彰化的班次"
+        for route in routes:
+            assert "CHENGGONG" not in route.station_ids, route.id
+
+    def test_mountain_routes_avoid_zhuifen(self, game_data: GameData) -> None:
+        """chat.md 五：純山線列車不得經追分。"""
+        checked = 0
+        for route in game_data.routes.values():
+            if "coast" in route.line_ids or "chengzhui" in route.line_ids:
+                continue
+            if "CHENGGONG" not in route.station_ids:
+                continue
+            checked += 1
+            assert "ZHUIFEN" not in route.station_ids, route.id
+        assert checked, "找不到任何純山線班次"
+
+
+class TestStopRulesMatchTheTimetable:
+    """成功站的停靠規則必須來自實際時刻表，而不是人工推測。"""
+
+    def test_chenggong_is_local_only(self, game_data: GameData) -> None:
+        """規格 §25.7、chat.md：成功站僅辦理區間車停靠。"""
+        station = game_data.stations["CHENGGONG"]
+        assert station.allows_train_type("local")
+        assert not station.allows_train_type("tze_chiang")
+
+    def test_no_service_stops_a_tze_chiang_at_chenggong(
+        self, game_data: GameData
+    ) -> None:
+        offenders = [
+            s.train_number
+            for s in game_data.services.values()
+            if s.train_type == "tze_chiang" and "CHENGGONG" in s.stop_station_ids
+        ]
+        assert offenders == []
+
+    def test_express_services_do_pass_through_chenggong(
+        self, game_data: GameData
+    ) -> None:
+        """通過與不經過是兩回事：對號列車確實行經成功站，只是不停。"""
+        passing = [
+            s.train_number
+            for s in game_data.services.values()
+            if s.train_type == "tze_chiang"
+            and "CHENGGONG" in game_data.routes[s.route_id].station_ids
+        ]
+        assert passing, "沒有任何對號列車行經成功站，山線經由判斷可能有誤"
 
 
 class TestNetworkModelling:

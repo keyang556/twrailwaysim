@@ -7,17 +7,27 @@
 - 快捷鍵不得互相衝突（§2.1、§7.1）→ :meth:`Keymap.conflicts`，並由
   ``tests/test_keymap.py`` 強制為空。
 
-鍵位衝突處理原則
-----------------
+與 OpenBVE 一致的鍵位
+---------------------
 
-規格 §7.1 的鍵位表與 chat.md 的結論一致：
+依使用者指示「相同的功能，快捷鍵需和 OpenBVE 相同」，預設 profile
+``driver`` 的鍵位直接取自 OpenBVE 的 ``assets/Controls/Default.controls``：
+電門 ``Z``、減段 ``A``／``,``、制軔 ``.``、緊急制軔 ``/``、鳴笛 ``Enter``，
+播報則沿用 OpenBVE 的無障礙指令 ``Ctrl+Shift+S／A／T``。
 
-- ``D`` 增加電門（chat.md：「保持 D 鍵電門」）
-- ``A`` 增加常用制軔（chat.md：「保持 A 鍵制軔」）
-- 緊急制軔使用獨立按鍵（chat.md：「緊急制軔使用獨立按鍵」）→ ``Space``
+這取代了先前依 chat.md 訂下的 ``D`` 電門／``A`` 制軔配置；舊配置保留在
+profile ``driver_legacy``，可用 ``--keymap-profile driver_legacy`` 選用。
+每個鍵位的 ``source`` 欄位都記錄其依據。
 
-兩份文件在鍵位上沒有實際衝突。依使用者指示，若日後出現衝突，一律以
-chat.md 的結論為準；本檔的 ``source`` 欄位即記錄每個鍵位的依據。
+修飾鍵
+------
+
+按鍵代碼支援 ``Ctrl+Shift+S`` 這種寫法，正規化後修飾鍵順序固定為
+``CTRL+SHIFT+ALT``，因此 ``Shift+Ctrl+S`` 與 ``Ctrl+Shift+S`` 視為同一鍵。
+
+**主控台介面的限制**：終端機只會收到控制字元，無法區分 ``Ctrl+S`` 與
+``Ctrl+Shift+S``。主控台把控制字元一律視為 ``Ctrl+Shift+<字母>``；由於本
+專案沒有使用單獨的 ``Ctrl+<字母>``，在本鍵位表內不會產生歧義。
 """
 
 from __future__ import annotations
@@ -27,7 +37,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-__all__ = ["KeyBinding", "Keymap", "KeymapConflict", "normalise_key"]
+__all__ = ["KeyBinding", "Keymap", "KeymapConflict", "display_key", "normalise_key"]
 
 #: 特殊鍵的正規化名稱。
 _SPECIAL_KEYS = {
@@ -36,21 +46,68 @@ _SPECIAL_KEYS = {
     "\r": "ENTER",
     "\n": "ENTER",
     "\t": "TAB",
+    ".": "PERIOD",
+    ",": "COMMA",
+    "/": "SLASH",
+    ";": "SEMICOLON",
+    "'": "QUOTE",
+    "[": "BRACKETLEFT",
+    "]": "BRACKETRIGHT",
+    "-": "MINUS",
+    "=": "EQUALS",
+    "\\": "BACKSLASH",
 }
+
+#: 修飾鍵的正規化名稱與固定排列順序。
+_MODIFIER_ALIASES = {
+    "CTRL": "CTRL",
+    "CONTROL": "CTRL",
+    "SHIFT": "SHIFT",
+    "ALT": "ALT",
+}
+
+#: 修飾鍵在代碼中的固定順序，確保 ``CTRL+SHIFT+S`` 與 ``SHIFT+CTRL+S`` 相同。
+_MODIFIER_ORDER = ("CTRL", "SHIFT", "ALT")
+
+
+def _normalise_base_key(raw: str) -> str:
+    if raw in _SPECIAL_KEYS:
+        return _SPECIAL_KEYS[raw]
+    upper = raw.strip().upper()
+    return _SPECIAL_KEYS.get(upper, upper)
 
 
 def normalise_key(raw: str) -> str:
     """把按鍵字串正規化成統一的代碼。
 
-    單一字元轉大寫，特殊字元轉為 ``SPACE``、``ESC`` 等名稱，其餘（``F1``、
-    ``UP``…）轉大寫後原樣保留。
+    支援修飾鍵，例如 ``"Ctrl+Shift+S"`` 與 ``"SHIFT+CTRL+s"`` 都會得到
+    ``"CTRL+SHIFT+S"``。單一字元轉大寫，特殊字元轉為 ``SPACE``、``PERIOD``
+    等名稱，其餘（``F1``、``UP``…）轉大寫後原樣保留。
     """
     if not raw:
         return ""
     if raw in _SPECIAL_KEYS:
         return _SPECIAL_KEYS[raw]
-    upper = raw.strip().upper()
-    return _SPECIAL_KEYS.get(upper, upper)
+
+    parts = [p for p in raw.strip().upper().split("+") if p]
+    if not parts:
+        # 「+」本身。
+        return _normalise_base_key(raw)
+
+    modifiers: set[str] = set()
+    base_parts: list[str] = []
+    for part in parts:
+        alias = _MODIFIER_ALIASES.get(part)
+        if alias:
+            modifiers.add(alias)
+        else:
+            base_parts.append(part)
+
+    base = _normalise_base_key("+".join(base_parts) if base_parts else "+")
+    if not modifiers:
+        return base
+    ordered = [m for m in _MODIFIER_ORDER if m in modifiers]
+    return "+".join([*ordered, base])
 
 
 @dataclass(frozen=True)
@@ -66,7 +123,7 @@ class KeyBinding:
     @property
     def keys_text(self) -> str:
         """給玩家看的按鍵說明。"""
-        return "、".join(_DISPLAY_NAMES.get(k, k) for k in self.keys)
+        return "、".join(display_key(k) for k in self.keys)
 
 
 #: 按鍵在說明中的顯示名稱。
@@ -74,7 +131,29 @@ _DISPLAY_NAMES = {
     "SPACE": "空白鍵",
     "ESC": "Esc",
     "ENTER": "Enter",
+    "PERIOD": "句號（.）",
+    "COMMA": "逗號（,）",
+    "SLASH": "斜線（/）",
+    "SEMICOLON": "分號（;）",
+    "MINUS": "減號（-）",
+    "EQUALS": "等號（=）",
+    "BRACKETLEFT": "左中括號（[）",
+    "BRACKETRIGHT": "右中括號（]）",
+    "BACKSLASH": "反斜線（\\）",
+    "CTRL": "Ctrl",
+    "SHIFT": "Shift",
+    "ALT": "Alt",
 }
+
+
+def display_key(key: str) -> str:
+    """把正規化的按鍵代碼轉成說明畫面用的文字。"""
+    if "+" not in key:
+        return _DISPLAY_NAMES.get(key, key)
+    *modifiers, base = key.split("+")
+    shown = [_DISPLAY_NAMES.get(m, m) for m in modifiers]
+    shown.append(_DISPLAY_NAMES.get(base, base))
+    return "＋".join(shown)
 
 
 @dataclass(frozen=True)

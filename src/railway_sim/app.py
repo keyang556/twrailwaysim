@@ -20,7 +20,7 @@ from railway_sim.roles.driver import DriverSession
 __all__ = ["build_session", "main"]
 
 #: 預設車次（區間車，停靠成功站）。
-DEFAULT_SERVICE = "2701"
+DEFAULT_SERVICE = "2115"
 
 # Keep Chinese CLI output usable when a Windows process inherits a western code
 # page (for example, a frozen executable run by GitHub Actions).
@@ -41,23 +41,38 @@ class Scenario:
 SCENARIOS: dict[str, Scenario] = {
     "local": Scenario(
         id="local",
-        name_zh_tw="區間車 2701 次：臺中往彰化，各站停車",
-        service_number="2701",
+        name_zh_tw="區間車 2115 次：豐原往彰化，各站停車",
+        service_number="2115",
         description="包含成功站停靠（成功站僅停靠區間車）。",
     ),
     "express": Scenario(
         id="express",
-        name_zh_tw="自強號 121 次：臺中往彰化，通過成功站",
-        service_number="121",
-        description="驗證自強號在成功站為通過站（規格 §25.7）。",
+        name_zh_tw="區間快 2021 次：豐原往彰化，通過成功站",
+        service_number="2021",
+        description="與 2115 次同一條路線，可直接比較停靠與通過的差別。",
+    ),
+    "tze_chiang": Scenario(
+        id="tze_chiang",
+        name_zh_tw="自強號 101 次：臺中往潮州",
+        service_number="101",
+        description="長途對號列車，通過成功站（規格 §25.7）。",
+    ),
+    "chengzhui": Scenario(
+        id="chengzhui",
+        name_zh_tw="區間車 2600 次：臺中往大甲，經成追線",
+        service_number="2600",
+        description=(
+            "由臺中經成功站轉成追線接入海線，不經彰化（規格 §10.4）。"
+            "時刻表以車次後綴「追」標示經由成追線。"
+        ),
     ),
     "red_signal": Scenario(
         id="red_signal",
-        name_zh_tw="區間車 2701 次＋前方列車故障",
-        service_number="2701",
-        obstruction_at_m=12500.0,
+        name_zh_tw="區間車 2115 次＋前方列車故障",
+        service_number="2115",
+        obstruction_at_m=28500.0,
         description=(
-            "特殊事件：成功站南方分歧前方有列車故障占用區間，"
+            "特殊事件：新烏日與成功之間前方有列車故障占用區間，"
             "號誌顯示停止，必須在號誌前停車"
             "（規格 §12.3：站外等待屬特殊事件，非日常狀態）。"
         ),
@@ -132,6 +147,14 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--data-dir", default=None, help="資料目錄，預設自動尋找。")
     parser.add_argument(
+        "--keymap-profile",
+        default="driver",
+        help=(
+            "鍵位配置。預設 driver：與 OpenBVE 相同的鍵位。"
+            "driver_legacy 為先前的 D 電門／A 制軔配置。"
+        ),
+    )
+    parser.add_argument(
         "--check",
         action="store_true",
         help="只執行資料驗證與鍵位衝突檢查後結束，不啟動遊戲。",
@@ -156,6 +179,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.check_gui:
         try:
             import wx
+
             from railway_sim.ui.wx_app import run_wx
         except ImportError:
             print("wxPython is not available.", file=sys.stderr)
@@ -187,7 +211,11 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     # --- 鍵位衝突檢查（§2.1、§7.1）------------------------------------
-    keymap = Keymap.from_dict(data.keymap_raw, "driver")
+    try:
+        keymap = Keymap.from_dict(data.keymap_raw, args.keymap_profile)
+    except KeyError as exc:
+        print(f"鍵位配置載入失敗：{exc}", file=sys.stderr)
+        return 2
     conflicts = keymap.conflicts()
     if conflicts:
         print("快捷鍵衝突：", file=sys.stderr)
