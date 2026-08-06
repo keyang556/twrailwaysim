@@ -22,6 +22,7 @@ from pathlib import Path
 
 from railway_sim.data_loader import default_data_dir, load_game_data
 from railway_sim.dataset.build import build_dataset, write_dataset
+from railway_sim.dataset.ods import OdsReadError
 from railway_sim.dataset.registry import UnknownStationError
 
 
@@ -59,7 +60,7 @@ def main(argv: list[str] | None = None) -> int:
     data_dir = Path(args.out) if args.out else default_data_dir()
     try:
         result = build_dataset(args.source, data_dir)
-    except (FileNotFoundError, UnknownStationError) as exc:
+    except (FileNotFoundError, UnknownStationError, OdsReadError) as exc:
         print(f"匯入失敗：{exc}", file=sys.stderr)
         return 2
 
@@ -75,21 +76,22 @@ def main(argv: list[str] | None = None) -> int:
         print("\n--dry-run：未寫入任何檔案。")
         return 0
 
-    written = write_dataset(result, data_dir)
+    # write_dataset() 在暫存目錄內先驗證過完整資料集才會覆寫正式檔案，
+    # 因此驗證失敗時正式目錄完全不受影響——這裡不需要再另外檢查一次。
+    try:
+        written = write_dataset(result, data_dir)
+    except ValueError as exc:
+        print(f"\n{exc}", file=sys.stderr)
+        return 1
+    except (FileNotFoundError, OSError) as exc:
+        print(f"\n寫入失敗：{exc}", file=sys.stderr)
+        return 2
+
     print("\n已寫入：")
     for path in written:
         print(f"  {path}")
 
-    # 寫完立刻用遊戲本身的載入器驗證一次，避免產生載不進去的資料。
     data = load_game_data(data_dir)
-    if data.issues:
-        print(f"\n資料驗證未通過（{len(data.issues)} 項）：", file=sys.stderr)
-        for issue in data.issues[:20]:
-            print(f"  - {issue}", file=sys.stderr)
-        if len(data.issues) > 20:
-            print(f"  …另有 {len(data.issues) - 20} 項", file=sys.stderr)
-        return 1
-
     print(
         f"\n資料驗證通過：車站 {len(data.stations)} 站、"
         f"路線 {len(data.routes)} 條、班次 {len(data.services)} 班。"

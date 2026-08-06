@@ -27,13 +27,17 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
+import shutil
+import tempfile
 from collections import defaultdict
 from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from itertools import pairwise
 from pathlib import Path
 
+from railway_sim.data_loader import load_game_data
 from railway_sim.dataset.registry import StationRegistry, UnknownStationError
 from railway_sim.dataset.tra_parser import (
     ParsedService,
@@ -886,16 +890,81 @@ def _direction_of(service: ParsedService) -> str:
 
 # ----------------------------------------------------------------------
 def write_dataset(result: BuildResult, data_dir: str | Path) -> list[Path]:
-    """把匯入結果寫入 ``data/``，回傳實際寫出的檔案。"""
+    """把匯入結果寫入 ``data/``，回傳實際寫出的檔案。
+
+    直接依序覆寫正式檔案有一個嚴重問題：驗證是在寫完之後才做的，一旦
+    驗證失敗，正式目錄裡已經是壞掉的資料——原本可啟動的遊戲就這樣被
+    一次失敗的匯入毀了。因此這裡改成：
+
+    1. 先把三個檔案連同既有、未受本次匯入影響的 ``trains.json``／
+       ``keymap.json`` 一起寫進正式目錄底下的暫存子目錄。
+    2. 用遊戲本身的載入器驗證這個暫存目錄的完整資料集；沒通過就直接
+       擲出例外，**完全不動正式目錄**。
+    3. 只有驗證通過，才逐檔以 :func:`os.replace` 取代正式檔案——同一
+       檔案系統內的原子操作，取代前會先備份舊檔。若中途有任何一檔取代
+       失敗，會把已經取代過的檔案全部還原，避免留下一半新一半舊的
+       混合狀態。
+
+    Raises:
+        FileNotFoundError: 正式目錄缺少驗證所需、本次匯入不會改動的
+            資料檔（``trains.json``、``keymap.json``）。
+        ValueError: 匯入結果沒有通過 :func:`~railway_sim.data_loader.load_game_data`
+            的驗證；訊息包含完整的問題清單。
+        OSError: 取代正式檔案時發生檔案系統層級的錯誤；已取代的檔案會先
+            還原才重新拋出。
+    """
     data_path = Path(data_dir)
-    written: list[Path] = []
-    for name, payload in (
-        ("stations.json", result.stations),
-        ("routes.json", result.routes),
-        ("timetables.json", result.timetables),
-    ):
-        target = data_path / name
-        text = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
-        target.write_text(text, encoding="utf-8", newline="\n")
-        written.append(target)
+    payloads = {
+        "stations.json": result.stations,
+        "routes.json": result.routes,
+        "timetables.json": result.timetables,
+    }
+
+    # 暫存目錄建在正式目錄底下，確保與目的檔案在同一個檔案系統，
+    # 之後的 os.replace() 才能保證是同一裝置內的原子操作。
+    staging = Path(tempfile.mkdtemp(prefix=".import-staging-", dir=data_path))
+    try:
+        for name, payload in payloads.items():
+            text = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
+            (staging / name).write_text(text, encoding="utf-8", newline="\n")
+
+        for name in ("trains.json", "keymap.json"):
+            source = data_path / name
+            if not source.is_file():
+                raise FileNotFoundError(
+                    f"{data_path} 缺少必要資料檔：{name}，無法驗證匯入結果"
+                )
+            shutil.copyfile(source, staging / name)
+
+        validated = load_game_data(staging)
+        if validated.issues:
+            raise ValueError(
+                "匯入結果未通過驗證，正式資料未被覆寫：\n"
+                + "\n".join(f"- {issue}" for issue in validated.issues)
+            )
+
+        written: list[Path] = []
+        replaced: list[tuple[Path, Path | None]] = []
+        try:
+            for name in payloads:
+                target = data_path / name
+                backup: Path | None = None
+                if target.is_file():
+                    backup = staging / f"{name}.bak"
+                    shutil.copyfile(target, backup)
+                os.replace(staging / name, target)
+                replaced.append((target, backup))
+                written.append(target)
+        except OSError:
+            # 逐檔取代中途失敗：把已經取代過的檔案還原成取代前的狀態
+            # （原本不存在的檔案直接刪除），不留下混合新舊版本的結果。
+            for target, backup in replaced:
+                if backup is not None:
+                    shutil.copyfile(backup, target)
+                else:
+                    target.unlink(missing_ok=True)
+            raise
+    finally:
+        shutil.rmtree(staging, ignore_errors=True)
+
     return written

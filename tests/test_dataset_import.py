@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import zipfile
 from itertools import pairwise
 from pathlib import Path
@@ -14,7 +15,8 @@ from pathlib import Path
 import pytest
 
 from railway_sim.data_loader import GameData, default_data_dir
-from railway_sim.dataset.ods import read_ods
+from railway_sim.dataset.build import BuildResult, write_dataset
+from railway_sim.dataset.ods import OdsReadError, read_ods
 from railway_sim.dataset.registry import StationRegistry, UnknownStationError
 from railway_sim.dataset.tra_parser import normalise_name, parse_sheet
 
@@ -93,6 +95,42 @@ class TestOdsReader:
         )
         sheet = read_ods(_write_ods(tmp_path / "d.ods", table))[0]
         assert sheet.rows[0] == ("x",)
+
+
+class TestCorruptOdsFiles:
+    """毀損的來源檔案必須報出帶檔名的錯誤，不能讓底層例外原樣往外跑。
+
+    臺鐵發布的檔案偶爾會因下載中斷或編輯器另存而毀損；使用者需要知道
+    「哪一個檔案」壞了，才能重新取得，而不是看到一段 zipfile／xml.etree
+    的原始 traceback。
+    """
+
+    def test_not_a_zip_file(self, tmp_path: Path) -> None:
+        path = tmp_path / "corrupt.ods"
+        path.write_bytes(b"not a zip file at all")
+        with pytest.raises(OdsReadError, match="corrupt.ods"):
+            read_ods(path)
+
+    def test_missing_content_xml(self, tmp_path: Path) -> None:
+        path = tmp_path / "empty.ods"
+        with zipfile.ZipFile(path, "w"):
+            pass
+        with pytest.raises(OdsReadError, match="empty.ods"):
+            read_ods(path)
+
+    def test_invalid_xml_in_content(self, tmp_path: Path) -> None:
+        path = tmp_path / "badxml.ods"
+        with zipfile.ZipFile(path, "w") as archive:
+            archive.writestr("content.xml", "<not-closed>")
+        with pytest.raises(OdsReadError, match="badxml.ods"):
+            read_ods(path)
+
+    def test_ods_read_error_is_a_value_error(self, tmp_path: Path) -> None:
+        """CLI 依此把讀取失敗歸類為可預期的匯入失敗，而不是未知例外。"""
+        path = tmp_path / "corrupt.ods"
+        path.write_bytes(b"garbage")
+        with pytest.raises(ValueError):
+            read_ods(path)
 
 
 class TestNameNormalisation:
@@ -178,7 +216,13 @@ class TestColumnLayoutParsing:
             + _row(_cell(repeat=4) + _cell("101") + _cell("103") + _cell("105"))
             + _row(_cell(repeat=4) + _cell("山") + _cell("海") + _cell(""))
             # 單一站名列
-            + _row(_cell("竹 南") + _cell(repeat=3) + _cell("08:38") + _cell("07:54") + _cell("-"))
+            + _row(
+                _cell("竹 南")
+                + _cell(repeat=3)
+                + _cell("08:38")
+                + _cell("07:54")
+                + _cell("-")
+            )
             # 山線／海線並排列：左欄海線、右欄山線
             + _row(
                 _cell("後 龍")
@@ -187,7 +231,13 @@ class TestColumnLayoutParsing:
                 + _cell("08:07")
                 + _cell("")
             )
-            + _row(_cell("彰 化") + _cell(repeat=3) + _cell("09:43") + _cell("09:17") + _cell("-"))
+            + _row(
+                _cell("彰 化")
+                + _cell(repeat=3)
+                + _cell("09:43")
+                + _cell("09:17")
+                + _cell("-")
+            )
             + "</table:table>"
         )
         return read_ods(_write_ods(tmp_path / "col.ods", table))[0]
@@ -211,8 +261,16 @@ class TestColumnLayoutParsing:
             + _row(_cell(repeat=4) + _cell("自強") + _cell("自強") + _cell("自強"))
             + _row(_cell(repeat=4) + _cell("101") + _cell("103") + _cell("105"))
             + _row(_cell(repeat=4) + _cell("山") + _cell("海") + _cell(""))
-            + _row(_cell("高雄") + _cell(repeat=3) + _cell("08:26") + _cell("") + _cell(""))
-            + _row(_cell("Kaohsiung") + _cell(repeat=3) + _cell("08:29") + _cell("") + _cell(""))
+            + _row(
+                _cell("高雄") + _cell(repeat=3) + _cell("08:26") + _cell("") + _cell("")
+            )
+            + _row(
+                _cell("Kaohsiung")
+                + _cell(repeat=3)
+                + _cell("08:29")
+                + _cell("")
+                + _cell("")
+            )
             + "</table:table>"
         )
         sheet = read_ods(_write_ods(tmp_path / "latin.ods", table))[0]
@@ -262,9 +320,7 @@ class TestParallelLineColumns:
         )
         return read_ods(_write_ods(tmp_path / "parallel.ods", table))[0]
 
-    def test_both_station_names_are_offered_as_candidates(
-        self, tmp_path: Path
-    ) -> None:
+    def test_both_station_names_are_offered_as_candidates(self, tmp_path: Path) -> None:
         block = parse_sheet(self._sheet(tmp_path))[0]
         assert "後龍" in block.station_names
         assert "苗栗" in block.station_names
@@ -430,3 +486,219 @@ class TestImportedDataShape:
         for route in game_data.routes.values():
             ok, reason = game_data.network.is_traversable(list(route.node_ids))
             assert ok, f"{route.id}：{reason}"
+
+
+def _minimal_build_result() -> BuildResult:
+    """一個保證能通過 ``load_game_data`` 驗證的最小資料集。
+
+    完全空白的站、路線、班次不會觸發 :func:`load_game_data` 裡任何一項
+    交叉參照檢查，因此可以拿來測試「寫入成功」路徑本身，不需要真的跑
+    一次完整匯入。
+    """
+    return BuildResult(
+        stations={"meta": {"description": "test"}, "stations": []},
+        routes={
+            "meta": {"description": "test"},
+            "lines": {},
+            "region_rules": {},
+            "nodes": [],
+            "links": [],
+            "routes": [],
+        },
+        timetables={"meta": {"description": "test"}, "services": []},
+    )
+
+
+class TestWriteDatasetIsAtomic:
+    """``write_dataset`` 不得讓一次失敗的匯入毀掉正式資料。
+
+    先前的實作依序直接覆寫 ``data/`` 底下的 JSON，驗證卻是寫完之後才做；
+    驗證失敗時正式目錄已經是壞資料。這裡驗證新流程：先在暫存目錄驗證
+    完整資料集，只有通過才提交，任何一步失敗都完全不動正式目錄。
+    """
+
+    @pytest.fixture
+    def isolated_data_dir(self, tmp_path: Path) -> Path:
+        """正式 ``data/`` 目錄的獨立副本，測試可以安全地寫壞它。"""
+        target = tmp_path / "data"
+        shutil.copytree(default_data_dir(), target)
+        return target
+
+    def test_failed_validation_leaves_existing_files_untouched(
+        self, isolated_data_dir: Path
+    ) -> None:
+        """重現實際回報的情境：stations 被清空，routes 仍參照舊車站。"""
+        before = {
+            name: (isolated_data_dir / name).read_text(encoding="utf-8")
+            for name in ("stations.json", "routes.json", "timetables.json")
+        }
+        original_stations = json.loads(before["stations.json"])
+
+        broken = BuildResult(
+            stations={"meta": original_stations["meta"], "stations": []},
+            routes=json.loads(before["routes.json"]),
+            timetables=json.loads(before["timetables.json"]),
+        )
+
+        with pytest.raises(ValueError, match="未通過驗證"):
+            write_dataset(broken, isolated_data_dir)
+
+        for name, original_text in before.items():
+            assert (isolated_data_dir / name).read_text(encoding="utf-8") == (
+                original_text
+            ), f"{name} 在驗證失敗後不應被改動"
+
+    def test_failed_validation_leaves_no_staging_or_backup_litter(
+        self, isolated_data_dir: Path
+    ) -> None:
+        original_stations = json.loads(
+            (isolated_data_dir / "stations.json").read_text(encoding="utf-8")
+        )
+        broken = BuildResult(
+            stations={"meta": original_stations["meta"], "stations": []},
+            routes=json.loads(
+                (isolated_data_dir / "routes.json").read_text(encoding="utf-8")
+            ),
+            timetables=json.loads(
+                (isolated_data_dir / "timetables.json").read_text(encoding="utf-8")
+            ),
+        )
+
+        with pytest.raises(ValueError):
+            write_dataset(broken, isolated_data_dir)
+
+        leftovers = [
+            p.name
+            for p in isolated_data_dir.iterdir()
+            if p.name.startswith(".import-staging") or p.name.endswith(".bak")
+        ]
+        assert leftovers == []
+
+    def test_missing_trains_json_is_reported_before_any_write(
+        self, isolated_data_dir: Path
+    ) -> None:
+        """trains.json／keymap.json 不受匯入改動，但驗證仍需要它們存在。"""
+        (isolated_data_dir / "trains.json").unlink()
+        before_stations = (isolated_data_dir / "stations.json").read_text(
+            encoding="utf-8"
+        )
+
+        with pytest.raises(FileNotFoundError, match="trains.json"):
+            write_dataset(_minimal_build_result(), isolated_data_dir)
+
+        assert (isolated_data_dir / "stations.json").read_text(
+            encoding="utf-8"
+        ) == before_stations
+
+    def test_successful_write_replaces_all_three_files(
+        self, isolated_data_dir: Path
+    ) -> None:
+        written = write_dataset(_minimal_build_result(), isolated_data_dir)
+        assert {p.name for p in written} == {
+            "stations.json",
+            "routes.json",
+            "timetables.json",
+        }
+
+        stored = json.loads(
+            (isolated_data_dir / "stations.json").read_text(encoding="utf-8")
+        )
+        assert stored["stations"] == []
+
+    def test_successful_write_leaves_no_staging_or_backup_litter(
+        self, isolated_data_dir: Path
+    ) -> None:
+        write_dataset(_minimal_build_result(), isolated_data_dir)
+
+        leftovers = [
+            p.name
+            for p in isolated_data_dir.iterdir()
+            if p.name.startswith(".import-staging") or p.name.endswith(".bak")
+        ]
+        assert leftovers == []
+
+
+class TestCliHandlesCorruptSource:
+    """CLI 對毀損來源檔案要輸出一致的「匯入失敗」訊息，不能讓例外原樣往外跑。
+
+    對應三種毀損情形：不是 zip、缺少 content.xml、content.xml 不是合法
+    XML。這三種在來源檔案損毀（下載中斷、編輯器另存）時都可能發生。
+    """
+
+    @pytest.fixture
+    def isolated_data_dir(self, tmp_path: Path) -> Path:
+        target = tmp_path / "data"
+        shutil.copytree(default_data_dir(), target)
+        return target
+
+    def _run(
+        self, source_dir: Path, data_dir: Path, capsys: pytest.CaptureFixture[str]
+    ) -> tuple[int, str]:
+        from railway_sim.dataset.__main__ import main
+
+        code = main(["--source", str(source_dir), "--out", str(data_dir)])
+        return code, capsys.readouterr().err
+
+    def test_not_a_zip_file(
+        self,
+        tmp_path: Path,
+        isolated_data_dir: Path,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        source_dir = tmp_path / "source"
+        source_dir.mkdir()
+        (source_dir / "corrupt.ods").write_bytes(b"not a zip file at all")
+
+        code, err = self._run(source_dir, isolated_data_dir, capsys)
+        assert code == 2
+        assert "匯入失敗" in err
+        assert "corrupt.ods" in err
+
+    def test_missing_content_xml(
+        self,
+        tmp_path: Path,
+        isolated_data_dir: Path,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        source_dir = tmp_path / "source"
+        source_dir.mkdir()
+        with zipfile.ZipFile(source_dir / "empty.ods", "w"):
+            pass
+
+        code, err = self._run(source_dir, isolated_data_dir, capsys)
+        assert code == 2
+        assert "匯入失敗" in err
+        assert "empty.ods" in err
+
+    def test_invalid_xml(
+        self,
+        tmp_path: Path,
+        isolated_data_dir: Path,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        source_dir = tmp_path / "source"
+        source_dir.mkdir()
+        with zipfile.ZipFile(source_dir / "badxml.ods", "w") as archive:
+            archive.writestr("content.xml", "<not-closed>")
+
+        code, err = self._run(source_dir, isolated_data_dir, capsys)
+        assert code == 2
+        assert "匯入失敗" in err
+        assert "badxml.ods" in err
+
+    def test_corrupt_source_does_not_touch_existing_data(
+        self,
+        tmp_path: Path,
+        isolated_data_dir: Path,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """讀取階段就失敗，連暫存驗證都還沒開始，正式資料自然不受影響。"""
+        before = (isolated_data_dir / "stations.json").read_text(encoding="utf-8")
+        source_dir = tmp_path / "source"
+        source_dir.mkdir()
+        (source_dir / "corrupt.ods").write_bytes(b"garbage")
+
+        self._run(source_dir, isolated_data_dir, capsys)
+
+        after = (isolated_data_dir / "stations.json").read_text(encoding="utf-8")
+        assert after == before

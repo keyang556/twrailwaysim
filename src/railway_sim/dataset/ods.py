@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-__all__ = ["Sheet", "read_ods"]
+__all__ = ["OdsReadError", "Sheet", "read_ods"]
 
 _TABLE = "urn:oasis:names:tc:opendocument:xmlns:table:1.0"
 _TEXT = "urn:oasis:names:tc:opendocument:xmlns:text:1.0"
@@ -32,6 +32,14 @@ _CELL_TAGS = (f"{{{_TABLE}}}table-cell", f"{{{_TABLE}}}covered-table-cell")
 #: 重複次數上限。ODS 會用一個 repeat 很大的空儲存格表示「這列剩下都是空的」，
 #: 照著展開會產生數萬個空格，因此超過上限就視為結尾填充，只保留一格。
 _MAX_REPEAT = 512
+
+
+class OdsReadError(ValueError):
+    """讀取 ``.ods`` 檔案失敗：檔案毀損，或格式不符 OpenDocument 試算表。
+
+    訊息一律帶有來源檔名，讓匯入指令可以直接告訴使用者是哪個檔案需要
+    重新取得，而不是讓 ``zipfile``／``xml.etree`` 的原始例外一路往外跑。
+    """
 
 
 @dataclass(frozen=True)
@@ -89,10 +97,31 @@ def read_ods(path: str | Path) -> list[Sheet]:
 
     每列尾端的空儲存格會被去除，因此不同列的長度不一定相同；取值請用
     :meth:`Sheet.cell`，不要直接索引。
+
+    Raises:
+        OdsReadError: 檔案不是有效的 zip、缺少 ``content.xml``，或
+            ``content.xml`` 不是合法的 XML。臺鐵發布的檔案偶爾會因下載
+            中斷或編輯器另存而毀損，這裡把三種底層例外統一包成一種帶
+            檔名的錯誤，讓匯入指令能給出可行動的訊息，而不是原始
+            traceback。
     """
-    with zipfile.ZipFile(path) as archive:
-        content = archive.read("content.xml")
-    root = ET.fromstring(content)
+    path = Path(path)
+    try:
+        with zipfile.ZipFile(path) as archive:
+            content = archive.read("content.xml")
+    except zipfile.BadZipFile as exc:
+        raise OdsReadError(
+            f"{path.name}：不是有效的 ODS（zip）檔案，可能已毀損"
+        ) from exc
+    except KeyError as exc:
+        raise OdsReadError(
+            f"{path.name}：缺少 content.xml，不是有效的 ODS 檔案"
+        ) from exc
+
+    try:
+        root = ET.fromstring(content)
+    except ET.ParseError as exc:
+        raise OdsReadError(f"{path.name}：content.xml 不是合法的 XML（{exc}）") from exc
 
     sheets: list[Sheet] = []
     for table in root.iter(f"{{{_TABLE}}}table"):
