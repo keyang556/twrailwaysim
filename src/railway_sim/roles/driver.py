@@ -553,6 +553,24 @@ class DriverSession:
     # ------------------------------------------------------------------
     # 狀態文字（供介面顯示，內容與播報一致）
     # ------------------------------------------------------------------
+    def briefing_lines(self) -> list[str]:
+        """運轉開始前的行前提要。
+
+        由本模組提供而非各自寫在介面裡，主控台與 wx 介面才會顯示完全相同
+        的內容（§25.5：必要資訊不得只存在於單一介面）。
+        """
+        class_name = self.data.service_class_name(self.service.train_type)
+        stops = "、".join(p.name_zh_tw for p in self.stations if p.stop_kind == "stop")
+        passes = "、".join(p.name_zh_tw for p in self.stations if p.stop_kind != "stop")
+        return [
+            f"車次：{class_name}{self.service.train_number}次",
+            f"車輛型式：{self.spec.name_zh_tw}",
+            f"路線：{self.route.name_zh_tw}",
+            f"路線長度：{self.route.length_m:.0f} 公尺",
+            f"停靠站：{stops or '無'}",
+            f"通過站：{passes or '無'}",
+        ]
+
     def status_lines(self) -> list[str]:
         """目前完整狀態的純文字，供介面顯示與螢幕閱讀器閱讀。"""
         state = self.last_state or self._evaluate_only()
@@ -569,6 +587,7 @@ class DriverSession:
 
         lines = [
             f"車次：{class_name}{self.service.train_number}次",
+            f"車輛型式：{self.spec.name_zh_tw}",
             f"目前速度：{self.train.current_speed_kmh:.0f} 公里／小時",
             f"允許速度：{state.permitted_kmh:.0f} 公里／小時",
             f"電門段位：{self.train.power_notch} / {self.spec.power_notches}",

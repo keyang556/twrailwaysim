@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import pytest
 
+from railway_sim.data_loader import GameData
 from railway_sim.simulation import physics
 from railway_sim.simulation.braking import notch_down, power_up
 from railway_sim.simulation.train import Train, TrainType
@@ -146,3 +147,60 @@ class TestSpeedLimits:
             physics.step(train, train_spec, 0.1)
         assert train.current_speed_kmh == 0.0
         assert train.position_m == pytest.approx(50.0, abs=0.5)
+
+
+#: 各車輛型式來源標示的性能，用來擋住資料被改回無來源的測試值。
+#:
+#: 值為 ``(營運速度, 常用減速度 km/h/s, 緊急減速度 km/h/s)``；減速度沒有
+#: 來源的車型（EMU900、CK）以 ``None`` 表示不檢查。
+SOURCED_PERFORMANCE = {
+    "EMU3000": (130.0, 3.6, 4.32),
+    "EMU900": (130.0, None, None),
+    "TEMU1000": (130.0, 3.6, 4.32),
+    "TEMU2000": (130.0, 3.6, 4.32),
+    "PP": (130.0, 3.6, 5.5),
+    "DR3100": (110.0, 3.0, 3.0),
+    "DR1000": (110.0, 2.448, 2.448),
+}
+
+
+class TestRealStockPerformance:
+    """``data/trains.json`` 的實車性能（見該檔 meta.sources）。"""
+
+    def test_every_sourced_type_exists(self, game_data: GameData) -> None:
+        missing = sorted(set(SOURCED_PERFORMANCE) - set(game_data.train_types))
+        assert not missing, f"trains.json 缺少車輛型式：{missing}"
+
+    @pytest.mark.parametrize("type_id", sorted(SOURCED_PERFORMANCE))
+    def test_matches_source_figures(self, game_data: GameData, type_id: str) -> None:
+        """最高速度與減速度必須等於來源數值（減速度換算成 m/s²）。"""
+        spec = game_data.train_type(type_id)
+        max_speed, service_kmhs, emergency_kmhs = SOURCED_PERFORMANCE[type_id]
+        assert spec.max_speed_kmh == pytest.approx(max_speed)
+        if service_kmhs is not None:
+            assert spec.max_service_brake_ms2 == pytest.approx(service_kmhs / 3.6, abs=0.001)
+        if emergency_kmhs is not None:
+            assert spec.emergency_brake_ms2 == pytest.approx(emergency_kmhs / 3.6, abs=0.001)
+
+    @pytest.mark.parametrize("type_id", sorted(SOURCED_PERFORMANCE))
+    def test_reaches_its_operating_speed(self, game_data: GameData, type_id: str) -> None:
+        """全電門、平直線上必須真的能加速到來源標示的營運速度。
+
+        牽引力與行駛阻力都會隨速度變化，兩者交會處就是實際的極速。阻力
+        係數沒有公開來源（``resistance_ms2`` 為測試值），因此這裡把「達得到
+        營運速度」當成校驗條件：達不到就表示阻力係數配得不對，而不是車輛
+        真的跑不到那個速度。
+        """
+        spec = game_data.train_type(type_id)
+        train = Train(id=f"T_{type_id}", train_type=type_id, length_m=spec.length_m)
+        train.power_notch = spec.power_notches
+        for _ in range(15 * 60 * 10):  # 15 分鐘、每步 0.1 秒
+            physics.step(train, spec, 0.1)
+        assert train.current_speed_kmh == pytest.approx(spec.max_speed_kmh, abs=0.1)
+
+    def test_branch_stock_is_slower_than_trunk_stock(self, game_data: GameData) -> None:
+        """柴油客車的最高速度低於城際電聯車，資料弄反時會被擋下。"""
+        assert (
+            game_data.train_type("DR1000").max_speed_kmh
+            < game_data.train_type("EMU3000").max_speed_kmh
+        )

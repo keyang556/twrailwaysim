@@ -3538,14 +3538,6 @@
     },
     {
       "from": "STA_LIUJIA",
-      "to": "STA_SHANGYUAN",
-      "length_m": 3000.0,
-      "line_id": "neiwan",
-      "max_speed_kmh": 60.0,
-      "verification_status": "estimated_from_timetable"
-    },
-    {
-      "from": "STA_LIUJIA",
       "to": "STA_ZHUZHONG",
       "length_m": 4580.0,
       "line_id": "neiwan",
@@ -3918,6 +3910,14 @@
       "length_m": 5500.0,
       "line_id": "mountain",
       "max_speed_kmh": 110.0,
+      "verification_status": "estimated_from_timetable"
+    },
+    {
+      "from": "STA_SHANGYUAN",
+      "to": "STA_ZHUZHONG",
+      "length_m": 4580.0,
+      "line_id": "neiwan",
+      "max_speed_kmh": 60.0,
       "verification_status": "estimated_from_timetable"
     },
     {
@@ -13032,7 +13032,6 @@
         "STA_ZHUDONG",
         "STA_RONGHUA",
         "STA_SHANGYUAN",
-        "STA_LIUJIA",
         "STA_ZHUZHONG",
         "STA_XINZHUANG",
         "STA_QIANJIA",
@@ -13052,7 +13051,6 @@
         "STA_QIANJIA",
         "STA_XINZHUANG",
         "STA_ZHUZHONG",
-        "STA_LIUJIA",
         "STA_SHANGYUAN",
         "STA_RONGHUA",
         "STA_ZHUDONG",
@@ -13078,7 +13076,6 @@
         "STA_ZHUDONG",
         "STA_RONGHUA",
         "STA_SHANGYUAN",
-        "STA_LIUJIA",
         "STA_ZHUZHONG"
       ],
       "verification_status": "derived_from_timetable"
@@ -13090,7 +13087,6 @@
       "direction": "northbound",
       "node_ids": [
         "STA_ZHUZHONG",
-        "STA_LIUJIA",
         "STA_SHANGYUAN",
         "STA_RONGHUA",
         "STA_ZHUDONG",
@@ -13113,7 +13109,6 @@
         "STA_QIANJIA",
         "STA_XINZHUANG",
         "STA_ZHUZHONG",
-        "STA_LIUJIA",
         "STA_SHANGYUAN",
         "STA_RONGHUA",
         "STA_ZHUDONG"

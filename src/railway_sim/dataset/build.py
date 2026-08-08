@@ -66,16 +66,76 @@ TRAIN_CLASS_IDS = {
     "普快": "ordinary",
 }
 
-#: 車種代碼 -> 建議車輛型式（``trains.json`` 的 ``train_types``）。
+#: 車種名稱 -> 擔當的車輛型式（``trains.json`` 的 ``train_types``）。
+#:
+#: 「自強號」是**車種**，不是車輛型式：時刻表的車種欄把 EMU3000 印成
+#: 「自強3000」、普悠瑪與太魯閣各自成一欄，其餘一律印「自強」。因此這裡
+#: 依時刻表實際印出的車種名稱分派車輛型式，不能全部當成 EMU3000。
 ROLLING_STOCK_BY_CLASS = {
     "區間車": "EMU900",
     "區間快": "EMU900",
-    "自強": "EMU3000",
+    "自強": "PP",
     "自強3000": "EMU3000",
-    "普悠瑪": "EMU3000",
-    "太魯閣": "EMU3000",
-    "莒光": "PP",
+    "普悠瑪": "TEMU2000",
+    "太魯閣": "TEMU1000",
+    "莒光": "CK",
 }
+
+#: 非電氣化支線區間的車站（中文站名）。
+#:
+#: 這些區間沒有電車線，只能由 DR1000 型柴油客車行駛，因此只要班次的停靠
+#: 或通過表碰到其中任何一站，該班次的車輛型式就是 DR1000——即使它有一大
+#: 段行程跑在電氣化的幹線上（例如彰化直通車埕的集集線區間快）。
+#:
+#: 清單只列**支線本身**的車站，不含支線接入幹線的那一站：二水、三貂嶺、
+#: 瑞芳都在幹線上，停靠它們的幹線列車當然不是柴油客車。六家線（竹中至
+#: 六家）已電氣化，行駛電聯車，因此六家不在清單內；新竹至六家的區間車
+#: 維持 EMU900。
+NON_ELECTRIFIED_BRANCH_STATIONS = frozenset(
+    {
+        # 集集線（二水至車埕，二水在縱貫線上）
+        "源泉",
+        "濁水",
+        "龍泉",
+        "集集",
+        "水里",
+        "車埕",
+        # 內灣線（竹中至內灣；竹中至六家的六家線已電氣化）
+        "上員",
+        "榮華",
+        "竹東",
+        "橫山",
+        "九讚頭",
+        "合興",
+        "富貴",
+        "內灣",
+        # 平溪線（三貂嶺至菁桐，三貂嶺在宜蘭線上）
+        "大華",
+        "十分",
+        "望古",
+        "嶺腳",
+        "平溪",
+        "菁桐",
+        # 深澳線（瑞芳至八斗子，瑞芳在宜蘭線上）
+        "海科館",
+        "八斗子",
+    }
+)
+
+#: 行駛非電氣化支線時擔當的車輛型式。
+BRANCH_ROLLING_STOCK = "DR1000"
+
+
+def rolling_stock_for(train_class: str, station_names: set[str]) -> str:
+    """回傳某班次的車輛型式代碼。
+
+    Args:
+        train_class: 時刻表印出的車種名稱。
+        station_names: 該班次停靠與通過的全部車站（中文站名）。
+    """
+    if station_names & NON_ELECTRIFIED_BRANCH_STATIONS:
+        return BRANCH_ROLLING_STOCK
+    return ROLLING_STOCK_BY_CLASS.get(train_class, "")
 
 #: 推估區間長度時採用的標稱速度（公尺／秒）。
 #:
@@ -233,6 +293,14 @@ def _build_edges(
             key = (left, right) if left < right else (right, left)
             if key in edges:
                 edges[key] = override["line_id"]
+
+    # 站序推不出來的相鄰關係修正（端末站與分歧站，見 topology_overrides.json）。
+    for removal in overrides.get("remove_station_links", ()):
+        left, right = removal["between"]
+        edges.pop((left, right) if left < right else (right, left), None)
+    for addition in overrides.get("add_station_links", ()):
+        left, right = addition["between"]
+        edges[(left, right) if left < right else (right, left)] = addition["line_id"]
     return edges
 
 
@@ -678,6 +746,7 @@ def build_dataset(source_dir: str | Path, data_dir: str | Path) -> BuildResult:
         pass_ids = []
         departure = {}
         arrival = {}
+        served_names: set[str] = set()
         for stop in service.stops:
             station_id = registry.id_for(stop.station_name)
             node = _node_id(station_id)
@@ -685,12 +754,14 @@ def build_dataset(source_dir: str | Path, data_dir: str | Path) -> BuildResult:
                 continue
             if stop.stops:
                 stop_ids.append(station_id)
+                served_names.add(stop.station_name)
                 if stop.time_text:
                     departure[station_id] = stop.time_text
                     arrival[station_id] = stop.time_text
             elif node in on_path:
                 # 來源標為通過、且確實在本班次路徑上的車站才列入通過站。
                 pass_ids.append(station_id)
+                served_names.add(stop.station_name)
 
         service_entries.append(
             {
@@ -698,7 +769,7 @@ def build_dataset(source_dir: str | Path, data_dir: str | Path) -> BuildResult:
                 "name_zh_tw": f"{service.train_class}{number}次",
                 "train_type": class_id,
                 "train_class_zh_tw": service.train_class,
-                "rolling_stock_id": ROLLING_STOCK_BY_CLASS.get(service.train_class, ""),
+                "rolling_stock_id": rolling_stock_for(service.train_class, served_names),
                 "route_id": route_id,
                 "stop_station_ids": stop_ids,
                 "pass_station_ids": pass_ids,

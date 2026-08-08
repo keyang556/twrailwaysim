@@ -21,7 +21,7 @@ from railway_sim.data_loader import (
     heal_interrupted_import,
     load_game_data,
 )
-from railway_sim.dataset.build import BuildResult, write_dataset
+from railway_sim.dataset.build import BuildResult, rolling_stock_for, write_dataset
 from railway_sim.dataset.ods import OdsReadError, read_ods
 from railway_sim.dataset.registry import StationRegistry, UnknownStationError
 from railway_sim.dataset.tra_parser import normalise_name, parse_sheet
@@ -713,6 +713,88 @@ class TestImportedDataShape:
         for route in game_data.routes.values():
             ok, reason = game_data.network.is_traversable(list(route.node_ids))
             assert ok, f"{route.id}：{reason}"
+
+
+class TestRollingStockAssignment:
+    """車種 → 車輛型式的分派（``dataset.build.rolling_stock_for``）。"""
+
+    def test_tze_chiang_uses_more_than_one_vehicle_type(
+        self, game_data: GameData
+    ) -> None:
+        """自強號是車種不是車輛型式，不能全部掛成 EMU3000。"""
+        used = {
+            s.rolling_stock_id
+            for s in game_data.services.values()
+            if s.train_type == "tze_chiang"
+        }
+        assert {"EMU3000", "TEMU1000", "TEMU2000", "PP"} <= used
+
+    def test_class_name_decides_the_vehicle_type(self) -> None:
+        assert rolling_stock_for("自強3000", set()) == "EMU3000"
+        assert rolling_stock_for("普悠瑪", set()) == "TEMU2000"
+        assert rolling_stock_for("太魯閣", set()) == "TEMU1000"
+        assert rolling_stock_for("自強", set()) == "PP"
+        assert rolling_stock_for("莒光", set()) == "CK"
+        assert rolling_stock_for("區間車", set()) == "EMU900"
+
+    def test_non_electrified_branch_forces_diesel(self) -> None:
+        """碰到非電氣化支線就是柴油客車，即使大半行程在電氣化幹線上。"""
+        assert rolling_stock_for("區間快", {"彰化", "二水", "集集", "車埕"}) == "DR1000"
+        assert rolling_stock_for("區間車", {"新竹", "竹中", "上員", "內灣"}) == "DR1000"
+        assert rolling_stock_for("區間車", {"八堵", "瑞芳", "十分", "菁桐"}) == "DR1000"
+
+    def test_liujia_line_keeps_electric_stock(self) -> None:
+        """六家線已電氣化，新竹至六家的區間車不是柴油客車。"""
+        assert rolling_stock_for("區間車", {"新竹", "北新竹", "竹中", "六家"}) == "EMU900"
+
+    def test_trunk_stations_of_a_branch_do_not_trigger_diesel(self) -> None:
+        """二水、三貂嶺、瑞芳在幹線上，只停這些站的幹線列車不受影響。"""
+        assert rolling_stock_for("區間車", {"彰化", "二水", "斗六"}) == "EMU900"
+        assert rolling_stock_for("自強", {"瑞芳", "三貂嶺", "雙溪"}) == "PP"
+
+    @pytest.mark.parametrize(
+        ("branch_station", "expected_line"),
+        [("集集", "jiji"), ("內灣", "neiwan"), ("菁桐", "pingxi"), ("八斗子", "pingxi")],
+    )
+    def test_branch_services_in_shipped_data_are_diesel(
+        self, game_data: GameData, branch_station: str, expected_line: str
+    ) -> None:
+        station = next(
+            s for s in game_data.stations.values() if s.name_zh_tw == branch_station
+        )
+        assert expected_line in station.line_ids
+        services = [
+            s
+            for s in game_data.services.values()
+            if station.id in s.stop_station_ids or station.id in s.pass_station_ids
+        ]
+        assert services, f"時刻表裡沒有停靠{branch_station}的班次"
+        assert all(s.rolling_stock_id == "DR1000" for s in services)
+
+    def test_liujia_services_in_shipped_data_are_electric(
+        self, game_data: GameData
+    ) -> None:
+        liujia = next(s for s in game_data.stations.values() if s.name_zh_tw == "六家")
+        services = [
+            s for s in game_data.services.values() if liujia.id in s.stop_station_ids
+        ]
+        assert services
+        assert all(s.rolling_stock_id == "EMU900" for s in services)
+
+    def test_liujia_is_a_stub_off_zhuzhong(self, game_data: GameData) -> None:
+        """六家由竹中分歧出去，內灣線列車不會經過六家。"""
+        ids = {s.name_zh_tw: s.id for s in game_data.stations.values()}
+        liujia = f"STA_{ids['六家']}"
+        zhuzhong = f"STA_{ids['竹中']}"
+        shangyuan = f"STA_{ids['上員']}"
+
+        assert game_data.network.link(zhuzhong, liujia) is not None
+        assert game_data.network.link(zhuzhong, shangyuan) is not None
+        assert game_data.network.link(liujia, shangyuan) is None
+
+        for route in game_data.routes.values():
+            if liujia in route.node_ids and shangyuan in route.node_ids:
+                pytest.fail(f"{route.id} 同時經過六家與上員")
 
 
 def _minimal_build_result() -> BuildResult:

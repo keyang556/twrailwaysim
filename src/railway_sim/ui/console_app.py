@@ -199,20 +199,9 @@ class ConsoleApp:
 
     # ------------------------------------------------------------------
     def announce_intro(self) -> None:
-        service = self.session.service
-        class_name = self.session.data.service_class_name(service.train_type)
         print("===== 臺灣鐵路人員模擬器：司機員模式 =====", flush=True)
-        print(f"車次：{class_name}{service.train_number}次", flush=True)
-        print(f"路線：{self.session.route.name_zh_tw}", flush=True)
-        print(f"路線長度：{self.session.route.length_m:.0f} 公尺", flush=True)
-        stops = "、".join(
-            p.name_zh_tw for p in self.session.stations if p.stop_kind == "stop"
-        )
-        passes = "、".join(
-            p.name_zh_tw for p in self.session.stations if p.stop_kind != "stop"
-        )
-        print(f"停靠站：{stops or '無'}", flush=True)
-        print(f"通過站：{passes or '無'}", flush=True)
+        for line in self.session.briefing_lines():
+            print(line, flush=True)
         print("按 F1 查看快捷鍵說明，按 Esc 開啟暫停選單。", flush=True)
         print("=========================================\n", flush=True)
 
