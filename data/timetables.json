@@ -9111,7 +9111,7 @@
       "name_zh_tw": "自強209次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "PP",
+      "rolling_stock_id": "DR3100",
       "route_id": "R_AUTO_0046",
       "stop_station_ids": [
         "SUAOXIN",
@@ -9545,7 +9545,7 @@
       "name_zh_tw": "自強221次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "PP",
+      "rolling_stock_id": "DR3100",
       "route_id": "R_AUTO_0049",
       "stop_station_ids": [
         "NANAO",
@@ -10262,7 +10262,7 @@
       "name_zh_tw": "自強238次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "PP",
+      "rolling_stock_id": "DR3100",
       "route_id": "R_AUTO_0047",
       "stop_station_ids": [
         "SHULIN",
@@ -10344,7 +10344,7 @@
       "name_zh_tw": "自強246次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "PP",
+      "rolling_stock_id": "DR3100",
       "route_id": "R_AUTO_0047",
       "stop_station_ids": [
         "SHULIN",

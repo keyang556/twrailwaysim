@@ -125,14 +125,36 @@ NON_ELECTRIFIED_BRANCH_STATIONS = frozenset(
 #: 行駛非電氣化支線時擔當的車輛型式。
 BRANCH_ROLLING_STOCK = "DR1000"
 
+#: 特定車次的車輛型式覆寫，優先於車種與支線判斷。
+#:
+#: 時刻表的車種欄無法分辨同一車種底下由哪一種車輛擔當——「自強」底下同時
+#: 有推拉式自強號與 DR3100 柴聯車，兩者都行駛東部幹線。這幾個車次已知由
+#: DR3100 擔當（人工確認，非由時刻表推導），故在此逐車次覆寫。
+ROLLING_STOCK_OVERRIDE_BY_TRAIN_NUMBER = {
+    "209": "DR3100",
+    "221": "DR3100",
+    "238": "DR3100",
+    "246": "DR3100",
+}
 
-def rolling_stock_for(train_class: str, station_names: set[str]) -> str:
+
+def rolling_stock_for(
+    train_class: str, station_names: set[str], *, train_number: str = ""
+) -> str:
     """回傳某班次的車輛型式代碼。
 
     Args:
         train_class: 時刻表印出的車種名稱。
-        station_names: 該班次停靠與通過的全部車站（中文站名）。
+        station_names: 該班次停靠與通過的全部車站（中文站名），應包含
+            **完整行經路徑**上的車站，不能只有時刻表印出時刻的站——對號
+            列車時刻表只印主要車站，實際尋路可能補入時刻表沒印出來的
+            中間站，這些站一樣是列車真的會經過的地方。
+        train_number: 車次號碼。優先查
+            :data:`ROLLING_STOCK_OVERRIDE_BY_TRAIN_NUMBER`。
     """
+    override = ROLLING_STOCK_OVERRIDE_BY_TRAIN_NUMBER.get(train_number)
+    if override:
+        return override
     if station_names & NON_ELECTRIFIED_BRANCH_STATIONS:
         return BRANCH_ROLLING_STOCK
     return ROLLING_STOCK_BY_CLASS.get(train_class, "")
@@ -689,6 +711,7 @@ def build_dataset(source_dir: str | Path, data_dir: str | Path) -> BuildResult:
     routes_by_path: dict[tuple[str, ...], str] = {}
     route_entries: list[dict] = []
     service_entries: list[dict] = []
+    station_name_by_id = {entry["id"]: entry["name_zh_tw"] for entry in station_entries}
 
     for number in sorted(services, key=lambda n: (len(n), n)):
         service = services[number]
@@ -763,13 +786,25 @@ def build_dataset(source_dir: str | Path, data_dir: str | Path) -> BuildResult:
                 pass_ids.append(station_id)
                 served_names.add(stop.station_name)
 
+        # 車輛型式的判斷必須看完整的行經路徑，不能只看 served_names：
+        # 對號列車時刻表只印主要車站，實際尋路可能補入時刻表完全沒印出來的
+        # 中間站；這些站一樣是列車真的會經過的地方，行經非電氣化支線一樣
+        # 需要改配柴油客車。
+        path_names = {
+            station_name_by_id[station_id]
+            for node in path
+            if (station_id := _station_id_of(node, registry)) in station_name_by_id
+        }
+
         service_entries.append(
             {
                 "train_number": number,
                 "name_zh_tw": f"{service.train_class}{number}次",
                 "train_type": class_id,
                 "train_class_zh_tw": service.train_class,
-                "rolling_stock_id": rolling_stock_for(service.train_class, served_names),
+                "rolling_stock_id": rolling_stock_for(
+                    service.train_class, served_names | path_names, train_number=number
+                ),
                 "route_id": route_id,
                 "stop_station_ids": stop_ids,
                 "pass_station_ids": pass_ids,
