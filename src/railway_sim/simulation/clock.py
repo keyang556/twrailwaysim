@@ -23,14 +23,18 @@ class SimulationClock:
     _carry_s: float = field(default=0.0, init=False, repr=False)
 
     def advance(self, real_dt_s: float) -> int:
-        """累積實際時間並回傳應執行的 tick 數。"""
+        """累積實際時間並回傳應執行的 tick 數。
+
+        本方法**不動** :attr:`elapsed_s`：模擬時間由實際執行的那一步（
+        ``DriverSession.tick``）累加，才不會出現「排定了幾步」與「真的跑了
+        幾步」兩份時間。兩邊都加會讓運轉時間以兩倍速前進。
+        """
         if real_dt_s <= 0:
             return 0
         self._carry_s += real_dt_s
         ticks = int(self._carry_s / self.tick_s)
         if ticks:
             self._carry_s -= ticks * self.tick_s
-            self.elapsed_s += ticks * self.tick_s
         return ticks
 
     def reset(self) -> None:

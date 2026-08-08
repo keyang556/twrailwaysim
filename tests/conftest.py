@@ -137,8 +137,9 @@ def signal_position(session: DriverSession, block_id: str) -> float:
 def slowest_segment(session: DriverSession) -> tuple[float, float]:
     """路線上速限最低的區間，回傳 ``(中點里程, 速限)``。
 
-    超速測試需要「速限低於車輛最高速度」的區間才有超速的空間；山線的速限
-    與 EMU900 的最高速度同為 110，因此必須挑速限較低的區間（例如成追線）。
+    超速測試需要「速限低於車輛最高速度」的區間才有超速的空間，而且要留得夠
+    多：嚴重超速的門檻是超出允許速度 15 公里。取速限最低的區間（例如速限 60
+    的成追線）最保險，也不必跟著車輛資料改點一起改。
     """
     segment = min(session.route.segments, key=lambda s: s.max_speed_kmh)
     return (segment.start_m + segment.end_m) / 2.0, segment.max_speed_kmh

@@ -21,7 +21,7 @@ from railway_sim.data_loader import (
     heal_interrupted_import,
     load_game_data,
 )
-from railway_sim.dataset.build import BuildResult, write_dataset
+from railway_sim.dataset.build import BuildResult, rolling_stock_for, write_dataset
 from railway_sim.dataset.ods import OdsReadError, read_ods
 from railway_sim.dataset.registry import StationRegistry, UnknownStationError
 from railway_sim.dataset.tra_parser import normalise_name, parse_sheet
@@ -713,6 +713,200 @@ class TestImportedDataShape:
         for route in game_data.routes.values():
             ok, reason = game_data.network.is_traversable(list(route.node_ids))
             assert ok, f"{route.id}：{reason}"
+
+
+class TestRollingStockAssignment:
+    """車種 → 車輛型式的分派（``dataset.build.rolling_stock_for``）。"""
+
+    def test_tze_chiang_uses_more_than_one_vehicle_type(
+        self, game_data: GameData
+    ) -> None:
+        """自強號是車種不是車輛型式，不能全部掛成 EMU3000。"""
+        used = {
+            s.rolling_stock_id
+            for s in game_data.services.values()
+            if s.train_type == "tze_chiang"
+        }
+        assert {"EMU3000", "TEMU1000", "TEMU2000", "PP"} <= used
+
+    def test_class_name_decides_the_vehicle_type(self) -> None:
+        assert rolling_stock_for("自強3000", set()) == "EMU3000"
+        assert rolling_stock_for("普悠瑪", set()) == "TEMU2000"
+        assert rolling_stock_for("太魯閣", set()) == "TEMU1000"
+        assert rolling_stock_for("自強", set()) == "PP"
+        assert rolling_stock_for("莒光", set()) == "CK"
+        assert rolling_stock_for("區間車", set()) == "EMU900"
+
+    def test_non_electrified_branch_forces_diesel(self) -> None:
+        """碰到非電氣化支線就是柴油客車，即使大半行程在電氣化幹線上。"""
+        assert rolling_stock_for("區間快", {"彰化", "二水", "集集", "車埕"}) == "DR1000"
+        assert rolling_stock_for("區間車", {"新竹", "竹中", "上員", "內灣"}) == "DR1000"
+        assert rolling_stock_for("區間車", {"八堵", "瑞芳", "十分", "菁桐"}) == "DR1000"
+
+    def test_liujia_line_keeps_electric_stock(self) -> None:
+        """六家線已電氣化，新竹至六家的區間車不是柴油客車。"""
+        assert rolling_stock_for("區間車", {"新竹", "北新竹", "竹中", "六家"}) == "EMU900"
+
+    def test_trunk_stations_of_a_branch_do_not_trigger_diesel(self) -> None:
+        """二水、三貂嶺、瑞芳在幹線上，只停這些站的幹線列車不受影響。"""
+        assert rolling_stock_for("區間車", {"彰化", "二水", "斗六"}) == "EMU900"
+        assert rolling_stock_for("自強", {"瑞芳", "三貂嶺", "雙溪"}) == "PP"
+
+    @pytest.mark.parametrize(
+        ("branch_station", "expected_line"),
+        [("集集", "jiji"), ("內灣", "neiwan"), ("菁桐", "pingxi"), ("八斗子", "pingxi")],
+    )
+    def test_branch_services_in_shipped_data_are_diesel(
+        self, game_data: GameData, branch_station: str, expected_line: str
+    ) -> None:
+        station = next(
+            s for s in game_data.stations.values() if s.name_zh_tw == branch_station
+        )
+        assert expected_line in station.line_ids
+        services = [
+            s
+            for s in game_data.services.values()
+            if station.id in s.stop_station_ids or station.id in s.pass_station_ids
+        ]
+        assert services, f"時刻表裡沒有停靠{branch_station}的班次"
+        assert all(s.rolling_stock_id == "DR1000" for s in services)
+
+    def test_liujia_services_in_shipped_data_are_electric(
+        self, game_data: GameData
+    ) -> None:
+        liujia = next(s for s in game_data.stations.values() if s.name_zh_tw == "六家")
+        services = [
+            s for s in game_data.services.values() if liujia.id in s.stop_station_ids
+        ]
+        assert services
+        assert all(s.rolling_stock_id == "EMU900" for s in services)
+
+    def test_liujia_is_a_stub_off_zhuzhong(self, game_data: GameData) -> None:
+        """六家由竹中分歧出去，內灣線列車不會經過六家。"""
+        ids = {s.name_zh_tw: s.id for s in game_data.stations.values()}
+        liujia = f"STA_{ids['六家']}"
+        zhuzhong = f"STA_{ids['竹中']}"
+        shangyuan = f"STA_{ids['上員']}"
+
+        assert game_data.network.link(zhuzhong, liujia) is not None
+        assert game_data.network.link(zhuzhong, shangyuan) is not None
+        assert game_data.network.link(liujia, shangyuan) is None
+
+        for route in game_data.routes.values():
+            if liujia in route.node_ids and shangyuan in route.node_ids:
+                pytest.fail(f"{route.id} 同時經過六家與上員")
+
+    def test_rolling_stock_for_sees_path_only_stations(self) -> None:
+        """車輛型式判斷必須看完整行經路徑，不能只看時刻表印出時刻的站。
+
+        對號列車時刻表只印主要車站，實際尋路可能補入時刻表沒印出來的
+        中間站；呼叫端（``build_dataset``）必須把這些站一併納入判斷，
+        單純傳入 ``served_names`` 少了它們就會漏判非電氣化支線。
+        """
+        served_names = {"樹林", "臺北"}  # 時刻表印出時刻的站，不含支線
+        path_only = {"海科館", "八斗子"}  # 只在完整路徑上出現
+        assert rolling_stock_for("自強3000", served_names) == "EMU3000"
+        assert rolling_stock_for("自強3000", served_names | path_only) == "DR1000"
+
+    def test_train_number_override_beats_class_and_branch(self) -> None:
+        """車次覆寫優先於車種與支線判斷。"""
+        assert rolling_stock_for("自強", set(), train_number="209") == "DR3100"
+        assert (
+            rolling_stock_for(
+                "自強", {"海科館", "八斗子"}, train_number="209"
+            )
+            == "DR3100"
+        )
+
+    def test_dr3100_override_applied_to_shipped_data(self, game_data: GameData) -> None:
+        """人工確認由 DR3100 擔當的車次（見 trains.json 的 DR3100 note）。"""
+        for number in ("209", "221", "238", "246"):
+            assert game_data.services[number].rolling_stock_id == "DR3100"
+
+
+class TestRuifangSijiaotingTopology:
+    """瑞芳－四腳亭是宜蘭線本線相鄰站，不應繞經深澳線分歧。
+
+    這是先前版本（此 PR 之前，即 6692c61）就存在的路網缺陷：圖裡完全沒有
+    瑞芳與四腳亭的直接連線，唯一連通路徑是深澳線分歧（瑞芳→海科館→八斗子
+    →四腳亭）。連只有兩站、時刻表明確排點 6 分鐘直達的區間車（例如 4017
+    次）都被迫繞經深澳線——證明問題出在路網本身缺一條邊，不是任何特定車次
+    的判斷邏輯。這連帶讓 157 個東部幹線班次（太魯閣、普悠瑪、自強3000 等）
+    的路徑經過深澳線車站，若車輛型式判斷改用完整路徑（如上一組測試），會把
+    它們全部誤判成 DR1000——但這些真的是電聯車，不會跑深澳線。修法是補上
+    瑞芳－四腳亭的直接連線（topology_overrides.json 的 add_station_links），
+    而不是接受繞路後將錯就錯地改車輛型式。
+    """
+
+    def test_direct_link_exists(self, game_data: GameData) -> None:
+        ids = {s.name_zh_tw: s.id for s in game_data.stations.values()}
+        ruifang = f"STA_{ids['瑞芳']}"
+        sijiaoting = f"STA_{ids['四腳亭']}"
+        assert game_data.network.link(ruifang, sijiaoting) is not None
+        assert game_data.network.link(sijiaoting, ruifang) is not None
+
+    def test_no_route_detours_through_the_shenao_branch(
+        self, game_data: GameData
+    ) -> None:
+        """深澳線車站只能出現在真的以深澳線為端點的路線上。"""
+        ids = {s.name_zh_tw: s.id for s in game_data.stations.values()}
+        haikeguan = f"STA_{ids['海科館']}"
+        badouzi = f"STA_{ids['八斗子']}"
+        branch = {haikeguan, badouzi}
+
+        for route in game_data.routes.values():
+            touched = branch & set(route.node_ids)
+            if not touched:
+                continue
+            endpoints = {route.node_ids[0], route.node_ids[-1]}
+            assert endpoints & branch, (
+                f"{route.id} 經過深澳線車站但兩端都不在深澳線上，"
+                "應該是繞路而非真的行駛深澳線"
+            )
+
+    def test_local_train_with_a_scheduled_direct_run_does_not_detour(
+        self, game_data: GameData
+    ) -> None:
+        """4017 次時刻表明確排點瑞芳直達四腳亭 6 分鐘，路徑不應繞經深澳線。"""
+        service = game_data.services["4017"]
+        route = game_data.routes[service.route_id]
+        ids = {s.name_zh_tw: s.id for s in game_data.stations.values()}
+        haikeguan = f"STA_{ids['海科館']}"
+        badouzi = f"STA_{ids['八斗子']}"
+        assert haikeguan not in route.node_ids
+        assert badouzi not in route.node_ids
+
+    def test_no_shipped_service_is_misclassified_by_a_path_detour(
+        self, game_data: GameData
+    ) -> None:
+        """迴歸測試：完整路徑經過非電氣化支線車站的班次都必須是柴油客車。
+
+        直接對照 ``dataset.build.NON_ELECTRIFIED_BRANCH_STATIONS``：任何
+        班次只要路線的完整節點序列包含清單中的車站，車輛型式就必須是
+        ``BRANCH_ROLLING_STOCK``；不符合的話代表要嘛路網又繞路了，要嘛
+        車輛型式判斷又只看了 served_names。
+        """
+        from railway_sim.dataset.build import (
+            BRANCH_ROLLING_STOCK,
+            NON_ELECTRIFIED_BRANCH_STATIONS,
+        )
+
+        offenders = []
+        for service in game_data.services.values():
+            route = game_data.routes.get(service.route_id)
+            if route is None:
+                continue
+            path_names = {
+                game_data.stations[sid].name_zh_tw
+                for sid in route.station_ids
+                if sid in game_data.stations
+            }
+            if (
+                path_names & NON_ELECTRIFIED_BRANCH_STATIONS
+                and service.rolling_stock_id != BRANCH_ROLLING_STOCK
+            ):
+                offenders.append((service.train_number, service.rolling_stock_id))
+        assert not offenders, offenders
 
 
 def _minimal_build_result() -> BuildResult:

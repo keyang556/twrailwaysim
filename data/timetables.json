@@ -137,7 +137,7 @@
       "name_zh_tw": "普悠瑪21次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0001",
       "stop_station_ids": [
         "TAITUNG",
@@ -225,7 +225,7 @@
       "name_zh_tw": "普悠瑪22次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0002",
       "stop_station_ids": [
         "SHULIN",
@@ -313,7 +313,7 @@
       "name_zh_tw": "自強101次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0003",
       "stop_station_ids": [
         "TAICHUNG",
@@ -414,7 +414,7 @@
       "name_zh_tw": "自強102次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0004",
       "stop_station_ids": [
         "DOULIU",
@@ -500,7 +500,7 @@
       "name_zh_tw": "自強103次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0005",
       "stop_station_ids": [
         "XIZHI",
@@ -637,7 +637,7 @@
       "name_zh_tw": "自強105次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0006",
       "stop_station_ids": [
         "KEELUNG",
@@ -787,7 +787,7 @@
       "name_zh_tw": "普悠瑪107次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0007",
       "stop_station_ids": [
         "NANGANG",
@@ -1035,7 +1035,7 @@
       "name_zh_tw": "自強109次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0009",
       "stop_station_ids": [
         "KEELUNG",
@@ -1401,7 +1401,7 @@
       "name_zh_tw": "自強112次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0011",
       "stop_station_ids": [
         "CHAOZHOU",
@@ -1545,7 +1545,7 @@
       "name_zh_tw": "自強113次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0012",
       "stop_station_ids": [
         "QIDU",
@@ -1623,7 +1623,7 @@
       "name_zh_tw": "自強114次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0008",
       "stop_station_ids": [
         "CHAOZHOU",
@@ -1759,7 +1759,7 @@
       "name_zh_tw": "自強115次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0009",
       "stop_station_ids": [
         "KEELUNG",
@@ -2184,7 +2184,7 @@
       "name_zh_tw": "自強118次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0013",
       "stop_station_ids": [
         "PINGTUNG",
@@ -2315,7 +2315,7 @@
       "name_zh_tw": "自強119次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0012",
       "stop_station_ids": [
         "QIDU",
@@ -2669,7 +2669,7 @@
       "name_zh_tw": "自強122次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0016",
       "stop_station_ids": [
         "CHAOZHOU",
@@ -2813,7 +2813,7 @@
       "name_zh_tw": "自強123次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0017",
       "stop_station_ids": [
         "QIDU",
@@ -2942,7 +2942,7 @@
       "name_zh_tw": "普悠瑪124次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0018",
       "stop_station_ids": [
         "CHAOZHOU",
@@ -3187,7 +3187,7 @@
       "name_zh_tw": "自強126次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0019",
       "stop_station_ids": [
         "DOUNAN",
@@ -3276,7 +3276,7 @@
       "name_zh_tw": "普悠瑪127次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0020",
       "stop_station_ids": [
         "SONGSHAN",
@@ -3331,7 +3331,7 @@
       "name_zh_tw": "自強128次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0016",
       "stop_station_ids": [
         "CHAOZHOU",
@@ -3473,7 +3473,7 @@
       "name_zh_tw": "自強129次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0006",
       "stop_station_ids": [
         "KEELUNG",
@@ -3611,7 +3611,7 @@
       "name_zh_tw": "自強130次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0021",
       "stop_station_ids": [
         "CHANGHUA",
@@ -4070,7 +4070,7 @@
       "name_zh_tw": "自強134次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0024",
       "stop_station_ids": [
         "PINGTUNG",
@@ -4211,7 +4211,7 @@
       "name_zh_tw": "自強135次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0017",
       "stop_station_ids": [
         "QIDU",
@@ -4566,7 +4566,7 @@
       "name_zh_tw": "自強138次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0013",
       "stop_station_ids": [
         "PINGTUNG",
@@ -4829,7 +4829,7 @@
       "name_zh_tw": "自強141次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0015",
       "stop_station_ids": [
         "QIDU",
@@ -4963,7 +4963,7 @@
       "name_zh_tw": "自強142次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0008",
       "stop_station_ids": [
         "CHAOZHOU",
@@ -5647,7 +5647,7 @@
       "name_zh_tw": "普悠瑪148次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0025",
       "stop_station_ids": [
         "CHANGHUA",
@@ -5705,7 +5705,7 @@
       "name_zh_tw": "自強149次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0006",
       "stop_station_ids": [
         "KEELUNG",
@@ -5847,7 +5847,7 @@
       "name_zh_tw": "自強150次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0013",
       "stop_station_ids": [
         "PINGTUNG",
@@ -5980,7 +5980,7 @@
       "name_zh_tw": "自強152次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0026",
       "stop_station_ids": [
         "CHAOZHOU",
@@ -6223,7 +6223,7 @@
       "name_zh_tw": "自強155次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0028",
       "stop_station_ids": [
         "QIDU",
@@ -6293,7 +6293,7 @@
       "name_zh_tw": "自強156次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0029",
       "stop_station_ids": [
         "PINGTUNG",
@@ -6361,7 +6361,7 @@
       "name_zh_tw": "自強157次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0030",
       "stop_station_ids": [
         "QIDU",
@@ -6425,7 +6425,7 @@
       "name_zh_tw": "自強158次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0031",
       "stop_station_ids": [
         "CHANGHUA",
@@ -7383,7 +7383,7 @@
       "name_zh_tw": "普悠瑪171次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0035",
       "stop_station_ids": [
         "SONGSHAN",
@@ -7650,7 +7650,7 @@
       "name_zh_tw": "自強173次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0036",
       "stop_station_ids": [
         "QIDU",
@@ -7739,7 +7739,7 @@
       "name_zh_tw": "自強175次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0015",
       "stop_station_ids": [
         "QIDU",
@@ -7875,7 +7875,7 @@
       "name_zh_tw": "自強176次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0037",
       "stop_station_ids": [
         "CHAOZHOU",
@@ -8011,7 +8011,7 @@
       "name_zh_tw": "普悠瑪178次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0038",
       "stop_station_ids": [
         "KAOHSIUNG",
@@ -8446,7 +8446,7 @@
       "name_zh_tw": "自強182次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0039",
       "stop_station_ids": [
         "CHANGHUA",
@@ -8832,7 +8832,7 @@
       "name_zh_tw": "自強198次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0042",
       "stop_station_ids": [
         "CHAOZHOU",
@@ -8902,7 +8902,7 @@
       "name_zh_tw": "自強199次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0043",
       "stop_station_ids": [
         "XINYING",
@@ -8972,7 +8972,7 @@
       "name_zh_tw": "普悠瑪203次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0044",
       "stop_station_ids": [
         "XINCHENG",
@@ -9111,7 +9111,7 @@
       "name_zh_tw": "自強209次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "DR3100",
       "route_id": "R_AUTO_0046",
       "stop_station_ids": [
         "SUAOXIN",
@@ -9361,7 +9361,7 @@
       "name_zh_tw": "太魯閣217次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "太魯閣",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU1000",
       "route_id": "R_AUTO_0048",
       "stop_station_ids": [
         "LUODONG",
@@ -9413,7 +9413,7 @@
       "name_zh_tw": "太魯閣218次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "太魯閣",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU1000",
       "route_id": "R_AUTO_0047",
       "stop_station_ids": [
         "SHULIN",
@@ -9475,7 +9475,7 @@
       "name_zh_tw": "普悠瑪219次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0044",
       "stop_station_ids": [
         "XINCHENG",
@@ -9545,7 +9545,7 @@
       "name_zh_tw": "自強221次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "DR3100",
       "route_id": "R_AUTO_0049",
       "stop_station_ids": [
         "NANAO",
@@ -9651,7 +9651,7 @@
       "name_zh_tw": "普悠瑪224次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0047",
       "stop_station_ids": [
         "SHULIN",
@@ -9731,7 +9731,7 @@
       "name_zh_tw": "普悠瑪228次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0047",
       "stop_station_ids": [
         "SHULIN",
@@ -9833,7 +9833,7 @@
       "name_zh_tw": "太魯閣231次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "太魯閣",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU1000",
       "route_id": "R_AUTO_0048",
       "stop_station_ids": [
         "LUODONG",
@@ -9954,7 +9954,7 @@
       "name_zh_tw": "太魯閣233次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "太魯閣",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU1000",
       "route_id": "R_AUTO_0048",
       "stop_station_ids": [
         "LUODONG",
@@ -10004,7 +10004,7 @@
       "name_zh_tw": "太魯閣234次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "太魯閣",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU1000",
       "route_id": "R_AUTO_0047",
       "stop_station_ids": [
         "SHULIN",
@@ -10064,7 +10064,7 @@
       "name_zh_tw": "普悠瑪235次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0044",
       "stop_station_ids": [
         "XINCHENG",
@@ -10140,7 +10140,7 @@
       "name_zh_tw": "普悠瑪236次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0047",
       "stop_station_ids": [
         "SHULIN",
@@ -10202,7 +10202,7 @@
       "name_zh_tw": "普悠瑪237次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0044",
       "stop_station_ids": [
         "XINCHENG",
@@ -10262,7 +10262,7 @@
       "name_zh_tw": "自強238次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "DR3100",
       "route_id": "R_AUTO_0047",
       "stop_station_ids": [
         "SHULIN",
@@ -10344,7 +10344,7 @@
       "name_zh_tw": "自強246次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "DR3100",
       "route_id": "R_AUTO_0047",
       "stop_station_ids": [
         "SHULIN",
@@ -10420,7 +10420,7 @@
       "name_zh_tw": "太魯閣248次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "太魯閣",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU1000",
       "route_id": "R_AUTO_0047",
       "stop_station_ids": [
         "SHULIN",
@@ -10621,7 +10621,7 @@
       "name_zh_tw": "普悠瑪256次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0047",
       "stop_station_ids": [
         "SHULIN",
@@ -10687,7 +10687,7 @@
       "name_zh_tw": "自強270次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0053",
       "stop_station_ids": [
         "CHIAYI",
@@ -10821,7 +10821,7 @@
       "name_zh_tw": "普悠瑪271次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0054",
       "stop_station_ids": [
         "LUODONG",
@@ -10905,7 +10905,7 @@
       "name_zh_tw": "自強272次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0055",
       "stop_station_ids": [
         "MIAOLI",
@@ -11013,7 +11013,7 @@
       "name_zh_tw": "普悠瑪273次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0054",
       "stop_station_ids": [
         "LUODONG",
@@ -11087,7 +11087,7 @@
       "name_zh_tw": "自強277次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0056",
       "stop_station_ids": [
         "XINCHENG",
@@ -11428,7 +11428,7 @@
       "name_zh_tw": "自強281次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "自強",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "PP",
       "route_id": "R_AUTO_0059",
       "stop_station_ids": [
         "XINCHENG",
@@ -11583,7 +11583,7 @@
       "name_zh_tw": "普悠瑪282次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0060",
       "stop_station_ids": [
         "CHANGHUA",
@@ -11870,7 +11870,7 @@
       "name_zh_tw": "普悠瑪288次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0060",
       "stop_station_ids": [
         "CHANGHUA",
@@ -12157,7 +12157,7 @@
       "name_zh_tw": "普悠瑪305次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0065",
       "stop_station_ids": [
         "XINZUOYING",
@@ -12356,7 +12356,7 @@
       "name_zh_tw": "普悠瑪310次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0064",
       "stop_station_ids": [
         "TAITUNG",
@@ -13041,7 +13041,7 @@
       "name_zh_tw": "普悠瑪401次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0001",
       "stop_station_ids": [
         "TAITUNG",
@@ -13127,7 +13127,7 @@
       "name_zh_tw": "普悠瑪402次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0071",
       "stop_station_ids": [
         "SHULIN",
@@ -14093,7 +14093,7 @@
       "name_zh_tw": "普悠瑪416次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0002",
       "stop_station_ids": [
         "SHULIN",
@@ -14183,7 +14183,7 @@
       "name_zh_tw": "普悠瑪417次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0074",
       "stop_station_ids": [
         "ZHIBEN",
@@ -14471,7 +14471,7 @@
       "name_zh_tw": "普悠瑪420次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0002",
       "stop_station_ids": [
         "SHULIN",
@@ -14973,7 +14973,7 @@
       "name_zh_tw": "普悠瑪425次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0001",
       "stop_station_ids": [
         "TAITUNG",
@@ -16421,7 +16421,7 @@
       "name_zh_tw": "普悠瑪443次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0073",
       "stop_station_ids": [
         "XINZUOYING",
@@ -16721,7 +16721,7 @@
       "name_zh_tw": "普悠瑪447次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0001",
       "stop_station_ids": [
         "TAITUNG",
@@ -16819,7 +16819,7 @@
       "name_zh_tw": "普悠瑪448次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0002",
       "stop_station_ids": [
         "SHULIN",
@@ -16921,7 +16921,7 @@
       "name_zh_tw": "普悠瑪452次",
       "train_type": "tze_chiang",
       "train_class_zh_tw": "普悠瑪",
-      "rolling_stock_id": "EMU3000",
+      "rolling_stock_id": "TEMU2000",
       "route_id": "R_AUTO_0075",
       "stop_station_ids": [
         "RUISUI",
@@ -17366,7 +17366,7 @@
       "name_zh_tw": "莒光501次",
       "train_type": "chu_kuang",
       "train_class_zh_tw": "莒光",
-      "rolling_stock_id": "PP",
+      "rolling_stock_id": "CK",
       "route_id": "R_AUTO_0078",
       "stop_station_ids": [
         "CHANGHUA",
@@ -17473,7 +17473,7 @@
       "name_zh_tw": "莒光503次",
       "train_type": "chu_kuang",
       "train_class_zh_tw": "莒光",
-      "rolling_stock_id": "PP",
+      "rolling_stock_id": "CK",
       "route_id": "R_AUTO_0079",
       "stop_station_ids": [
         "XINZUOYING",
@@ -17527,7 +17527,7 @@
       "name_zh_tw": "莒光554次",
       "train_type": "chu_kuang",
       "train_class_zh_tw": "莒光",
-      "rolling_stock_id": "PP",
+      "rolling_stock_id": "CK",
       "route_id": "R_AUTO_0080",
       "stop_station_ids": [
         "CHAOZHOU",
@@ -17739,7 +17739,7 @@
       "name_zh_tw": "莒光602次",
       "train_type": "chu_kuang",
       "train_class_zh_tw": "莒光",
-      "rolling_stock_id": "PP",
+      "rolling_stock_id": "CK",
       "route_id": "R_AUTO_0081",
       "stop_station_ids": [
         "JIAN",
@@ -17815,7 +17815,7 @@
       "name_zh_tw": "莒光653次",
       "train_type": "chu_kuang",
       "train_class_zh_tw": "莒光",
-      "rolling_stock_id": "PP",
+      "rolling_stock_id": "CK",
       "route_id": "R_AUTO_0082",
       "stop_station_ids": [
         "TAITUNG",
@@ -18007,7 +18007,7 @@
       "name_zh_tw": "莒光708次",
       "train_type": "chu_kuang",
       "train_class_zh_tw": "莒光",
-      "rolling_stock_id": "PP",
+      "rolling_stock_id": "CK",
       "route_id": "R_AUTO_0064",
       "stop_station_ids": [
         "TAITUNG",
@@ -18100,7 +18100,7 @@
       "name_zh_tw": "莒光727次",
       "train_type": "chu_kuang",
       "train_class_zh_tw": "莒光",
-      "rolling_stock_id": "PP",
+      "rolling_stock_id": "CK",
       "route_id": "R_AUTO_0083",
       "stop_station_ids": [
         "CHAOZHOU",
@@ -34614,7 +34614,7 @@
       "name_zh_tw": "區間車1801次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0122",
       "stop_station_ids": [
         "NEIWAN",
@@ -34672,7 +34672,7 @@
       "name_zh_tw": "區間車1802次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0123",
       "stop_station_ids": [
         "HSINCHU",
@@ -34730,7 +34730,7 @@
       "name_zh_tw": "區間車1803次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0122",
       "stop_station_ids": [
         "NEIWAN",
@@ -34788,7 +34788,7 @@
       "name_zh_tw": "區間車1804次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0123",
       "stop_station_ids": [
         "HSINCHU",
@@ -34846,7 +34846,7 @@
       "name_zh_tw": "區間車1805次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0124",
       "stop_station_ids": [
         "NEIWAN",
@@ -34892,7 +34892,7 @@
       "name_zh_tw": "區間車1806次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0123",
       "stop_station_ids": [
         "HSINCHU",
@@ -34950,7 +34950,7 @@
       "name_zh_tw": "區間車1807次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0124",
       "stop_station_ids": [
         "NEIWAN",
@@ -34996,7 +34996,7 @@
       "name_zh_tw": "區間車1808次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0125",
       "stop_station_ids": [
         "ZHUZHONG",
@@ -35042,7 +35042,7 @@
       "name_zh_tw": "區間車1811次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0124",
       "stop_station_ids": [
         "NEIWAN",
@@ -35088,7 +35088,7 @@
       "name_zh_tw": "區間車1812次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0125",
       "stop_station_ids": [
         "ZHUZHONG",
@@ -35134,7 +35134,7 @@
       "name_zh_tw": "區間車1813次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0124",
       "stop_station_ids": [
         "NEIWAN",
@@ -35180,7 +35180,7 @@
       "name_zh_tw": "區間車1814次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0125",
       "stop_station_ids": [
         "ZHUZHONG",
@@ -35226,7 +35226,7 @@
       "name_zh_tw": "區間車1815次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0124",
       "stop_station_ids": [
         "NEIWAN",
@@ -35272,7 +35272,7 @@
       "name_zh_tw": "區間車1816次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0125",
       "stop_station_ids": [
         "ZHUZHONG",
@@ -35318,7 +35318,7 @@
       "name_zh_tw": "區間車1817次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0122",
       "stop_station_ids": [
         "NEIWAN",
@@ -35376,7 +35376,7 @@
       "name_zh_tw": "區間車1818次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0125",
       "stop_station_ids": [
         "ZHUZHONG",
@@ -35422,7 +35422,7 @@
       "name_zh_tw": "區間車1819次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0124",
       "stop_station_ids": [
         "NEIWAN",
@@ -35468,7 +35468,7 @@
       "name_zh_tw": "區間車1820次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0123",
       "stop_station_ids": [
         "HSINCHU",
@@ -35526,7 +35526,7 @@
       "name_zh_tw": "區間車1821次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0124",
       "stop_station_ids": [
         "NEIWAN",
@@ -35572,7 +35572,7 @@
       "name_zh_tw": "區間車1822次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0125",
       "stop_station_ids": [
         "ZHUZHONG",
@@ -35618,7 +35618,7 @@
       "name_zh_tw": "區間車1823次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0124",
       "stop_station_ids": [
         "NEIWAN",
@@ -35664,7 +35664,7 @@
       "name_zh_tw": "區間車1824次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0125",
       "stop_station_ids": [
         "ZHUZHONG",
@@ -35710,7 +35710,7 @@
       "name_zh_tw": "區間車1825次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0124",
       "stop_station_ids": [
         "NEIWAN",
@@ -35756,7 +35756,7 @@
       "name_zh_tw": "區間車1826次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0125",
       "stop_station_ids": [
         "ZHUZHONG",
@@ -35802,7 +35802,7 @@
       "name_zh_tw": "區間車1827次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0124",
       "stop_station_ids": [
         "NEIWAN",
@@ -35848,7 +35848,7 @@
       "name_zh_tw": "區間車1828次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0125",
       "stop_station_ids": [
         "ZHUZHONG",
@@ -35894,7 +35894,7 @@
       "name_zh_tw": "區間車1831次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0122",
       "stop_station_ids": [
         "NEIWAN",
@@ -35952,7 +35952,7 @@
       "name_zh_tw": "區間車1832次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0125",
       "stop_station_ids": [
         "ZHUZHONG",
@@ -35998,7 +35998,7 @@
       "name_zh_tw": "區間車1833次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0124",
       "stop_station_ids": [
         "NEIWAN",
@@ -36044,7 +36044,7 @@
       "name_zh_tw": "區間車1834次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0123",
       "stop_station_ids": [
         "HSINCHU",
@@ -36102,7 +36102,7 @@
       "name_zh_tw": "區間車1835次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0124",
       "stop_station_ids": [
         "NEIWAN",
@@ -36148,7 +36148,7 @@
       "name_zh_tw": "區間車1836次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0125",
       "stop_station_ids": [
         "ZHUZHONG",
@@ -36194,7 +36194,7 @@
       "name_zh_tw": "區間車1837次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0124",
       "stop_station_ids": [
         "NEIWAN",
@@ -36240,7 +36240,7 @@
       "name_zh_tw": "區間車1838次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0125",
       "stop_station_ids": [
         "ZHUZHONG",
@@ -36286,7 +36286,7 @@
       "name_zh_tw": "區間車1839次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0122",
       "stop_station_ids": [
         "NEIWAN",
@@ -36344,7 +36344,7 @@
       "name_zh_tw": "區間車1841次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0122",
       "stop_station_ids": [
         "NEIWAN",
@@ -36402,7 +36402,7 @@
       "name_zh_tw": "區間車1842次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0123",
       "stop_station_ids": [
         "HSINCHU",
@@ -36460,7 +36460,7 @@
       "name_zh_tw": "區間車1843次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0122",
       "stop_station_ids": [
         "NEIWAN",
@@ -36518,7 +36518,7 @@
       "name_zh_tw": "區間車1844次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0126",
       "stop_station_ids": [
         "HSINCHU",
@@ -36561,7 +36561,7 @@
       "name_zh_tw": "區間車1845次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0122",
       "stop_station_ids": [
         "NEIWAN",
@@ -36619,7 +36619,7 @@
       "name_zh_tw": "區間車1846次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0123",
       "stop_station_ids": [
         "HSINCHU",
@@ -36677,7 +36677,7 @@
       "name_zh_tw": "區間車1847次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0122",
       "stop_station_ids": [
         "NEIWAN",
@@ -36735,7 +36735,7 @@
       "name_zh_tw": "區間車1848次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0125",
       "stop_station_ids": [
         "ZHUZHONG",
@@ -52608,7 +52608,7 @@
       "name_zh_tw": "區間快2702次",
       "train_type": "local_express",
       "train_class_zh_tw": "區間快",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0188",
       "stop_station_ids": [
         "SHUILI",
@@ -52659,7 +52659,7 @@
       "name_zh_tw": "區間快2703次",
       "train_type": "local_express",
       "train_class_zh_tw": "區間快",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0189",
       "stop_station_ids": [
         "CHANGHUA",
@@ -52713,7 +52713,7 @@
       "name_zh_tw": "區間車2704次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0190",
       "stop_station_ids": [
         "CHECHENG",
@@ -52753,7 +52753,7 @@
       "name_zh_tw": "區間車2705次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0191",
       "stop_station_ids": [
         "ERSHUI",
@@ -52793,7 +52793,7 @@
       "name_zh_tw": "區間車2706次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0190",
       "stop_station_ids": [
         "CHECHENG",
@@ -52833,7 +52833,7 @@
       "name_zh_tw": "區間快2707次",
       "train_type": "local_express",
       "train_class_zh_tw": "區間快",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0189",
       "stop_station_ids": [
         "CHANGHUA",
@@ -52887,7 +52887,7 @@
       "name_zh_tw": "區間車2708次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0190",
       "stop_station_ids": [
         "CHECHENG",
@@ -52927,7 +52927,7 @@
       "name_zh_tw": "區間車2711次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0191",
       "stop_station_ids": [
         "ERSHUI",
@@ -52967,7 +52967,7 @@
       "name_zh_tw": "區間車2712次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0190",
       "stop_station_ids": [
         "CHECHENG",
@@ -53007,7 +53007,7 @@
       "name_zh_tw": "區間車2713次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0191",
       "stop_station_ids": [
         "ERSHUI",
@@ -53047,7 +53047,7 @@
       "name_zh_tw": "區間車2714次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0190",
       "stop_station_ids": [
         "CHECHENG",
@@ -53087,7 +53087,7 @@
       "name_zh_tw": "區間車2715次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0191",
       "stop_station_ids": [
         "ERSHUI",
@@ -53127,7 +53127,7 @@
       "name_zh_tw": "區間車2716次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0190",
       "stop_station_ids": [
         "CHECHENG",
@@ -53167,7 +53167,7 @@
       "name_zh_tw": "區間車2717次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0191",
       "stop_station_ids": [
         "ERSHUI",
@@ -53207,7 +53207,7 @@
       "name_zh_tw": "區間車2718次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0190",
       "stop_station_ids": [
         "CHECHENG",
@@ -53247,7 +53247,7 @@
       "name_zh_tw": "區間車2721次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0191",
       "stop_station_ids": [
         "ERSHUI",
@@ -53287,7 +53287,7 @@
       "name_zh_tw": "區間車2722次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0190",
       "stop_station_ids": [
         "CHECHENG",
@@ -53327,7 +53327,7 @@
       "name_zh_tw": "區間車2723次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0191",
       "stop_station_ids": [
         "ERSHUI",
@@ -53367,7 +53367,7 @@
       "name_zh_tw": "區間車2724次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0190",
       "stop_station_ids": [
         "CHECHENG",
@@ -53407,7 +53407,7 @@
       "name_zh_tw": "區間車2725次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0191",
       "stop_station_ids": [
         "ERSHUI",
@@ -53447,7 +53447,7 @@
       "name_zh_tw": "區間車2726次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0190",
       "stop_station_ids": [
         "CHECHENG",
@@ -53487,7 +53487,7 @@
       "name_zh_tw": "區間車2727次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0191",
       "stop_station_ids": [
         "ERSHUI",
@@ -53527,7 +53527,7 @@
       "name_zh_tw": "區間快2728次",
       "train_type": "local_express",
       "train_class_zh_tw": "區間快",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0192",
       "stop_station_ids": [
         "CHECHENG",
@@ -88161,7 +88161,7 @@
       "name_zh_tw": "區間車4703次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0301",
       "stop_station_ids": [
         "JINGTONG",
@@ -88216,7 +88216,7 @@
       "name_zh_tw": "區間車4704次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0302",
       "stop_station_ids": [
         "RUIFANG",
@@ -88262,7 +88262,7 @@
       "name_zh_tw": "區間車4705次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0301",
       "stop_station_ids": [
         "JINGTONG",
@@ -88317,7 +88317,7 @@
       "name_zh_tw": "區間車4706次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0303",
       "stop_station_ids": [
         "BADU",
@@ -88372,7 +88372,7 @@
       "name_zh_tw": "區間車4707次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0301",
       "stop_station_ids": [
         "JINGTONG",
@@ -88427,7 +88427,7 @@
       "name_zh_tw": "區間車4708次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0302",
       "stop_station_ids": [
         "RUIFANG",
@@ -88473,7 +88473,7 @@
       "name_zh_tw": "區間車4712次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0303",
       "stop_station_ids": [
         "BADU",
@@ -88528,7 +88528,7 @@
       "name_zh_tw": "區間車4714次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0302",
       "stop_station_ids": [
         "RUIFANG",
@@ -88574,7 +88574,7 @@
       "name_zh_tw": "區間車4715次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0301",
       "stop_station_ids": [
         "JINGTONG",
@@ -88629,7 +88629,7 @@
       "name_zh_tw": "區間車4722次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0303",
       "stop_station_ids": [
         "BADU",
@@ -88684,7 +88684,7 @@
       "name_zh_tw": "區間車4733次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0301",
       "stop_station_ids": [
         "JINGTONG",
@@ -88739,7 +88739,7 @@
       "name_zh_tw": "區間車4735次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0304",
       "stop_station_ids": [
         "JINGTONG",
@@ -88785,7 +88785,7 @@
       "name_zh_tw": "區間車4737次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0301",
       "stop_station_ids": [
         "JINGTONG",
@@ -88840,7 +88840,7 @@
       "name_zh_tw": "區間車4738次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0303",
       "stop_station_ids": [
         "BADU",
@@ -88895,7 +88895,7 @@
       "name_zh_tw": "區間車4741次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0301",
       "stop_station_ids": [
         "JINGTONG",
@@ -88950,7 +88950,7 @@
       "name_zh_tw": "區間車4742次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0303",
       "stop_station_ids": [
         "BADU",
@@ -89005,7 +89005,7 @@
       "name_zh_tw": "區間車4744次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0305",
       "stop_station_ids": [
         "BADU",
@@ -89048,7 +89048,7 @@
       "name_zh_tw": "區間車4807次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0306",
       "stop_station_ids": [
         "JINGTONG",
@@ -89100,7 +89100,7 @@
       "name_zh_tw": "區間車4811次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0306",
       "stop_station_ids": [
         "JINGTONG",
@@ -89152,7 +89152,7 @@
       "name_zh_tw": "區間車4813次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0306",
       "stop_station_ids": [
         "JINGTONG",
@@ -89204,7 +89204,7 @@
       "name_zh_tw": "區間車4814次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0307",
       "stop_station_ids": [
         "BADOUZI",
@@ -89256,7 +89256,7 @@
       "name_zh_tw": "區間車4815次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0306",
       "stop_station_ids": [
         "JINGTONG",
@@ -89308,7 +89308,7 @@
       "name_zh_tw": "區間車4816次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0307",
       "stop_station_ids": [
         "BADOUZI",
@@ -89360,7 +89360,7 @@
       "name_zh_tw": "區間車4817次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0306",
       "stop_station_ids": [
         "JINGTONG",
@@ -89412,7 +89412,7 @@
       "name_zh_tw": "區間車4818次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0307",
       "stop_station_ids": [
         "BADOUZI",
@@ -89464,7 +89464,7 @@
       "name_zh_tw": "區間車4821次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0306",
       "stop_station_ids": [
         "JINGTONG",
@@ -89516,7 +89516,7 @@
       "name_zh_tw": "區間車4822次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0307",
       "stop_station_ids": [
         "BADOUZI",
@@ -89568,7 +89568,7 @@
       "name_zh_tw": "區間車4823次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0306",
       "stop_station_ids": [
         "JINGTONG",
@@ -89620,7 +89620,7 @@
       "name_zh_tw": "區間車4824次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0307",
       "stop_station_ids": [
         "BADOUZI",
@@ -89672,7 +89672,7 @@
       "name_zh_tw": "區間車4825次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0306",
       "stop_station_ids": [
         "JINGTONG",
@@ -89724,7 +89724,7 @@
       "name_zh_tw": "區間車4826次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0307",
       "stop_station_ids": [
         "BADOUZI",
@@ -89776,7 +89776,7 @@
       "name_zh_tw": "區間車4827次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0306",
       "stop_station_ids": [
         "JINGTONG",
@@ -89828,7 +89828,7 @@
       "name_zh_tw": "區間車4828次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0307",
       "stop_station_ids": [
         "BADOUZI",
@@ -89880,7 +89880,7 @@
       "name_zh_tw": "區間車4831次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0306",
       "stop_station_ids": [
         "JINGTONG",
@@ -89932,7 +89932,7 @@
       "name_zh_tw": "區間車4832次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0307",
       "stop_station_ids": [
         "BADOUZI",
@@ -89984,7 +89984,7 @@
       "name_zh_tw": "區間車4834次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0307",
       "stop_station_ids": [
         "BADOUZI",
@@ -90036,7 +90036,7 @@
       "name_zh_tw": "區間車4836次",
       "train_type": "local",
       "train_class_zh_tw": "區間車",
-      "rolling_stock_id": "EMU900",
+      "rolling_stock_id": "DR1000",
       "route_id": "R_AUTO_0307",
       "stop_station_ids": [
         "BADOUZI",
