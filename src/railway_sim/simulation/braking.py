@@ -23,6 +23,7 @@ __all__ = [
     "release_emergency",
     "required_decel_ms2",
     "service_brake_notch_for",
+    "single_brake",
 ]
 
 
@@ -61,11 +62,15 @@ def _snapshot(train: Train, *, accepted: bool, reason: str | None = None) -> Bra
 def power_up(train: Train, spec: TrainType) -> BrakeChange:
     """增加電門段位。
 
-    緊急制軔中不可加電門（§8.3）。加電門前會先把制軔緩解到 0，避免同時
-    施加牽引與制軔。
+    緊急制軔中不可加電門（§8.3），車門開啟中也不可加電門（§16.2：關門
+    確認在出發之前）。加電門前會先把制軔緩解到 0，避免同時施加牽引與制軔；
+    被連鎖擋下時**不做**這件事，否則「按了沒作用」的操作反而把制軔放掉，
+    停在站內的列車會溜逸。
     """
     if train.emergency_brake:
         return _snapshot(train, accepted=False, reason="emergency")
+    if train.any_door_open:
+        return _snapshot(train, accepted=False, reason="doors_open")
     train.brake_notch = 0
     if train.power_notch >= spec.power_notches:
         return _snapshot(train, accepted=False, reason="max_power")
@@ -98,6 +103,28 @@ def notch_down(train: Train, spec: TrainType) -> BrakeChange:
         train.brake_notch -= 1
         return _snapshot(train, accepted=True)
     return _snapshot(train, accepted=False, reason="already_coasting")
+
+
+def single_brake(train: Train, spec: TrainType) -> BrakeChange:
+    """單手把往制軔方向移動一段（OpenBVE 的 ``SINGLE_BRAKE``，預設鍵 Q）。
+
+    與 :func:`notch_down` 相反：``notch_down`` 是往中立方向走（減電門，
+    電門為 0 之後再減制軔），本函式是往制軔方向走——有電門時先減電門，
+    電門為 0 之後改為**加**制軔。因此從全電門一路按下去，就會依
+    ``P5…P1 → 惰行 → B1…B7`` 移動，與單手把主控制器的操作方式一致。
+
+    行為取自 OpenBVE ``source/TrainManager/Handles/CabHandles.cs`` 對
+    ``Command.SingleBrake`` 的處理（有電門則減電門，否則加制軔）。
+    """
+    if train.emergency_brake:
+        return _snapshot(train, accepted=False, reason="emergency")
+    if train.power_notch > 0:
+        train.power_notch -= 1
+        return _snapshot(train, accepted=True)
+    if train.brake_notch >= spec.brake_notches:
+        return _snapshot(train, accepted=False, reason="max_brake")
+    train.brake_notch += 1
+    return _snapshot(train, accepted=True)
 
 
 def release_brake(train: Train, spec: TrainType) -> BrakeChange:

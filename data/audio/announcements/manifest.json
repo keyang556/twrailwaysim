@@ -1,0 +1,1249 @@
+{
+  "meta": {
+    "description": "由 railway_sim.audio.importer 產生的匯入紀錄，僅供追溯。遊戲執行時是掃描資料夾建立索引，不讀本檔，因此手動增刪音檔不需要同步修改這裡。",
+    "count": 124
+  },
+  "entries": [
+    {
+      "file": "mountain/CHANGHUA.arrive.ogg",
+      "station_id": "CHANGHUA",
+      "station_name": "彰化",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "22彰化到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "09a6a2a9893ca60b56f74c3d93f04d8da9fd3b2932fe15a42e7d054b7205ed82"
+    },
+    {
+      "file": "mountain/CHANGHUA.next.ogg",
+      "station_id": "CHANGHUA",
+      "station_name": "彰化",
+      "kind": "next",
+      "variant": "",
+      "source_name": "22彰化.ogg",
+      "source_dir": "2山線",
+      "sha256": "9dd68efb8e7b5b006ca36fbb55cbc854f5aa25536a2e37cadc71c88d214f79c8"
+    },
+    {
+      "file": "mountain/CHENGGONG.arrive.ogg",
+      "station_id": "CHENGGONG",
+      "station_name": "成功",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "21成功到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "17ab064984560c744bc3efeabef1666e9e50e829578e2ab50488abc34851a088"
+    },
+    {
+      "file": "mountain/CHENGGONG.next.ogg",
+      "station_id": "CHENGGONG",
+      "station_name": "成功",
+      "kind": "next",
+      "variant": "",
+      "source_name": "21成功.ogg",
+      "source_dir": "2山線",
+      "sha256": "3f5b4bcf38bde00f5280441582e89b1f98fb902b3c44380783f95b8b043c2399"
+    },
+    {
+      "file": "mountain/DAQING.arrive.ogg",
+      "station_id": "DAQING",
+      "station_name": "大慶",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "18大慶到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "77e7ffe7046b6a1d804580e4b8b5f9e8f8ea799da9e1fca0fa3ea23e88f417df"
+    },
+    {
+      "file": "mountain/DAQING.next.ogg",
+      "station_id": "DAQING",
+      "station_name": "大慶",
+      "kind": "next",
+      "variant": "",
+      "source_name": "18大慶.ogg",
+      "source_dir": "2山線",
+      "sha256": "492600b419d103ba73290fb995754aaaa724ecfd82c7439420b44986f31b47b8"
+    },
+    {
+      "file": "mountain/FENGFU.arrive.ogg",
+      "station_id": "FENGFU",
+      "station_name": "豐富",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "2豐富到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "6f7cd68efae9b2bb4a85d8d0d63d5b0274fafaeda1d66afd7984e131f9773e2a"
+    },
+    {
+      "file": "mountain/FENGFU.next.ogg",
+      "station_id": "FENGFU",
+      "station_name": "豐富",
+      "kind": "next",
+      "variant": "",
+      "source_name": "2豐富.ogg",
+      "source_dir": "2山線",
+      "sha256": "b99a738e8777a9bb539f6403d251c1613754f696be86e03b54ef6d334bae8feb"
+    },
+    {
+      "file": "mountain/FENGYUAN.arrive.ogg",
+      "station_id": "FENGYUAN",
+      "station_name": "豐原",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "9豐原到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "1e698b6e3b575245d26daa657b1610737ea9102088339405369098a93fda1e1e"
+    },
+    {
+      "file": "mountain/FENGYUAN.next.ogg",
+      "station_id": "FENGYUAN",
+      "station_name": "豐原",
+      "kind": "next",
+      "variant": "",
+      "source_name": "9豐原.ogg",
+      "source_dir": "2山線",
+      "sha256": "811136219c445f440d64cb62a488ed9b2b72bbdd440f1ec78c321dfbd504917a"
+    },
+    {
+      "file": "mountain/FENGYUAN.terminus.ogg",
+      "station_id": "FENGYUAN",
+      "station_name": "豐原",
+      "kind": "terminus",
+      "variant": "",
+      "source_name": "9豐原終點.ogg",
+      "source_dir": "2山線",
+      "sha256": "eb82882bc44986364b9f6e51c927307f8039d4523d9343bfcff9b2a9f746efd5"
+    },
+    {
+      "file": "mountain/HOULI.arrive.ogg",
+      "station_id": "HOULI",
+      "station_name": "后里",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "8后里到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "b176118d3e0add6bbf4059530d33c435dee8f2342bc61ffab39f52425643dab1"
+    },
+    {
+      "file": "mountain/HOULI.next.ogg",
+      "station_id": "HOULI",
+      "station_name": "后里",
+      "kind": "next",
+      "variant": "",
+      "source_name": "8后里.ogg",
+      "source_dir": "2山線",
+      "sha256": "b3ea4a4916041e29055b7b9e5fe4cda2e9d5bcc4dfab27f8138a73739b8eaa92"
+    },
+    {
+      "file": "mountain/HOULI.terminus.ogg",
+      "station_id": "HOULI",
+      "station_name": "后里",
+      "kind": "terminus",
+      "variant": "",
+      "source_name": "8后里終點.ogg",
+      "source_dir": "2山線",
+      "sha256": "7f323da4c70dea187ba6b3ad5ac518fce685bbaecd4cae1952dae1f24d7020c1"
+    },
+    {
+      "file": "mountain/JINGWU.arrive.ogg",
+      "station_id": "JINGWU",
+      "station_name": "精武",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "15經舞蹈站.ogg",
+      "source_dir": "2山線",
+      "sha256": "41375008860b4b68bd9df73d59793e959a134cf79e67074b8fb87190626a0a5d"
+    },
+    {
+      "file": "mountain/JINGWU.next.ogg",
+      "station_id": "JINGWU",
+      "station_name": "精武",
+      "kind": "next",
+      "variant": "",
+      "source_name": "15經五.ogg",
+      "source_dir": "2山線",
+      "sha256": "f09024c081df68379815844fe037d8f1c4b7b2b243ff72c5320a82bb5d67dfec"
+    },
+    {
+      "file": "mountain/LILIN.arrive.ogg",
+      "station_id": "LILIN",
+      "station_name": "栗林",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "10麗玲到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "02e0281a8184bb21f1927da9fdacfbb4e123e539ff46e8f177ccba7f01f5c252"
+    },
+    {
+      "file": "mountain/LILIN.next.ogg",
+      "station_id": "LILIN",
+      "station_name": "栗林",
+      "kind": "next",
+      "variant": "",
+      "source_name": "10麗玲.ogg",
+      "source_dir": "2山線",
+      "sha256": "22f6669df8b823e408666327ae3b8c314b7650dc695527ce45a309dee0914a2b"
+    },
+    {
+      "file": "mountain/MIAOLI.arrive.ogg",
+      "station_id": "MIAOLI",
+      "station_name": "苗栗",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "3苗栗到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "06bffa3abd8101a3f21f8f2d630ae886512ced0fb0f587cc81e1c73b8e7d2eae"
+    },
+    {
+      "file": "mountain/MIAOLI.next.ogg",
+      "station_id": "MIAOLI",
+      "station_name": "苗栗",
+      "kind": "next",
+      "variant": "",
+      "source_name": "3苗栗.ogg",
+      "source_dir": "2山線",
+      "sha256": "09a31d057e76c9813ca7e352eacf4ed96e6619d04bd2cfc1b930fbf08f18be16"
+    },
+    {
+      "file": "mountain/NANSHI.arrive.ogg",
+      "station_id": "NANSHI",
+      "station_name": "南勢",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "4南市到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "eea2ae16ce4d6cfe0d5fe80a68dd105a1df0643979ef7f711622750db64374e7"
+    },
+    {
+      "file": "mountain/NANSHI.next.ogg",
+      "station_id": "NANSHI",
+      "station_name": "南勢",
+      "kind": "next",
+      "variant": "",
+      "source_name": "4南市.ogg",
+      "source_dir": "2山線",
+      "sha256": "5d5b73c0a28fe7bb249a62fbed00ca1a8f45bfdd3f02e8112c2173dbf16fc3af"
+    },
+    {
+      "file": "mountain/SANYI.arrive.ogg",
+      "station_id": "SANYI",
+      "station_name": "三義",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "6三義到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "8505c7e20fa5206b0681368254c813486740c2e4130f6b0a627655676f21ad87"
+    },
+    {
+      "file": "mountain/SANYI.next.ogg",
+      "station_id": "SANYI",
+      "station_name": "三義",
+      "kind": "next",
+      "variant": "",
+      "source_name": "6三義.ogg",
+      "source_dir": "2山線",
+      "sha256": "336842f0fbd1b7a35bf98c63846e4e4e5791d65cca29d2152c919858c17e44b0"
+    },
+    {
+      "file": "mountain/SONGZHU.arrive.ogg",
+      "station_id": "SONGZHU",
+      "station_name": "松竹",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "13松竹到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "79c60b5cd77719eae907b67ae9c411ac9bb3cabd69b6d96fe3341bfbc9bbcc6f"
+    },
+    {
+      "file": "mountain/SONGZHU.next.ogg",
+      "station_id": "SONGZHU",
+      "station_name": "松竹",
+      "kind": "next",
+      "variant": "",
+      "source_name": "13松竹.ogg",
+      "source_dir": "2山線",
+      "sha256": "8df8bc453992063e1bbde31637ff28a83abce25c91bfae658356c049b6dc4b2d"
+    },
+    {
+      "file": "mountain/TAIAN.arrive.ogg",
+      "station_id": "TAIAN",
+      "station_name": "泰安",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "7泰安到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "a7e49dfcd6483f8daab6616805d6fa63416fb17d3c8ec8af575d50fa85775aff"
+    },
+    {
+      "file": "mountain/TAIAN.next.ogg",
+      "station_id": "TAIAN",
+      "station_name": "泰安",
+      "kind": "next",
+      "variant": "",
+      "source_name": "7泰安.ogg",
+      "source_dir": "2山線",
+      "sha256": "afd1bf82f9aa6fec6d14627b79b131019f422abaceb1254600bc039069147046"
+    },
+    {
+      "file": "mountain/TAICHUNG.arrive.ogg",
+      "station_id": "TAICHUNG",
+      "station_name": "臺中",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "16台中到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "c498e9c7024265b41dc61656a7640a2ed676f2adac6c654f668d6b12f713e1e0"
+    },
+    {
+      "file": "mountain/TAICHUNG.next.ogg",
+      "station_id": "TAICHUNG",
+      "station_name": "臺中",
+      "kind": "next",
+      "variant": "",
+      "source_name": "16台中.ogg",
+      "source_dir": "2山線",
+      "sha256": "a1058212961552f7882d3167434160cd26dd572e6004e4ac510981552633e1cd"
+    },
+    {
+      "file": "mountain/TAICHUNG.terminus.ogg",
+      "station_id": "TAICHUNG",
+      "station_name": "臺中",
+      "kind": "terminus",
+      "variant": "",
+      "source_name": "16台中終點.ogg",
+      "source_dir": "2山線",
+      "sha256": "6d4157f49e35b4c09a4d8d95836ee5a1cc35e51eb7e84cbb05f964bcdf202da8"
+    },
+    {
+      "file": "mountain/TAIYUAN.arrive.ogg",
+      "station_id": "TAIYUAN",
+      "station_name": "太原",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "14太原到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "38366f2ad719b7c4ac9351094c1dbb9a7e077bce9d291f8e9ce8fcd17a19cbaa"
+    },
+    {
+      "file": "mountain/TAIYUAN.next.ogg",
+      "station_id": "TAIYUAN",
+      "station_name": "太原",
+      "kind": "next",
+      "variant": "",
+      "source_name": "14太原.ogg",
+      "source_dir": "2山線",
+      "sha256": "8ecc1cb15db281ec999ed6c6a1850b9f230f7955febfe4a341d81211260e00e6"
+    },
+    {
+      "file": "mountain/TANZI.arrive.ogg",
+      "station_id": "TANZI",
+      "station_name": "潭子",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "11潭子到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "ce3d34f9a1a49d3f9490c456390146d91b8d03c4e2bebac4276922320091c6c4"
+    },
+    {
+      "file": "mountain/TANZI.next.ogg",
+      "station_id": "TANZI",
+      "station_name": "潭子",
+      "kind": "next",
+      "variant": "",
+      "source_name": "11潭子.ogg",
+      "source_dir": "2山線",
+      "sha256": "c2664014cbd1cf075ec1ec8b3e9964c2a3dd915580fe24fc51f31b40864d1913"
+    },
+    {
+      "file": "mountain/TONGLUO.arrive.ogg",
+      "station_id": "TONGLUO",
+      "station_name": "銅鑼",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "5銅鑼到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "fa584d84fe7a2444bc8d66c5b73eb075948225f876428b832905815c3a6b120f"
+    },
+    {
+      "file": "mountain/TONGLUO.next.ogg",
+      "station_id": "TONGLUO",
+      "station_name": "銅鑼",
+      "kind": "next",
+      "variant": "",
+      "source_name": "5銅鑼.ogg",
+      "source_dir": "2山線",
+      "sha256": "a0ba32a4ca507d0e82b06076c82bfec22f68efe88bb53968fd41fa659320164d"
+    },
+    {
+      "file": "mountain/TOUJIACUO.arrive.ogg",
+      "station_id": "TOUJIACUO",
+      "station_name": "頭家厝",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "12頭家厝到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "f2ab9eb442b9121d37d8a0c64bed1c176f6131e55073167d09e366e513a7cb65"
+    },
+    {
+      "file": "mountain/TOUJIACUO.next.ogg",
+      "station_id": "TOUJIACUO",
+      "station_name": "頭家厝",
+      "kind": "next",
+      "variant": "",
+      "source_name": "12頭家厝.ogg",
+      "source_dir": "2山線",
+      "sha256": "eacb2428af9ce0f6893c62dc2624df3188c9a3161ad75ec23a8c53388a4c3137"
+    },
+    {
+      "file": "mountain/WUQUAN.arrive.ogg",
+      "station_id": "WUQUAN",
+      "station_name": "五權",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "17五權到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "2242d4437878b8a5db89a4c5bd5c65d21d00068ddfc388172d7e2c81a4514733"
+    },
+    {
+      "file": "mountain/WUQUAN.next.ogg",
+      "station_id": "WUQUAN",
+      "station_name": "五權",
+      "kind": "next",
+      "variant": "",
+      "source_name": "17五權.ogg",
+      "source_dir": "2山線",
+      "sha256": "f31605c93b22b3a686fe75e84f8ae84a9c5e2d2280163a7a32fd09b1276ffd9e"
+    },
+    {
+      "file": "mountain/WURI.arrive.ogg",
+      "station_id": "WURI",
+      "station_name": "烏日",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "19烏日到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "548c654592e1fe2fce9667fd808ffe957831cefb7a8dd66ca69fefe35e74a5e6"
+    },
+    {
+      "file": "mountain/WURI.next.ogg",
+      "station_id": "WURI",
+      "station_name": "烏日",
+      "kind": "next",
+      "variant": "",
+      "source_name": "19烏日.ogg",
+      "source_dir": "2山線",
+      "sha256": "1baedac871e99b88d2de5c6eb30d57b346707e20ed457e621138ddbd741364df"
+    },
+    {
+      "file": "mountain/XINWURI.arrive.ogg",
+      "station_id": "XINWURI",
+      "station_name": "新烏日",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "20新烏日到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "99cb946622c25c200815a6a85c2d304be81fdd88341377b3f05a64e757f03e34"
+    },
+    {
+      "file": "mountain/XINWURI.next.ogg",
+      "station_id": "XINWURI",
+      "station_name": "新烏日",
+      "kind": "next",
+      "variant": "",
+      "source_name": "20新烏日.ogg",
+      "source_dir": "2山線",
+      "sha256": "28b0dc98ca9e71806def7e7f6ec9f7be8e03604d0a168fe6d65873b64a7b8512"
+    },
+    {
+      "file": "mountain/ZAOQIAO.arrive.ogg",
+      "station_id": "ZAOQIAO",
+      "station_name": "造橋",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "1造橋到站.ogg",
+      "source_dir": "2山線",
+      "sha256": "7bc573860043906e5431e763631bd3332ce2c2467ed41052275ad4bb469e6200"
+    },
+    {
+      "file": "mountain/ZAOQIAO.next.ogg",
+      "station_id": "ZAOQIAO",
+      "station_name": "造橋",
+      "kind": "next",
+      "variant": "",
+      "source_name": "1造橋.ogg",
+      "source_dir": "2山線",
+      "sha256": "58603196c6cd0a34bf679810ddf7699120f9fc0d95e4427ba0145621c2addacc"
+    },
+    {
+      "file": "west_north/BADU.arrive.ogg",
+      "station_id": "BADU",
+      "station_name": "八堵",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "3八堵到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "9080475f3f58a7bd8229eddade8963867fc25c9ae3505a2e4a5977b97e8cfa35"
+    },
+    {
+      "file": "west_north/BADU.next.hualien.ogg",
+      "station_id": "BADU",
+      "station_name": "八堵",
+      "kind": "next",
+      "variant": "hualien",
+      "source_name": "3八堵(往花蓮).ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "50cf5c6b380a569e4d6d01f4a980267d83b052f3d53ba599089388338f18f29a"
+    },
+    {
+      "file": "west_north/BADU.next.keelung.ogg",
+      "station_id": "BADU",
+      "station_name": "八堵",
+      "kind": "next",
+      "variant": "keelung",
+      "source_name": "3八堵(往基隆).ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "064845b7b560ac99406e534e89e31a904b9a90a74cdb73f55f5a5b6ace49c43e"
+    },
+    {
+      "file": "west_north/BAIFU.arrive.ogg",
+      "station_id": "BAIFU",
+      "station_name": "百福",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "5百福到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "8e19d4913b88cd166f5d5c335c00abcbcac8f90dd04e7ac97e70c01d3851223c"
+    },
+    {
+      "file": "west_north/BAIFU.next.ogg",
+      "station_id": "BAIFU",
+      "station_name": "百福",
+      "kind": "next",
+      "variant": "",
+      "source_name": "5百福.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "b07cff8d0b350cca60a42f415660e1958e4573536ec8a12657050077949ee266"
+    },
+    {
+      "file": "west_north/BANQIAO.arrive.ogg",
+      "station_id": "BANQIAO",
+      "station_name": "板橋",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "13板橋到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "4325e98ffc26a7b864786a978be37b8cef76c43409cec1c556fea47498b4e4b1"
+    },
+    {
+      "file": "west_north/BANQIAO.next.ogg",
+      "station_id": "BANQIAO",
+      "station_name": "板橋",
+      "kind": "next",
+      "variant": "",
+      "source_name": "13板橋.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "80b0a6b07001cdbc67dc7900445e4b45952ff08bea61f8ff674445234eb99ac2"
+    },
+    {
+      "file": "west_north/BEIHU.arrive.ogg",
+      "station_id": "BEIHU",
+      "station_name": "北湖",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "27北湖到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "8f05c265a5153f867e038f3f5f52306af2c72b285a4121fe3ac7410bf4d323d9"
+    },
+    {
+      "file": "west_north/BEIHU.next.ogg",
+      "station_id": "BEIHU",
+      "station_name": "北湖",
+      "kind": "next",
+      "variant": "",
+      "source_name": "27北湖.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "2b7c6554cf5b78d3340e0b4d90c4ead0c7b54bb31e859ad33d41d66979876da0"
+    },
+    {
+      "file": "west_north/BEIXINZHU.arrive.ogg",
+      "station_id": "BEIXINZHU",
+      "station_name": "北新竹",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "31北新竹到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "00a34db5ee8096edd338613413632ea4c627b4c4dcfe844a1c0a7895302b9ffa"
+    },
+    {
+      "file": "west_north/BEIXINZHU.next.ogg",
+      "station_id": "BEIXINZHU",
+      "station_name": "北新竹",
+      "kind": "next",
+      "variant": "",
+      "source_name": "31北新竹.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "17618340a5d3cc7b85c8368fca9ddb405500eaa28e551f1962a720dd56d19113"
+    },
+    {
+      "file": "west_north/FENGMING.arrive.ogg",
+      "station_id": "FENGMING",
+      "station_name": "鳳鳴",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "19鳳鳴到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "e453c4f337b2cf274419a56a4b36a76db513b6f13b160b95533ae1c3b0cd295d"
+    },
+    {
+      "file": "west_north/FENGMING.next.ogg",
+      "station_id": "FENGMING",
+      "station_name": "鳳鳴",
+      "kind": "next",
+      "variant": "",
+      "source_name": "19鳳鳴.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "91ca94efb7b3e825d7719ec5df78bb3b52067837c44ff4d6b1dd2fc62dcdbf0f"
+    },
+    {
+      "file": "west_north/FUGANG.arrive.ogg",
+      "station_id": "FUGANG",
+      "station_name": "富岡",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "25富岡到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "674b5cc8b86d9ce883273d3cee24567009daa5a70104aecbc893204500910cd5"
+    },
+    {
+      "file": "west_north/FUGANG.next.ogg",
+      "station_id": "FUGANG",
+      "station_name": "富岡",
+      "kind": "next",
+      "variant": "",
+      "source_name": "25富岡.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "613b0795e7e15cb6dae4372f3457025da276f9cc200a0c5236e352086ea2a667"
+    },
+    {
+      "file": "west_north/FUZHOU.arrive.ogg",
+      "station_id": "FUZHOU",
+      "station_name": "浮洲",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "14福州到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "97d96d74508fa1d716f576b06122a2d8ce2bbf2347904b65c449ca69573beafb"
+    },
+    {
+      "file": "west_north/FUZHOU.next.ogg",
+      "station_id": "FUZHOU",
+      "station_name": "浮洲",
+      "kind": "next",
+      "variant": "",
+      "source_name": "14福州.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "a3850d3f3a23cce738c296e8dddca91cda70255a7943b220faa24c55c6c51d1b"
+    },
+    {
+      "file": "west_north/HSINCHU.arrive.ogg",
+      "station_id": "HSINCHU",
+      "station_name": "新竹",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "32新竹到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "ef85a84e3e20eeb71df0751250f0143cf6a5ba2de8e838ea8b7da406e1417ea5"
+    },
+    {
+      "file": "west_north/HSINCHU.next.ogg",
+      "station_id": "HSINCHU",
+      "station_name": "新竹",
+      "kind": "next",
+      "variant": "",
+      "source_name": "32新竹.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "f7fee94e34bae1aa895738423c225712e417542c5558f4e7d2a73753a177d1d8"
+    },
+    {
+      "file": "west_north/HUKOU.arrive.ogg",
+      "station_id": "HUKOU",
+      "station_name": "湖口",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "28湖口到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "08b50f0477bce35f24297a730bd2700044e888a79eab79b77dcf53d4324b22bf"
+    },
+    {
+      "file": "west_north/HUKOU.next.ogg",
+      "station_id": "HUKOU",
+      "station_name": "湖口",
+      "kind": "next",
+      "variant": "",
+      "source_name": "28湖口.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "492a9b00f86e8d9c1ab14afeb67fdf8593496d48f92261659dfcb9de989cc839"
+    },
+    {
+      "file": "west_north/KEELUNG.arrive.ogg",
+      "station_id": "KEELUNG",
+      "station_name": "基隆",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "1基隆到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "1329813532a8b4826ccfbfc4ea8058f2267ee7a05041b0fa033a0d6971e8a4e8"
+    },
+    {
+      "file": "west_north/KEELUNG.next.ogg",
+      "station_id": "KEELUNG",
+      "station_name": "基隆",
+      "kind": "next",
+      "variant": "",
+      "source_name": "1基隆.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "5a1f26cc820d0417afcbb07de77d3e756ef4a828fc3b7075b56c4e4baac294fe"
+    },
+    {
+      "file": "west_north/KEELUNG.terminus.ogg",
+      "station_id": "KEELUNG",
+      "station_name": "基隆",
+      "kind": "terminus",
+      "variant": "",
+      "source_name": "1基隆終點.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "2efd272760808c140de36ae814b64f823f8904f82811da353608084c2ee6104d"
+    },
+    {
+      "file": "west_north/NANGANG.arrive.ogg",
+      "station_id": "NANGANG",
+      "station_name": "南港",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "9南港到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "6c646440b0adc8c01db1e37450f8472c6cd1be6fa74cfd055eee24f78023d5a5"
+    },
+    {
+      "file": "west_north/NANGANG.next.ogg",
+      "station_id": "NANGANG",
+      "station_name": "南港",
+      "kind": "next",
+      "variant": "",
+      "source_name": "9南港.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "4ebabe9b31b3ce0d61cb65fa0f5e60af5088fe3cae33e1cb6c4549e3e364153c"
+    },
+    {
+      "file": "west_north/NANSHULIN.arrive.ogg",
+      "station_id": "NANSHULIN",
+      "station_name": "南樹林",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "16楠樹林到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "061b8888d8ead9f83afe8601d58a7774916a21ac3873cda01bfee755052444fd"
+    },
+    {
+      "file": "west_north/NANSHULIN.next.ogg",
+      "station_id": "NANSHULIN",
+      "station_name": "南樹林",
+      "kind": "next",
+      "variant": "",
+      "source_name": "16楠樹林.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "dca02fb25db6bfe412a3731a8b1036873d7e2ac33ba1920823f1c02f3f99f713"
+    },
+    {
+      "file": "west_north/NEILI.arrive.ogg",
+      "station_id": "NEILI",
+      "station_name": "內壢",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "21內壢到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "9304ac9012390d61697f17704ad26b8fe3be097074f1a29ebbcc93fcdf0f71cc"
+    },
+    {
+      "file": "west_north/NEILI.next.ogg",
+      "station_id": "NEILI",
+      "station_name": "內壢",
+      "kind": "next",
+      "variant": "",
+      "source_name": "21內壢.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "433bdf8b3059079ca63f6aa66d122e8aa0a5fe2c5febd69593cce1a3fdac6d49"
+    },
+    {
+      "file": "west_north/PUXIN.arrive.ogg",
+      "station_id": "PUXIN",
+      "station_name": "埔心",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "23普興到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "ca2428b9c761b086cd87308010cd9a29d639e3e799152206bdfebdf88f28dd2a"
+    },
+    {
+      "file": "west_north/PUXIN.next.ogg",
+      "station_id": "PUXIN",
+      "station_name": "埔心",
+      "kind": "next",
+      "variant": "",
+      "source_name": "23普興.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "1e3d540a1f65b6dce3400f9e877ae029c0fdc753c8530e38e07d2e8bd0cf63c1"
+    },
+    {
+      "file": "west_north/QIDING.arrive.ogg",
+      "station_id": "QIDING",
+      "station_name": "崎頂",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "35崎頂到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "fb95d7ad4c49d734dd872ecf3efa4b22d86740bf58dfba2de49ec0ab781ad1da"
+    },
+    {
+      "file": "west_north/QIDING.next.ogg",
+      "station_id": "QIDING",
+      "station_name": "崎頂",
+      "kind": "next",
+      "variant": "",
+      "source_name": "35崎頂.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "b5af6f5a4343f9663176619f16ef3f1bb601cf3b58a84a768f0dd0b94616bff2"
+    },
+    {
+      "file": "west_north/QIDU.arrive.ogg",
+      "station_id": "QIDU",
+      "station_name": "七堵",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "4七堵到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "773f6c056ea64b5d7a0c83c1815fc0356225db94ecd7dfeaedfe4ec8dcdfd2e7"
+    },
+    {
+      "file": "west_north/QIDU.next.hualien.ogg",
+      "station_id": "QIDU",
+      "station_name": "七堵",
+      "kind": "next",
+      "variant": "hualien",
+      "source_name": "4七堵(往花蓮).ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "34e028642cffc7115b1bc0a6a9519cd7a4ea2e23840cb5d00b40ad9d5bb38ed5"
+    },
+    {
+      "file": "west_north/QIDU.next.keelung.ogg",
+      "station_id": "QIDU",
+      "station_name": "七堵",
+      "kind": "next",
+      "variant": "keelung",
+      "source_name": "4七堵(往基隆).ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "13da85560ae127df99ddbf830191885216f105329dcc02b734019ebac0843d0b"
+    },
+    {
+      "file": "west_north/QIDU.terminus.ogg",
+      "station_id": "QIDU",
+      "station_name": "七堵",
+      "kind": "terminus",
+      "variant": "",
+      "source_name": "4七堵終點.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "b6150491abdc1afdde3cc4623a0e6300aaee1574d41480bff28a0fcb88cbd419"
+    },
+    {
+      "file": "west_north/SANKENG.arrive.ogg",
+      "station_id": "SANKENG",
+      "station_name": "三坑",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "2三坑到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "d2dc51a729fe5b12ce7d3966940e3171dd455efd0c45dd0e9b01d37639b481aa"
+    },
+    {
+      "file": "west_north/SANKENG.next.ogg",
+      "station_id": "SANKENG",
+      "station_name": "三坑",
+      "kind": "next",
+      "variant": "",
+      "source_name": "2三坑.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "008dc168f42371ab08b836702a93a9e16552cdade05531d7f7b1bfff2486b77c"
+    },
+    {
+      "file": "west_north/SANXINGQIAO.arrive.ogg",
+      "station_id": "SANXINGQIAO",
+      "station_name": "三姓橋",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "33三性橋到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "a9f64b34482980dc47fa343b0d86b27ed8adc85ee2eb60f4221d1f67a15267ea"
+    },
+    {
+      "file": "west_north/SANXINGQIAO.next.ogg",
+      "station_id": "SANXINGQIAO",
+      "station_name": "三姓橋",
+      "kind": "next",
+      "variant": "",
+      "source_name": "33三性橋.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "477e99a61bfe9a2dd6c6fc86fac214664e8c18c1e2425410798721dfa345effb"
+    },
+    {
+      "file": "west_north/SHANJIA.arrive.ogg",
+      "station_id": "SHANJIA",
+      "station_name": "山佳",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "17山佳到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "cbdc08898a56125b81ec35735cb71d1eb17a22151b90305eb4eb375dae43d5cb"
+    },
+    {
+      "file": "west_north/SHANJIA.next.ogg",
+      "station_id": "SHANJIA",
+      "station_name": "山佳",
+      "kind": "next",
+      "variant": "",
+      "source_name": "17山佳.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "3511d6cf62cd468d83a3101598f3d9e33583196f74fc70ed590703b3afb696cd"
+    },
+    {
+      "file": "west_north/SHULIN.arrive.ogg",
+      "station_id": "SHULIN",
+      "station_name": "樹林",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "15樹林到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "c82cd96eb6883487201dfd2c2e3eac72240e3bcb03c8fb700e393bba230794aa"
+    },
+    {
+      "file": "west_north/SHULIN.next.ogg",
+      "station_id": "SHULIN",
+      "station_name": "樹林",
+      "kind": "next",
+      "variant": "",
+      "source_name": "15樹林.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "0ea9a5b7682755e09efbf00135c9548464eea5a622020b234d04021148b18615"
+    },
+    {
+      "file": "west_north/SHULIN.terminus.ogg",
+      "station_id": "SHULIN",
+      "station_name": "樹林",
+      "kind": "terminus",
+      "variant": "",
+      "source_name": "15樹林終點.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "91e30a7ce354dc68c528c620411b1863bbb0d7bde0d41a3f2b58dc9b801b8d8a"
+    },
+    {
+      "file": "west_north/SONGSHAN.arrive.ogg",
+      "station_id": "SONGSHAN",
+      "station_name": "松山",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "10松山到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "97766e4c0615df79e149fec42cbb82a719ffcb92aebda93ff43cc21efca11715"
+    },
+    {
+      "file": "west_north/SONGSHAN.next.ogg",
+      "station_id": "SONGSHAN",
+      "station_name": "松山",
+      "kind": "next",
+      "variant": "",
+      "source_name": "10松山.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "98205dc161570372a796a173daa7409b77a03885f56f09aed3794a5d24ab243d"
+    },
+    {
+      "file": "west_north/TAIPEI.arrive.ogg",
+      "station_id": "TAIPEI",
+      "station_name": "臺北",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "11台北到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "9d5bf268e4c038c90aa2d1cdd8c8512890698376bbb527ab4749b19e5b54cdb3"
+    },
+    {
+      "file": "west_north/TAIPEI.next.ogg",
+      "station_id": "TAIPEI",
+      "station_name": "臺北",
+      "kind": "next",
+      "variant": "",
+      "source_name": "11台北.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "a8a59f53c26246aa3fdb7ef66ee352c77e45d939fe69ca2ce81a460daa03040c"
+    },
+    {
+      "file": "west_north/TAOYUAN.arrive.ogg",
+      "station_id": "TAOYUAN",
+      "station_name": "桃園",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "20桃園到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "b0b7b23520298c310ff6abaeddd769861fd64406088f8728c85104b4b9aef906"
+    },
+    {
+      "file": "west_north/TAOYUAN.next.ogg",
+      "station_id": "TAOYUAN",
+      "station_name": "桃園",
+      "kind": "next",
+      "variant": "",
+      "source_name": "20桃園.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "6ba23db8d35633d6a8a043c0f79a3139085faf3b8fa3edbef936dbeea41daf88"
+    },
+    {
+      "file": "west_north/WANHUA.arrive.ogg",
+      "station_id": "WANHUA",
+      "station_name": "萬華",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "12萬華到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "8c4d1dc5458ffd55c691c8880aebc2ec67b02e1565711e74ef09bf405e8a5f36"
+    },
+    {
+      "file": "west_north/WANHUA.next.ogg",
+      "station_id": "WANHUA",
+      "station_name": "萬華",
+      "kind": "next",
+      "variant": "",
+      "source_name": "12萬華.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "ae195605715fe946d0305f65e20c4ceba809bbc03cdf3d01e60a228ba7c6813a"
+    },
+    {
+      "file": "west_north/WUDU.arrive.ogg",
+      "station_id": "WUDU",
+      "station_name": "五堵",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "6五堵到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "238ba683b62630d1fc030977e6d76be509cd51e68a7e63f710ae7ddce0015108"
+    },
+    {
+      "file": "west_north/WUDU.next.ogg",
+      "station_id": "WUDU",
+      "station_name": "五堵",
+      "kind": "next",
+      "variant": "",
+      "source_name": "6五堵.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "21ea40c5a64d3ecd4c18c3e2a3946c9cdc9d75d9cf0479587d2a33e854a7cef1"
+    },
+    {
+      "file": "west_north/XIANGSHAN.arrive.ogg",
+      "station_id": "XIANGSHAN",
+      "station_name": "香山",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "34香山到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "c8a45edc245fc12dc57295fc06275903dc9663291efaaa2945aa5a734618647b"
+    },
+    {
+      "file": "west_north/XIANGSHAN.next.ogg",
+      "station_id": "XIANGSHAN",
+      "station_name": "香山",
+      "kind": "next",
+      "variant": "",
+      "source_name": "34香山.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "6a448b0ccafb507bbbdc916b8cf63bc8cbd2cfbbfe18cf02d5ec15c4bffb77f3"
+    },
+    {
+      "file": "west_north/XIKE.arrive.ogg",
+      "station_id": "XIKE",
+      "station_name": "汐科",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "8汐科到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "8bad42fc85acc08c9541d260b0f7bc35df4a05894eedfd00f35807423eac0bec"
+    },
+    {
+      "file": "west_north/XIKE.next.ogg",
+      "station_id": "XIKE",
+      "station_name": "汐科",
+      "kind": "next",
+      "variant": "",
+      "source_name": "8汐科.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "683c8c627856e477472a627c9c4eead6052dab9b750f6d98b43c4740f608fda8"
+    },
+    {
+      "file": "west_north/XINFENG.arrive.ogg",
+      "station_id": "XINFENG",
+      "station_name": "新豐",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "29新豐到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "7a3174c07abf055013df769e31b8fe64fe1e9f0a94e8d088a6fec40ef4f29306"
+    },
+    {
+      "file": "west_north/XINFENG.next.ogg",
+      "station_id": "XINFENG",
+      "station_name": "新豐",
+      "kind": "next",
+      "variant": "",
+      "source_name": "29新豐.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "b56a5183e542a3d34d32549a607afe309701b438ea0a85691a78d5fbc47553a3"
+    },
+    {
+      "file": "west_north/XINFU.arrive.ogg",
+      "station_id": "XINFU",
+      "station_name": "新富",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "26新富到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "98beeab56c359e83c4415c9a271e875568424f9c8a4687297914ef8a7fa8d33e"
+    },
+    {
+      "file": "west_north/XINFU.next.ogg",
+      "station_id": "XINFU",
+      "station_name": "新富",
+      "kind": "next",
+      "variant": "",
+      "source_name": "26新富.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "6683980ede9ba59ba4c208ae22983a38eb4666566c57f99ce2d9814d47dc9807"
+    },
+    {
+      "file": "west_north/XIZHI.arrive.ogg",
+      "station_id": "XIZHI",
+      "station_name": "汐止",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "7汐止到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "d4197ddbfa524622ec7a8161d7d547b4978e0bebdaf142f8a7113af14e673021"
+    },
+    {
+      "file": "west_north/XIZHI.next.ogg",
+      "station_id": "XIZHI",
+      "station_name": "汐止",
+      "kind": "next",
+      "variant": "",
+      "source_name": "7汐止.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "5bfd6607c7ec9b6eddb9676ad05009029d071d25123d169337201f699e2e088b"
+    },
+    {
+      "file": "west_north/YANGMEI.arrive.ogg",
+      "station_id": "YANGMEI",
+      "station_name": "楊梅",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "24楊梅到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "de3818588cc573b013c4010e41d3945d03cdd83f5399957f7a8afa7cecea5fad"
+    },
+    {
+      "file": "west_north/YANGMEI.next.ogg",
+      "station_id": "YANGMEI",
+      "station_name": "楊梅",
+      "kind": "next",
+      "variant": "",
+      "source_name": "24楊梅.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "4ae492496cbef9512244bd1b2420061cec5d3b657773dd874df1bb484b01ad30"
+    },
+    {
+      "file": "west_north/YINGGE.arrive.ogg",
+      "station_id": "YINGGE",
+      "station_name": "鶯歌",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "18鶯歌到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "bf41deda1ce0939adaa57310a0e45c47b2d318c99e06b29718afc20720749ba1"
+    },
+    {
+      "file": "west_north/YINGGE.next.ogg",
+      "station_id": "YINGGE",
+      "station_name": "鶯歌",
+      "kind": "next",
+      "variant": "",
+      "source_name": "18鶯歌.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "0a31bc1c0c0cf1c41bbef715ee134e74807b63868d1588d4a394b2d335fcd301"
+    },
+    {
+      "file": "west_north/ZHONGLI.arrive.ogg",
+      "station_id": "ZHONGLI",
+      "station_name": "中壢",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "22中壢到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "30dfa44adf3dfe63d708a08a7af0143574d7c819e89c39566dc16e5a4a35e7d0"
+    },
+    {
+      "file": "west_north/ZHONGLI.next.ogg",
+      "station_id": "ZHONGLI",
+      "station_name": "中壢",
+      "kind": "next",
+      "variant": "",
+      "source_name": "22中壢.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "29e1fe155546ab7fc08132e269a118e4bfc88cb602e11c961bda8236f8d52381"
+    },
+    {
+      "file": "west_north/ZHUBEI.arrive.ogg",
+      "station_id": "ZHUBEI",
+      "station_name": "竹北",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "30竹北到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "8374fef21ba0748f1442fa7f30bd8151b3282a078a0ef0418174d26408ec443f"
+    },
+    {
+      "file": "west_north/ZHUBEI.next.ogg",
+      "station_id": "ZHUBEI",
+      "station_name": "竹北",
+      "kind": "next",
+      "variant": "",
+      "source_name": "30竹北.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "49375937874b2c80bc12d09694e2ee91748ab933da3b87652817499325d6b452"
+    },
+    {
+      "file": "west_north/ZHUNAN.arrive.ogg",
+      "station_id": "ZHUNAN",
+      "station_name": "竹南",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "36竹南到站.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "081e0a3b860c805a1eeb8f3f9c82f0f93b61d784885872e01c776cc8f5bed40f"
+    },
+    {
+      "file": "west_north/ZHUNAN.next.ogg",
+      "station_id": "ZHUNAN",
+      "station_name": "竹南",
+      "kind": "next",
+      "variant": "",
+      "source_name": "36竹南.ogg",
+      "source_dir": "1縱貫北",
+      "sha256": "5aa6b29faa0adb38f30c9c1235148e9177e300adbda18ab75afc97fe95953bf3"
+    }
+  ],
+  "unresolved": []
+}

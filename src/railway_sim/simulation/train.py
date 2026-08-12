@@ -24,6 +24,9 @@ class TrainType:
         emergency_brake_ms2: 緊急制軔的減速度。
         resistance_ms2: 行駛阻力係數 ``(r0, r1, r2)``，
             阻力 = ``r0 + r1 * v + r2 * v²``（``v`` 單位為公尺／秒）。
+        has_broadcast: 有無車上自動廣播設備。DR1000 型柴油客車沒有，因此
+            該型車不播放到站與下一站廣播（§20.2）。以資料欄位表示而不是在
+            程式裡寫死車型代碼，日後多一型沒有廣播的車只要改資料。
     """
 
     id: str
@@ -38,6 +41,7 @@ class TrainType:
     power_corner_speed_kmh: float = 45.0
     resistance_ms2: tuple[float, float, float] = (0.02, 0.0005, 0.00035)
     verification_status: str = "test_data"
+    has_broadcast: bool = True
 
     @classmethod
     def from_dict(cls, raw: dict[str, Any]) -> TrainType:
@@ -54,6 +58,7 @@ class TrainType:
             power_corner_speed_kmh=float(raw.get("power_corner_speed_kmh", 45.0)),
             resistance_ms2=tuple(raw.get("resistance_ms2", (0.02, 0.0005, 0.00035))),  # type: ignore[arg-type]
             verification_status=raw.get("verification_status", "test_data"),
+            has_broadcast=bool(raw.get("has_broadcast", True)),
         )
 
 
@@ -72,6 +77,8 @@ class Train:
     power_notch: int = 0
     brake_notch: int = 0
     emergency_brake: bool = False
+    left_doors_open: bool = False
+    right_doors_open: bool = False
     position_m: float = 0.0
     direction: str = "southbound"
     current_route_id: str = ""
@@ -91,6 +98,11 @@ class Train:
     def is_stopped(self) -> bool:
         """速度低於 0.1 公里／小時即視為停妥。"""
         return self.current_speed_kmh < 0.1
+
+    @property
+    def any_door_open(self) -> bool:
+        """任一側車門開啟中。出發前必須為 ``False``（§16.2）。"""
+        return self.left_doors_open or self.right_doors_open
 
     @property
     def rear_position_m(self) -> float:

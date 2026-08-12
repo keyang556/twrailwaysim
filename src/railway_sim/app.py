@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from railway_sim import __version__
 from railway_sim.accessibility.announcer import Announcer
 from railway_sim.accessibility.speech import create_speech_sink
+from railway_sim.audio.player import AudioPlayer, create_player
 from railway_sim.data_loader import GameData, load_game_data
 from railway_sim.input.keymap import Keymap
 from railway_sim.roles.driver import DriverSession
@@ -139,7 +140,9 @@ def start_choice_key(scenario: Scenario) -> str:
     return f"{SCENARIO_KEY_PREFIX}{scenario.id}"
 
 
-def start_session(data: GameData, key: str) -> tuple[DriverSession, Announcer]:
+def start_session(
+    data: GameData, key: str, player: AudioPlayer | None = None
+) -> tuple[DriverSession, Announcer]:
     """由識別字串建立工作階段，供視窗介面在遊戲中換車次。"""
     if key.startswith(SCENARIO_KEY_PREFIX):
         scenario = SCENARIOS[key[len(SCENARIO_KEY_PREFIX) :]]
@@ -148,7 +151,7 @@ def start_session(data: GameData, key: str) -> tuple[DriverSession, Announcer]:
     else:
         scenario = scenario_for_service(data, key)
     announcer = Announcer()
-    return build_session(data, scenario, announcer), announcer
+    return build_session(data, scenario, announcer, player), announcer
 
 
 def start_choices(data: GameData) -> list:
@@ -230,12 +233,14 @@ def build_session(
     data: GameData,
     scenario: Scenario,
     announcer: Announcer | None = None,
+    player: AudioPlayer | None = None,
 ) -> DriverSession:
     """依情境建立司機員工作階段。"""
     session = DriverSession(
         data=data,
         service=data.service(scenario.service_number),
         announcer=announcer or Announcer(),
+        player=player,
     )
     if scenario.obstruction_at_m is not None:
         session.add_obstruction("T_FAULT", scenario.obstruction_at_m)
@@ -310,6 +315,14 @@ def _build_parser() -> argparse.ArgumentParser:
         help=(
             "鍵位配置。預設 driver：與 OpenBVE 相同的鍵位。"
             "driver_legacy 為先前的 D 電門／A 制軔配置。"
+        ),
+    )
+    parser.add_argument(
+        "--no-audio",
+        action="store_true",
+        help=(
+            "不播放車上廣播音檔。廣播內容仍會以文字送出（規格 §20.1），"
+            "因此關掉聲音不會少掉任何資訊。"
         ),
     )
     parser.add_argument(
@@ -413,6 +426,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"{exc.args[0]}。用 --list-services 查詢可用車次。", file=sys.stderr)
         return 2
     speak = create_speech_sink()
+    # 播放後端是選用的：放不出聲音時廣播仍以文字送出（§20.1）。
+    player = None if args.no_audio else create_player()
 
     if args.ui == "wx":
         try:
@@ -430,16 +445,26 @@ def main(argv: list[str] | None = None) -> int:
         # 沒有指定車次時先開車次選擇視窗：視窗版沒有命令列可以下 --service，
         # 少了這一步，安裝版就永遠只能開同一個預設車次。
         initial_key = None if scenario is None else start_choice_key(scenario)
-        return run_wx(
-            start_choices(data),
-            lambda key: start_session(data, key),
-            keymap,
-            speak,
-            initial_key=initial_key,
-        )
+        try:
+            return run_wx(
+                start_choices(data),
+                lambda key: start_session(data, key, player),
+                keymap,
+                speak,
+                initial_key=initial_key,
+            )
+        finally:
+            if player is not None:
+                player.close()
 
     from railway_sim.ui.console_app import ConsoleApp
 
     announcer = Announcer()
-    session = build_session(data, scenario or SCENARIOS[DEFAULT_SCENARIO], announcer)
-    return ConsoleApp(session, keymap, announcer, speak).run()
+    session = build_session(
+        data, scenario or SCENARIOS[DEFAULT_SCENARIO], announcer, player
+    )
+    try:
+        return ConsoleApp(session, keymap, announcer, speak).run()
+    finally:
+        if player is not None:
+            player.close()

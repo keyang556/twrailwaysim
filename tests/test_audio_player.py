@@ -1,0 +1,104 @@
+"""播放後端測試（規格 §20.1）。
+
+播放能力是選用的：這台機器有沒有後端、檔案在不在、播放成不成功，都不可
+以變成例外。這些測試刻意**不驗證有沒有聲音**——那需要音效裝置，也不是
+遊戲功能的必要條件。
+"""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+from railway_sim.audio.player import AudioPlayer, create_player
+
+
+class SilentBackend:
+    """不出聲的後端，只記下被要求播了什麼。"""
+
+    name = "silent"
+
+    def __init__(self) -> None:
+        self.started: list[str] = []
+        self.stopped = 0
+        self.closed = 0
+
+    def start(self, path: Path) -> bool:
+        self.started.append(path.name)
+        return True
+
+    def is_busy(self) -> bool:
+        return False
+
+    def stop(self) -> None:
+        self.stopped += 1
+
+    def close(self) -> None:
+        self.closed += 1
+
+
+class TestCreatePlayer:
+    def test_never_raises(self) -> None:
+        """沒有任何後端時回傳 None，不是例外。"""
+        player = create_player()
+        try:
+            assert player is None or isinstance(player, AudioPlayer)
+        finally:
+            if player is not None:
+                player.close()
+
+
+class TestQueueing:
+    def _player(self) -> tuple[AudioPlayer, SilentBackend]:
+        backend = SilentBackend()
+        return AudioPlayer(backend), backend  # type: ignore[arg-type]
+
+    def test_missing_file_is_not_an_error(self, tmp_path: Path) -> None:
+        player, backend = self._player()
+        try:
+            assert player.play(tmp_path / "沒有這個檔.ogg") is False
+            assert backend.started == []
+        finally:
+            player.close()
+
+    def test_existing_file_is_queued(self, tmp_path: Path) -> None:
+        clip = tmp_path / "TAIPEI.next.ogg"
+        clip.write_bytes(b"clip")
+        player, backend = self._player()
+        try:
+            assert player.play(clip) is True
+            player._queue.join()
+            assert backend.started == ["TAIPEI.next.ogg"]
+        finally:
+            player.close()
+
+    def test_close_is_idempotent(self, tmp_path: Path) -> None:
+        player, backend = self._player()
+        player.close()
+        player.close()
+        assert backend.closed == 1
+        assert player.available is False
+
+    def test_play_after_close_is_refused(self, tmp_path: Path) -> None:
+        clip = tmp_path / "TAIPEI.next.ogg"
+        clip.write_bytes(b"clip")
+        player, _ = self._player()
+        player.close()
+        assert player.play(clip) is False
+
+    def test_queue_does_not_grow_without_bound(self, tmp_path: Path) -> None:
+        """廣播很長，堆積太多只會嚴重落後於列車位置，不如丟掉。"""
+        clip = tmp_path / "TAIPEI.next.ogg"
+        clip.write_bytes(b"clip")
+
+        class BusyBackend(SilentBackend):
+            def is_busy(self) -> bool:
+                return True
+
+        backend = BusyBackend()
+        player = AudioPlayer(backend)  # type: ignore[arg-type]
+        try:
+            accepted = [player.play(clip) for _ in range(20)]
+            assert accepted.count(True) <= 6
+            assert accepted[-1] is False
+        finally:
+            player.close()

@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "meta": {
+    "description": "把整理前的臺鐵廣播檔名翻譯成程式可索引的形式。由 python -m railway_sim.audio import 讀取。",
+    "naming_note": "來源檔名格式為「站序編號＋站名＋（可省略的）到站／終點＋（可省略的）方向括號」，例如 14福州到站.ogg、3八堵(往基隆).ogg。站序編號只是給人排序用，匯入時直接去掉。",
+    "alias_policy": "station_aliases 只收「來源檔名的站名與官方站名不一致」的項目，其餘一律由 stations.json 的 name_zh_tw 直接比對。台／臺為異體字，程式已自動正規化，不需要列在這裡。",
+    "update_policy": "新增一條線只要在 line_ids 加一筆；修正一個錯字只要在 station_aliases 加一筆。程式不寫死任何站名對應。"
+  },
+  "line_ids": {
+    "1縱貫北": "west_north",
+    "2山線": "mountain",
+    "3海線": "coast",
+    "4縱貫南": "west_south",
+    "5屏東": "pingtung",
+    "6宜蘭": "yilan",
+    "7北迴": "north_link",
+    "8台東": "taitung",
+    "9南迴": "south_link",
+    "共用": "common"
+  },
+  "kind_suffixes": {
+    "到站": "arrive",
+    "終點": "terminus"
+  },
+  "variant_names": {
+    "往基隆": "keelung",
+    "往花蓮": "hualien"
+  },
+  "station_aliases": {
+    "福州": "浮洲",
+    "楠樹林": "南樹林",
+    "普興": "埔心",
+    "三性橋": "三姓橋",
+    "麗玲": "栗林",
+    "南市": "南勢",
+    "經五": "精武"
+  },
+  "filename_aliases": {
+    "經舞蹈站": "精武到站"
+  }
+}

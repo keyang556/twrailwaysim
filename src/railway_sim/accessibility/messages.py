@@ -14,12 +14,21 @@ from __future__ import annotations
 
 __all__ = [
     "DIRECTION_NAMES",
+    "DOOR_SIDE_NAMES",
     "SIGNAL_ASPECT_NAMES",
     "STOP_KIND_NAMES",
     "approaching_speed_limit",
     "approaching_stop_point",
     "brake_notch",
+    "broadcast_arriving",
+    "broadcast_doors",
+    "broadcast_next_stop",
+    "broadcast_terminus",
     "distance_phrase",
+    "door_blocked_by_movement",
+    "door_closed",
+    "door_opened",
+    "door_status",
     "emergency_brake_applied",
     "emergency_brake_released",
     "horn",
@@ -28,6 +37,7 @@ __all__ = [
     "num_to_zh",
     "overspeed",
     "position_report",
+    "power_blocked_by_doors",
     "power_notch",
     "signal_report",
     "speed_report",
@@ -134,6 +144,11 @@ STOP_KIND_NAMES: dict[str, str] = {
     "conditional": "依班次停靠",
 }
 
+DOOR_SIDE_NAMES: dict[str, str] = {
+    "left": "左側",
+    "right": "右側",
+}
+
 
 # ----------------------------------------------------------------------
 # 操作回饋（§7.2：每次按鍵都應提供文字回饋）
@@ -178,6 +193,66 @@ def power_blocked_by_emergency() -> str:
 
 
 # ----------------------------------------------------------------------
+# 車門（§16.1、§20.2；鍵位取自 OpenBVE 的 DOORS_LEFT／DOORS_RIGHT）
+# ----------------------------------------------------------------------
+def _side_name(side: str) -> str:
+    return DOOR_SIDE_NAMES.get(side, side)
+
+
+def door_opened(side: str) -> str:
+    return f"{_side_name(side)}車門開啟。"
+
+
+def door_closed(side: str) -> str:
+    return f"{_side_name(side)}車門關閉。"
+
+
+def door_blocked_by_movement(side: str) -> str:
+    """行進中不得開門（§9.3：通過站不開門，延伸為列車未停妥不得開門）。"""
+    return f"列車尚未停妥，無法開啟{_side_name(side)}車門。"
+
+
+def power_blocked_by_doors() -> str:
+    """車門未關妥不得起動（§16.2 出發流程：關門確認在出發之前）。"""
+    return "車門開啟中，無法加電門。請先關閉車門。"
+
+
+def door_status(left_open: bool, right_open: bool) -> str:
+    """車門狀態總覽。"""
+    if not left_open and not right_open:
+        return "車門：全部關閉。"
+    sides = [
+        name
+        for name, is_open in ((DOOR_SIDE_NAMES["left"], left_open),
+                              (DOOR_SIDE_NAMES["right"], right_open))
+        if is_open
+    ]
+    return f"車門：{'、'.join(sides)}開啟中。"
+
+
+# ----------------------------------------------------------------------
+# 車上廣播（§20.2）
+# ----------------------------------------------------------------------
+# 以下是廣播內容的**摘要**，不是逐字稿：實際音檔含國語、臺語、客語與英語，
+# 逐字稿無法由檔名得知，寫成摘要才不會虛構內容（§2.3）。
+def broadcast_next_stop(name: str) -> str:
+    return f"車內廣播：下一站，{name}。"
+
+
+def broadcast_arriving(name: str) -> str:
+    return f"車內廣播：{name}站快到了。"
+
+
+def broadcast_terminus(name: str) -> str:
+    return f"車內廣播：終點站{name}快到了。"
+
+
+def broadcast_doors(side: str, *, opening: bool) -> str:
+    action = "開啟" if opening else "關閉"
+    return f"車內廣播：{_side_name(side)}車門即將{action}。"
+
+
+# ----------------------------------------------------------------------
 # 狀態查詢
 # ----------------------------------------------------------------------
 def speed_report(speed_kmh: float, permitted_kmh: float | None = None) -> str:
@@ -219,6 +294,24 @@ def signal_report(aspect: str, distance_m: float, permitted_kmh: float) -> str:
 
 def no_signal_ahead() -> str:
     return "前方無號誌。"
+
+
+def no_station_ahead() -> str:
+    return "前方無車站，已至路線終點。"
+
+
+def service_report(
+    train_number: str, class_name: str, stock_name: str, route_name: str
+) -> str:
+    """車次資訊播報。"""
+    return f"{class_name}{train_number}次，{stock_name}，{route_name}。"
+
+
+def run_summary(elapsed_text: str, violations: int) -> str:
+    """運轉摘要播報。"""
+    if violations == 0:
+        return f"運轉時間{elapsed_text}，無行車違規。"
+    return f"運轉時間{elapsed_text}，行車違規{num_to_zh(violations)}件。"
 
 
 def train_status(
