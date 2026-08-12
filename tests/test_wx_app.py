@@ -18,11 +18,12 @@ wx = pytest.importorskip("wx", reason="需要 wxPython 才能測試視窗介面"
 from railway_sim.accessibility.announcer import Announcer
 from railway_sim.app import start_choices, start_session
 from railway_sim.data_loader import GameData
-from railway_sim.input.keymap import Keymap
+from railway_sim.input.keymap import Keymap, display_key
 from railway_sim.roles.driver import DriverSession
 from railway_sim.ui.console_app import ConsoleApp
 from railway_sim.ui.wx_app import (
     _MAX_CATCH_UP_S,
+    _STATUS_HINT_TEXT,
     _UNBOUND_KEY_TEXT,
     DriverFrame,
     ServicePicker,
@@ -30,7 +31,13 @@ from railway_sim.ui.wx_app import (
 )
 from tests.conftest import LOCAL_SERVICE, make_session
 
-_SPECIAL_KEYS = {"F1": wx.WXK_F1, "F2": wx.WXK_F2, "ESC": wx.WXK_ESCAPE}
+_SPECIAL_KEYS = {
+    "F1": wx.WXK_F1,
+    "F2": wx.WXK_F2,
+    "F5": wx.WXK_F5,
+    "F6": wx.WXK_F6,
+    "ESC": wx.WXK_ESCAPE,
+}
 
 
 @pytest.fixture(scope="module")
@@ -91,8 +98,16 @@ class TestParityWithConsole:
         shown = frame.log_ctrl.GetValue().splitlines()
         assert shown[: len(frame.session.briefing_lines())] == frame.session.briefing_lines()
 
-    def test_status_shows_the_vehicle_type(self, frame: DriverFrame) -> None:
-        assert frame.session.spec.name_zh_tw in frame.status_ctrl.GetValue()
+    def test_status_starts_empty_and_explains_how_to_query(
+        self, frame: DriverFrame
+    ) -> None:
+        """狀態欄不再常駐顯示整份狀態，改為查詢後才出現（與 OpenBVE 相同）。"""
+        assert frame.status_ctrl.GetValue() == _STATUS_HINT_TEXT
+
+    def test_full_status_is_still_reachable(self, frame: DriverFrame) -> None:
+        """完整狀態沒有被拿掉，只是移到選單裡，兩個介面都拿得到（§25.5）。"""
+        assert frame.session.spec.name_zh_tw in frame.session.status_text()
+        assert "status_item" in [code for code, _ in frame.pause_menu_actions()]
 
 
 class TestDriving:
@@ -117,8 +132,45 @@ class TestDriving:
         press(frame, "V")
         assert "目前速度" in frame.log_ctrl.GetValue()
 
-    def test_unbound_key_still_gives_feedback(self, frame: DriverFrame) -> None:
+    def test_query_key_shows_only_that_item(self, frame: DriverFrame) -> None:
+        """按 V 之後狀態欄只顯示速度，顯示的與播報的是同一句。"""
+        press(frame, "V")
+        shown = frame.status_ctrl.GetValue()
+        assert shown.startswith("速度：")
+        assert frame.session.last_status is not None
+        assert frame.session.last_status.text in shown
+        assert "前方號誌" not in shown
+
+    def test_query_key_replaces_the_previous_item(self, frame: DriverFrame) -> None:
+        press(frame, "V")
+        press(frame, "P")
+        shown = frame.status_ctrl.GetValue()
+        assert shown.startswith("位置：")
+        assert "目前速度" not in shown
+
+    def test_single_brake_key_follows_openbve(self, frame: DriverFrame) -> None:
+        """Q：有電門先減電門，電門為零之後改為加制軔。"""
+        press(frame, "Z")
+        press(frame, "Z")
         press(frame, "Q")
+        assert frame.session.train.power_notch == 1
+        press(frame, "Q")
+        assert frame.session.train.power_notch == 0
+        press(frame, "Q")
+        assert frame.session.train.brake_notch == 1
+
+    def test_door_keys_open_and_close_each_side(self, frame: DriverFrame) -> None:
+        """F5／F6 開關左右側車門，同一個鍵開也關（與 OpenBVE 相同）。"""
+        press(frame, "F5")
+        assert frame.session.train.left_doors_open is True
+        assert frame.session.train.right_doors_open is False
+        press(frame, "F6")
+        assert frame.session.train.right_doors_open is True
+        press(frame, "F5")
+        assert frame.session.train.left_doors_open is False
+
+    def test_unbound_key_still_gives_feedback(self, frame: DriverFrame) -> None:
+        press(frame, "X")
         assert frame.log_ctrl.GetValue().splitlines()[-1] == _UNBOUND_KEY_TEXT
 
     def test_train_actually_moves(self, frame: DriverFrame) -> None:
@@ -162,6 +214,42 @@ class TestSimulationTiming:
         """運轉時間不可以走得比真實時間快（先前 advance 與 tick 各加一次）。"""
         frame.session.advance(10.0)
         assert frame.session.clock.elapsed_s == pytest.approx(10.0, abs=0.1)
+
+
+class TestStatusMenu:
+    """狀態查詢選單：不必先記住快捷鍵也查得到（§2.1）。"""
+
+    def test_menu_lists_every_status_item(self, frame: DriverFrame) -> None:
+        codes = list(frame._menu_status_codes.values())
+        assert codes == [item.code for item in frame.session.status_items()]
+
+    def test_menu_labels_show_the_key(self, frame: DriverFrame) -> None:
+        """選單看得到每一項對應哪個鍵，鍵名取自鍵位表而不是寫死。"""
+        keys = frame.keymap.keys_for("announce_speed")
+        label = frame._status_menu_label("speed", "速度")
+        assert all(display_key(key) in label for key in keys)
+
+    def test_items_without_a_hotkey_show_no_key(self, frame: DriverFrame) -> None:
+        assert frame._status_menu_label("summary", "運轉摘要") == "運轉摘要"
+
+    def test_menu_and_hotkey_produce_the_same_result(
+        self, frame: DriverFrame
+    ) -> None:
+        frame.query_status("speed")
+        from_menu = frame.status_ctrl.GetValue()
+
+        frame.session.last_status = None
+        frame._status_text = ""
+        press(frame, "V")
+        assert frame.status_ctrl.GetValue().split("：", 1)[0] == from_menu.split("：", 1)[0]
+
+    def test_menu_bar_is_attached(self, frame: DriverFrame) -> None:
+        bar = frame.frame.GetMenuBar()
+        assert bar is not None
+        assert [bar.GetMenuLabelText(i) for i in range(bar.GetMenuCount())] == [
+            "狀態查詢",
+            "系統",
+        ]
 
 
 class TestTextFields:
@@ -284,7 +372,12 @@ class TestChangeService:
     def test_pause_menu_matches_the_console_menu(self, frame: DriverFrame) -> None:
         """前四項與主控台暫停選單的 1～4 相同。"""
         labels = [label for _, label in frame.pause_menu_actions()]
-        assert labels[:3] == ["繼續運轉", "快捷鍵說明", "列車狀態"]
+        assert labels[:4] == [
+            "繼續運轉",
+            "快捷鍵說明",
+            "列車狀態",
+            "狀態查詢（單一項目）",
+        ]
         assert labels[-1] == "離開遊戲"
         assert "選擇其他車次" in labels
 
@@ -296,7 +389,13 @@ class TestChangeService:
         built = DriverFrame(session, keymap, announcer, can_change_service=False)
         try:
             labels = [label for _, label in built.pause_menu_actions()]
-            assert labels == ["繼續運轉", "快捷鍵說明", "列車狀態", "離開遊戲"]
+            assert labels == [
+                "繼續運轉",
+                "快捷鍵說明",
+                "列車狀態",
+                "狀態查詢（單一項目）",
+                "離開遊戲",
+            ]
         finally:
             built.frame.Destroy()
 

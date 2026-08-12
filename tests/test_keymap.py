@@ -285,13 +285,13 @@ class TestDispatcher:
 
     def test_unbound_key_reports_reason(self, driver_keymap: Keymap) -> None:
         """未綁定的按鍵也要有回饋，不可靜默（規格 §7.2）。"""
-        result = KeyDispatcher(driver_keymap).dispatch("Q")
+        result = KeyDispatcher(driver_keymap).dispatch("X")
         assert not result.handled
         assert result.reason == "unbound_key"
 
     def test_registering_unknown_action_raises(self, driver_keymap: Keymap) -> None:
         with pytest.raises(KeyError):
-            KeyDispatcher(driver_keymap).register("open_doors", lambda: None)
+            KeyDispatcher(driver_keymap).register("沒有這個動作", lambda: None)
 
     def test_all_driver_actions_have_handlers(
         self, driver_keymap: Keymap, local_session

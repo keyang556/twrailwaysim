@@ -20,6 +20,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from railway_sim.audio.library import BroadcastLibrary, default_announcement_dir
 from railway_sim.railway.route import RegionRules, Route, validate_route
 from railway_sim.railway.station import Station
 from railway_sim.railway.track import Network
@@ -133,6 +134,13 @@ class GameData:
     services: dict[str, Service]
     line_names: dict[str, str]
     keymap_raw: dict[str, Any]
+    broadcasts: BroadcastLibrary = field(default_factory=BroadcastLibrary.empty)
+    """車上廣播音檔索引（§20.2）。
+
+    空的索引是合法狀態：還沒匯入任何廣播、或某條線暫時還沒有廣播，都只是
+    「沒有聲音」，不是資料錯誤，因此**不會**進 :attr:`issues`。
+    """
+
     issues: list[str] = field(default_factory=list)
 
     # ------------------------------------------------------------------
@@ -262,6 +270,11 @@ def load_game_data(data_dir: str | Path | None = None) -> GameData:
     # --- 鍵位 ---------------------------------------------------------
     keymap_raw = _read_json(directory / "keymap.json")
 
+    # --- 車上廣播（§20.2）----------------------------------------------
+    # 掃描資料夾而不是讀清單檔：廣播會改版、新站會通車，把檔案放進資料夾
+    # 就該生效；缺檔一律視為「這一站暫時沒有廣播」，不是資料錯誤。
+    broadcasts = BroadcastLibrary.load(default_announcement_dir(directory))
+
     return GameData(
         data_dir=directory,
         stations=stations,
@@ -273,5 +286,6 @@ def load_game_data(data_dir: str | Path | None = None) -> GameData:
         services=services,
         line_names=line_names,
         keymap_raw=keymap_raw,
+        broadcasts=broadcasts,
         issues=issues,
     )

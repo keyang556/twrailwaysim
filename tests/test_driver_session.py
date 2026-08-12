@@ -17,7 +17,11 @@ from railway_sim.app import SCENARIOS, build_session, main
 from railway_sim.data_loader import GameData
 from railway_sim.input.keyboard import KeyDispatcher
 from railway_sim.input.keymap import Keymap
-from railway_sim.roles.driver import DriverSession
+from railway_sim.roles.driver import (
+    STATUS_ITEM_ACTIONS,
+    STATUS_ITEM_LABELS,
+    DriverSession,
+)
 
 
 @pytest.fixture
@@ -246,6 +250,63 @@ class TestStatusText:
         express_session.train.position_m = chenggong.position_m - 1000.0
         express_session.tick(0.1)
         assert "成功（通過站）" in express_session.status_text()
+
+
+class TestStatusItems:
+    """單項狀態查詢：介面只顯示查到的那一項，與 OpenBVE 無障礙模式相同。
+
+    項目與內容一律由 :class:`DriverSession` 提供，因此視窗版與主控台版拿到
+    的完全相同（§25.5）。
+    """
+
+    def test_every_item_has_a_label_and_text(
+        self, local_session: DriverSession
+    ) -> None:
+        items = local_session.status_items()
+        assert [i.code for i in items] == [code for code, _ in STATUS_ITEM_LABELS]
+        for item in items:
+            assert item.label
+            assert item.text
+
+    def test_unknown_item_raises(self, local_session: DriverSession) -> None:
+        with pytest.raises(KeyError):
+            local_session.status_item("沒有這一項")
+
+    def test_shown_text_is_the_text_that_is_announced(
+        self, local_session: DriverSession
+    ) -> None:
+        """看到的與聽到的必須是同一句。"""
+        item = local_session.announce_status("speed")
+        local_session.announcer.flush()
+        assert local_session.announcer.texts()[-1] == item.text
+        assert local_session.last_status is item
+
+    def test_query_keys_go_through_the_same_path(
+        self, local_session: DriverSession
+    ) -> None:
+        local_session.announce_speed()
+        assert local_session.last_status is not None
+        assert local_session.last_status.code == "speed"
+
+        local_session.announce_signal()
+        assert local_session.last_status.code == "signal"
+
+    def test_nothing_is_recorded_before_the_first_query(
+        self, local_session: DriverSession
+    ) -> None:
+        assert local_session.last_status is None
+
+    def test_every_hotkey_item_is_bound_to_a_key(self, game_data: GameData) -> None:
+        keymap = Keymap.from_dict(game_data.keymap_raw, "driver")
+        for code, action in STATUS_ITEM_ACTIONS.items():
+            assert keymap.keys_for(action), f"{code} 的動作 {action} 沒有按鍵"
+
+    def test_query_publishes_an_event_for_the_interfaces(
+        self, local_session: DriverSession
+    ) -> None:
+        local_session.announce_status("position")
+        events = local_session.bus.events_of("status_query")
+        assert [e.get("code") for e in events] == ["position"]
 
 
 class TestApproachAnnouncements:

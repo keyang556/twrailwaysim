@@ -19,7 +19,7 @@ from collections.abc import Callable
 from railway_sim.accessibility.announcer import Announcement, Announcer, Priority
 from railway_sim.input.keyboard import KeyDispatcher
 from railway_sim.input.keymap import Keymap
-from railway_sim.roles.driver import DriverSession
+from railway_sim.roles.driver import STATUS_ITEM_ACTIONS, DriverSession
 
 __all__ = ["ConsoleApp", "read_key_nonblocking"]
 
@@ -170,13 +170,14 @@ class ConsoleApp:
             self._say("目前沒有可重複的訊息。")
 
     def pause_menu(self) -> None:
-        """Esc：暫停選單。"""
+        """Esc：暫停選單。項目與視窗版一致（§25.5）。"""
         print("\n===== 暫停選單 =====", flush=True)
         print("1：繼續運轉", flush=True)
         print("2：快捷鍵說明", flush=True)
         print("3：列車狀態", flush=True)
-        print("4：離開遊戲", flush=True)
-        print("請按 1 到 4。", flush=True)
+        print("4：狀態查詢（單一項目）", flush=True)
+        print("5：離開遊戲", flush=True)
+        print("請按 1 到 5。", flush=True)
 
         while True:
             key = read_key_nonblocking()
@@ -191,11 +192,46 @@ class ConsoleApp:
             elif key == "3":
                 print(self.session.status_text(), flush=True)
             elif key == "4":
+                self.status_menu()
+            elif key == "5":
                 self.running = False
                 print("離開遊戲。", flush=True)
                 return
             else:
-                print("請按 1 到 4。", flush=True)
+                print("請按 1 到 5。", flush=True)
+
+    def status_menu(self) -> None:
+        """狀態查詢選單。
+
+        每一項也都有快捷鍵，可以直接在運轉中按；選單的用途是**不必先記住
+        快捷鍵**（§2.1 所有快捷鍵必須可查詢）。項目與內容來自
+        :class:`~railway_sim.roles.driver.DriverSession`，因此與視窗版完全
+        相同（§25.5）。
+        """
+        items = self.session.status_items()
+        print("\n----- 狀態查詢 -----", flush=True)
+        for index, item in enumerate(items, start=1):
+            keys = self._keys_text_for(STATUS_ITEM_ACTIONS.get(item.code, ""))
+            print(f"{index}：{item.label}{f'（{keys}）' if keys else ''}", flush=True)
+        print("0：返回", flush=True)
+
+        while True:
+            key = read_key_nonblocking()
+            if key is None:
+                time.sleep(0.02)
+                continue
+            if key == "0":
+                print("返回暫停選單。", flush=True)
+                return
+            if key.isdigit() and 1 <= int(key) <= len(items):
+                self.session.announce_status(items[int(key) - 1].code)
+                self.announcer.flush()
+                return
+            print(f"請按 0 到 {len(items)}。", flush=True)
+
+    def _keys_text_for(self, action: str) -> str:
+        binding = self.keymap.binding_for(action) if action else None
+        return binding.keys_text if binding is not None else ""
 
     # ------------------------------------------------------------------
     def announce_intro(self) -> None:

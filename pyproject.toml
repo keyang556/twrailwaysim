@@ -13,6 +13,10 @@ dependencies = []
 
 [project.optional-dependencies]
 gui = ["wxPython>=4.2"]
+# 車上廣播的播放後端。臺鐵廣播是 Ogg Vorbis，Windows 內建的播放元件不解這個
+# 格式；pygame 內建 SDL_mixer 可以直接播。沒有安裝時會改用 PATH 上的 ffplay，
+# 兩者都沒有就只播文字，遊戲功能不受影響（規格 §20.1）。
+audio = ["pygame>=2.5"]
 dev = ["pytest>=8.0"]
 installer = [
     "pyinstaller==6.21.0",

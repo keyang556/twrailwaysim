@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "meta": {
+    "description": "分歧站『下一站』廣播的方向版本挑選規則。",
+    "why": "八堵、七堵的下一站廣播有兩個版本，差別在於提醒旅客往基隆或往宜蘭花蓮方向要不要在本站換車，因此取決於『本班列車開往哪裡』，不是取決於車站本身。",
+    "how": "依序比對每個版本的 when_service_calls_at；本班次的停靠表只要包含其中任一站就採用該版本。都不符合時退回沒有方向標記的檔案，沒有的話就不播音檔，文字播報照常送出。",
+    "update_policy": "多一個分歧站只要在 rules 加一筆，程式不需要修改。"
+  },
+  "rules": {
+    "BADU": [
+      { "variant": "keelung", "when_service_calls_at": ["KEELUNG"] },
+      { "variant": "hualien", "when_service_calls_at": ["HUALIEN", "YILAN", "SUAO"] }
+    ],
+    "QIDU": [
+      { "variant": "keelung", "when_service_calls_at": ["KEELUNG"] },
+      { "variant": "hualien", "when_service_calls_at": ["HUALIEN", "YILAN", "SUAO"] }
+    ]
+  }
+}

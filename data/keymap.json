@@ -48,6 +48,24 @@
         "category": "driving",
         "source": "OpenBVE BRAKE_INCREASE, keyboard, Period, 0"
       },
+      "single_brake": {
+        "keys": ["Q"],
+        "label": "單手把減速一段（先減電門，電門為零後加制軔）",
+        "category": "driving",
+        "source": "OpenBVE SINGLE_BRAKE, keyboard, Q, 0。行為取自 OpenBVE source/TrainManager/Handles/CabHandles.cs：有電門時減電門，否則加制軔。"
+      },
+      "doors_left": {
+        "keys": ["F5"],
+        "label": "開關左側車門",
+        "category": "driving",
+        "source": "OpenBVE DOORS_LEFT, keyboard, F5, 0"
+      },
+      "doors_right": {
+        "keys": ["F6"],
+        "label": "開關右側車門",
+        "category": "driving",
+        "source": "OpenBVE DOORS_RIGHT, keyboard, F6, 0"
+      },
       "emergency_brake": {
         "keys": ["SLASH"],
         "label": "緊急制軔",
@@ -101,6 +119,12 @@
         "label": "播報列車狀態",
         "category": "query",
         "source": "規格 §7.1（OpenBVE 無對應指令）"
+      },
+      "announce_doors": {
+        "keys": ["B"],
+        "label": "播報車門狀態",
+        "category": "query",
+        "source": "規格 §16.2 出發流程需確認車門狀態。OpenBVE 無對應的無障礙指令（其 ACCESSIBILITY_* 只有速度、號誌、車站與速限）。"
       }
     },
     "driver_legacy": {
@@ -121,6 +145,24 @@
         "label": "回到惰行或降低控制段位",
         "category": "driving",
         "source": "規格 §7.1"
+      },
+      "single_brake": {
+        "keys": ["Q"],
+        "label": "單手把減速一段（先減電門，電門為零後加制軔）",
+        "category": "driving",
+        "source": "OpenBVE SINGLE_BRAKE, keyboard, Q, 0。舊配置沒有這個功能，沿用 OpenBVE 的鍵，與 driver 配置一致。"
+      },
+      "doors_left": {
+        "keys": ["F5"],
+        "label": "開關左側車門",
+        "category": "driving",
+        "source": "OpenBVE DOORS_LEFT, keyboard, F5, 0"
+      },
+      "doors_right": {
+        "keys": ["F6"],
+        "label": "開關右側車門",
+        "category": "driving",
+        "source": "OpenBVE DOORS_RIGHT, keyboard, F6, 0"
       },
       "emergency_brake": {
         "keys": ["SPACE"],
@@ -175,6 +217,12 @@
         "label": "播報列車狀態",
         "category": "query",
         "source": "規格 §7.1"
+      },
+      "announce_doors": {
+        "keys": ["B"],
+        "label": "播報車門狀態",
+        "category": "query",
+        "source": "規格 §16.2 出發流程需確認車門狀態"
       }
     }
   }

@@ -1,11 +1,24 @@
 """wxPython 介面（規格 §5.1）。
 
-版面刻意極簡：兩個唯讀多行文字欄位，一個放運轉播報，一個放列車狀態。
-理由是螢幕閱讀器可以直接用方向鍵逐行閱讀文字欄位內容，不需要任何自訂
-繪圖或視覺元素；所有資訊也同時存在於文字中（§25.5）。
+版面刻意極簡：兩個唯讀多行文字欄位，一個放運轉播報，一個放最近一次的
+狀態查詢結果。理由是螢幕閱讀器可以直接用方向鍵逐行閱讀文字欄位內容，
+不需要任何自訂繪圖或視覺元素；所有資訊也同時存在於文字中（§25.5）。
+
+狀態改為「查詢才出現」
+----------------------
+
+先前的版本常駐顯示整份列車狀態，玩家得自己在十幾行文字裡找需要的那一
+行，而且每次內容變動螢幕閱讀器都會重讀。現在改成與 OpenBVE 無障礙模式
+相同的做法：**按快捷鍵或選單選一項，才會播報並顯示那一項**，例如 V 報
+速度、G 報前方號誌。狀態欄顯示的就是剛剛播出去的那一句，看到的與聽到的
+完全一致。
+
+顯示的是查詢當下的快照，不會自己更新——播出去的語音也是快照，兩者若不
+一致反而更難判斷。要最新的數值就再按一次。
 
 鍵盤事件以 ``EVT_CHAR_HOOK`` 在視窗層級攔截，因此焦點在哪個欄位都能操作，
-焦點移動可預測（§2.1）。
+焦點移動可預測（§2.1）。選單項目刻意**不**設 wx 加速鍵，改在標籤裡寫出
+按鍵名稱，避免同一個按鍵被加速鍵與 ``EVT_CHAR_HOOK`` 各處理一次。
 
 語音方面：若系統可用 NVDA Controller Client，會直接送出語音；否則仍以
 文字呈現，遊戲功能不受影響（見 :mod:`railway_sim.accessibility.speech`）。
@@ -34,7 +47,7 @@ from dataclasses import dataclass
 from railway_sim.accessibility.announcer import Announcement, Announcer, Priority
 from railway_sim.input.keyboard import KeyDispatcher
 from railway_sim.input.keymap import Keymap
-from railway_sim.roles.driver import DriverSession
+from railway_sim.roles.driver import STATUS_ITEM_ACTIONS, DriverSession
 
 __all__ = ["DriverFrame", "ServicePicker", "StartChoice", "run_wx"]
 
@@ -52,6 +65,13 @@ _LOG_LIMIT = 300
 
 #: 未綁定按鍵的回饋（與主控台相同，§7.2）。
 _UNBOUND_KEY_TEXT = "此按鍵未設定功能，按 F1 查看快捷鍵說明。"
+
+#: 尚未查詢任何狀態時，狀態欄顯示的說明。
+_STATUS_HINT_TEXT = (
+    "尚未查詢。按快捷鍵或用「狀態查詢」選單查詢單一項目，查到的內容會顯示在"
+    "這裡，同時播報出去。"
+)
+
 
 
 @dataclass(frozen=True)
@@ -93,9 +113,10 @@ def _keycode_to_token(event) -> str | None:
         wx.WXK_NUMPAD_ENTER: "ENTER",
         wx.WXK_TAB: "TAB",
         wx.WXK_BACK: "BACKSPACE",
-        wx.WXK_F1: "F1",
-        wx.WXK_F2: "F2",
     }
+    # F1 至 F12 一次列出：車門用的 F5／F6 取自 OpenBVE，只補這兩個會讓
+    # 下一個要用功能鍵的動作又得回來改一次。
+    special.update({getattr(wx, f"WXK_F{n}"): f"F{n}" for n in range(1, 13)})
     if code in special:
         base = special[code]
     elif 33 <= code <= 126:
@@ -249,21 +270,24 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         )
         self.log_ctrl.SetName("運轉播報")
 
-        status_label = wx.StaticText(panel, label="列車狀態（唯讀）")
+        status_label = wx.StaticText(
+            panel, label="狀態查詢結果（唯讀，顯示最近一次查詢的項目）"
+        )
         self.status_ctrl = wx.TextCtrl(
             panel, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2
         )
-        self.status_ctrl.SetName("列車狀態")
+        self.status_ctrl.SetName("狀態查詢結果")
 
         hint = wx.StaticText(panel, label="F1：快捷鍵說明　F2：重複播報　Esc：暫停選單")
 
         sizer.Add(log_label, 0, wx.ALL, 6)
-        sizer.Add(self.log_ctrl, 3, wx.EXPAND | wx.ALL, 6)
+        sizer.Add(self.log_ctrl, 4, wx.EXPAND | wx.ALL, 6)
         sizer.Add(status_label, 0, wx.ALL, 6)
-        sizer.Add(self.status_ctrl, 2, wx.EXPAND | wx.ALL, 6)
+        sizer.Add(self.status_ctrl, 1, wx.EXPAND | wx.ALL, 6)
         sizer.Add(hint, 0, wx.ALL, 6)
         panel.SetSizer(sizer)
 
+        self._build_menu_bar()
         self.announcer.sink = self._emit
 
         self.dispatcher = KeyDispatcher(keymap)
@@ -285,6 +309,71 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         self._announce_intro()
         self._refresh_status()
         self.log_ctrl.SetFocus()
+
+    # ------------------------------------------------------------------
+    # 選單
+    # ------------------------------------------------------------------
+    def _keys_text_for(self, action: str) -> str:
+        """動作對應按鍵的顯示文字，取自鍵位表而不是寫死在選單裡。"""
+        binding = self.keymap.binding_for(action)
+        return binding.keys_text if binding is not None else ""
+
+    def _status_menu_label(self, code: str, label: str) -> str:
+        """狀態選單項目的文字，例如「速度（Ｖ、Ctrl＋Shift＋S）」。
+
+        刻意不使用 wx 的加速鍵（``\\t``）：按鍵已由 ``EVT_CHAR_HOOK`` 統一
+        處理，再設一次加速鍵會讓同一次按鍵被處理兩遍。
+        """
+        keys = self._keys_text_for(STATUS_ITEM_ACTIONS.get(code, ""))
+        return f"{label}（{keys}）" if keys else label
+
+    def _build_menu_bar(self) -> None:
+        """建立選單列。
+
+        鍵盤操作已經夠用，選單存在的理由是**不必先記住快捷鍵**：查得到有
+        哪些狀態可以問，也看得到每一項對應哪個鍵（§2.1 所有快捷鍵必須可
+        查詢）。選單項目與快捷鍵走的是同一條路徑，因此兩者結果一定一致。
+        """
+        wx = self.wx
+        self._menu_status_codes = {}
+
+        status_menu = wx.Menu()
+        for item in self.session.status_items():
+            entry = status_menu.Append(
+                wx.ID_ANY, self._status_menu_label(item.code, item.label)
+            )
+            self._menu_status_codes[entry.GetId()] = item.code
+            self.frame.Bind(wx.EVT_MENU, self._on_status_menu, entry)
+
+        system_menu = wx.Menu()
+        help_item = system_menu.Append(wx.ID_ANY, f"快捷鍵說明（{self._keys_text_for('show_help')}）")
+        repeat_item = system_menu.Append(
+            wx.ID_ANY, f"重複播報最近一則（{self._keys_text_for('repeat_last')}）"
+        )
+        full_status_item = system_menu.Append(wx.ID_ANY, "完整列車狀態")
+        pause_item = system_menu.Append(
+            wx.ID_ANY, f"暫停選單（{self._keys_text_for('pause_menu')}）"
+        )
+        self.frame.Bind(wx.EVT_MENU, lambda _e: self.show_help(), help_item)
+        self.frame.Bind(wx.EVT_MENU, lambda _e: self.repeat_last(), repeat_item)
+        self.frame.Bind(wx.EVT_MENU, lambda _e: self.show_status(), full_status_item)
+        self.frame.Bind(wx.EVT_MENU, lambda _e: self.pause_menu(), pause_item)
+
+        bar = wx.MenuBar()
+        bar.Append(status_menu, "狀態查詢(&S)")
+        bar.Append(system_menu, "系統(&Y)")
+        self.frame.SetMenuBar(bar)
+
+    def _on_status_menu(self, event) -> None:
+        code = self._menu_status_codes.get(event.GetId())
+        if code is not None:
+            self.query_status(code)
+
+    def query_status(self, code: str) -> None:
+        """查詢並播報一個狀態項目，同時更新狀態欄。"""
+        self.session.announce_status(code)
+        self.announcer.flush()
+        self._refresh_status()
 
     # ------------------------------------------------------------------
     def show(self) -> None:
@@ -334,14 +423,24 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         for line in self.session.briefing_lines():
             self._append_log(line)
         self._append_log("按 F1 查看快捷鍵說明，按 Esc 開啟暫停選單。")
+        self._append_log(
+            "狀態不再常駐顯示：按快捷鍵或用「狀態查詢」選單問一項，"
+            f"例如{self._keys_text_for('announce_speed')}報速度。"
+        )
 
     def _refresh_status(self) -> None:
         """狀態欄只在內容真的變了才重寫。
 
         每 50 毫秒無條件 ``SetValue`` 會讓螢幕閱讀器一直重讀同一段文字，也
-        會把插入點打回開頭，方向鍵逐行閱讀完全沒辦法用。
+        會把插入點打回開頭，方向鍵逐行閱讀完全沒辦法用。現在欄位內容只在
+        玩家查詢時變動，因此實際上幾乎不會重寫。
         """
-        text = self.session.status_text()
+        status = self.session.last_status
+        text = (
+            _STATUS_HINT_TEXT
+            if status is None
+            else f"{status.label}：{status.text}"
+        )
         if text == self._status_text:
             return
         self._status_text = text
@@ -370,6 +469,8 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
             self.announcer.flush()
             event.Skip()
             return
+        # 狀態查詢鍵（V、G、N…）按下之後，狀態欄要換成剛剛播出去的那一項。
+        self._refresh_status()
         # 已處理的按鍵不再往下傳，避免觸發預設控制項行為。
 
     def _on_close(self, _event) -> None:
@@ -415,8 +516,28 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         self._show_text_dialog("快捷鍵說明", self.keymap.help_text(), "快捷鍵說明")
 
     def show_status(self) -> None:
-        """列車狀態（與主控台暫停選單的第 3 項相同）。"""
+        """完整列車狀態（與主控台暫停選單的第 3 項相同）。
+
+        平常的狀態欄只顯示查詢到的單一項目；要一次看完整份時用這個。
+        """
         self._show_text_dialog("列車狀態", self.session.status_text(), "列車狀態")
+
+    def ask_status_item(self) -> None:
+        """狀態查詢選單（與主控台暫停選單的第 4 項相同）。"""
+        wx = self.wx
+        items = self.session.status_items()
+        labels = [self._status_menu_label(i.code, i.label) for i in items]
+        dialog = wx.SingleChoiceDialog(self.frame, "要查詢哪一項？", "狀態查詢", labels)
+        try:
+            if dialog.ShowModal() != wx.ID_OK:
+                return
+            code = items[dialog.GetSelection()].code
+        finally:
+            dialog.Destroy()
+        self.query_status(code)
+        self._show_text_dialog(
+            "狀態查詢結果", self._status_text, "狀態查詢結果"
+        )
 
     def repeat_last(self) -> None:
         """F2：重複播報最近一則訊息（§2.1）。"""
@@ -434,6 +555,7 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
             ("resume", "繼續運轉"),
             ("help", "快捷鍵說明"),
             ("status", "列車狀態"),
+            ("status_item", "狀態查詢（單一項目）"),
         ]
         if self.can_change_service:
             actions.append(("change", "選擇其他車次"))
@@ -464,6 +586,8 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
                 self.show_help()
             elif chosen == "status":
                 self.show_status()
+            elif chosen == "status_item":
+                self.ask_status_item()
             elif chosen in ("change", "quit"):
                 self.change_service_requested = chosen == "change"
                 self.frame.Close()

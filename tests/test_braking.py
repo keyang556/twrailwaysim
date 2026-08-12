@@ -54,6 +54,63 @@ class TestServiceBrake:
         assert braking.brake_decel_ms2(train_spec, 0, False) == 0.0
 
 
+class TestSingleBrake:
+    """單手把減速（OpenBVE 的 SINGLE_BRAKE，預設鍵 Q）。
+
+    行為取自 OpenBVE ``source/TrainManager/Handles/CabHandles.cs``：有電門
+    時減電門，電門為零之後改為加制軔。
+    """
+
+    def test_reduces_power_first(self, train: Train, train_spec: TrainType) -> None:
+        train.power_notch = 3
+        result = braking.single_brake(train, train_spec)
+        assert result.accepted
+        assert train.power_notch == 2
+        assert train.brake_notch == 0
+
+    def test_adds_brake_once_power_is_zero(
+        self, train: Train, train_spec: TrainType
+    ) -> None:
+        result = braking.single_brake(train, train_spec)
+        assert result.accepted
+        assert train.brake_notch == 1
+
+    def test_full_sweep_from_power_to_full_brake(
+        self, train: Train, train_spec: TrainType
+    ) -> None:
+        """一路按下去就是 P5…P1 → 惰行 → B1…B7。"""
+        train.power_notch = train_spec.power_notches
+        sequence = []
+        for _ in range(train_spec.power_notches + train_spec.brake_notches):
+            braking.single_brake(train, train_spec)
+            sequence.append((train.power_notch, train.brake_notch))
+
+        assert sequence[: train_spec.power_notches] == [(4, 0), (3, 0), (2, 0), (1, 0), (0, 0)]
+        assert sequence[-1] == (0, train_spec.brake_notches)
+
+    def test_stops_at_max_brake(self, train: Train, train_spec: TrainType) -> None:
+        train.brake_notch = train_spec.brake_notches
+        result = braking.single_brake(train, train_spec)
+        assert not result.accepted
+        assert result.reason == "max_brake"
+
+    def test_blocked_by_emergency(self, train: Train, train_spec: TrainType) -> None:
+        train.emergency_brake = True
+        result = braking.single_brake(train, train_spec)
+        assert not result.accepted
+        assert result.reason == "emergency"
+
+    def test_is_the_opposite_direction_of_notch_down(
+        self, train: Train, train_spec: TrainType
+    ) -> None:
+        """notch_down 往中立走，single_brake 往制軔走。"""
+        train.brake_notch = 3
+        braking.notch_down(train, train_spec)
+        assert train.brake_notch == 2
+        braking.single_brake(train, train_spec)
+        assert train.brake_notch == 3
+
+
 class TestEmergencyBrake:
     """緊急制軔（規格 §8.3、§23.1）。"""
 

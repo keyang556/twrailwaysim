@@ -7,6 +7,7 @@
     "max_speed_note": "max_speed_kmh 取來源的「營運速度」而非「設計最高速度」，因為前者才是實際容許的運轉速度。區間速限另由 routes.json 決定，實際允許速度取兩者較低者。",
     "resistance_note": "resistance_ms2 為行駛阻力係數 (r0, r1, r2)，阻力 = r0 + r1·v + r2·v²（v 單位為公尺／秒）。臺鐵未公布各車型的阻力係數，因此改用鐵道車輛通用的戴維斯式係數換算，並以每一車型能達到來源標示的營運速度為校驗條件（tests/test_train_physics.py::TestRealStockPerformance）。仍屬 test_data。",
     "notch_note": "power_notches／brake_notches 依開發規格 §8.2 固定為電門 5 段、制軔 7 段；來源未公布各車型實際的主控制器段數。",
+    "broadcast_note": "has_broadcast 表示本型車有無車上自動廣播設備，預設 true。DR1000 型柴油客車沒有這項設備，因此標為 false，該型車不播放到站與下一站廣播（音檔與文字都不送出）。",
     "sources": [
       { "title": "台鐵45DR1000型柴油客車", "publisher": "維基百科", "used_for": ["DR1000"] },
       { "title": "臺鐵DR3100型柴聯車", "publisher": "維基百科", "used_for": ["DR3100", "DR1000"] },
@@ -208,6 +209,7 @@
       "emergency_brake_ms2": 0.68,
       "power_notches": 5,
       "brake_notches": 7,
+      "has_broadcast": false,
       "resistance_ms2": [0.01764, 0.000635, 0.0000571],
       "verification_status": "official_with_test_data",
       "note": "支線主力車種，行駛深澳線、平溪線、內灣線（竹中至內灣段）與集集線。營運速度與設計最高速度同為 110 公里。長度 19.774 公尺 ×3 ＝ 59.3 公尺（取平日常態的 3 輛編成）。常用與緊急減速度同為 2.448 km/h/s。起動加速度：來源載明本型車動力聯控系統及性能與 DR2800～3100 型柴聯車相同，但該系列標示的 0.5 km/h/s 與其營運速度矛盾（見 meta.known_source_conflict），因此改由來源的引擎出力推算：每輛 350 HP，3 輛 ＝ 783 kW，取傳動效率 0.9 得輪周功率約 705 kW，編組重量 135 公噸（45 公噸 ×3）；轉折速度取來源說明的液聯位／直聯位換檔速度 60 公里，得起動加速度 0.31 m/s²。",

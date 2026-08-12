@@ -11,6 +11,8 @@ from dataclasses import dataclass, field
 
 from railway_sim.accessibility import messages as msg
 from railway_sim.accessibility.announcer import Announcer, Priority
+from railway_sim.audio.broadcast import BroadcastSystem
+from railway_sim.audio.player import AudioPlayer
 from railway_sim.data_loader import GameData
 from railway_sim.events.event_bus import EventBus
 from railway_sim.events.incidents import IncidentLog
@@ -18,7 +20,7 @@ from railway_sim.railway.block import BlockSystem
 from railway_sim.railway.interlocking import Interlocking
 from railway_sim.railway.route import Route, RouteStop
 from railway_sim.railway.signal import SignalSystem
-from railway_sim.simulation import braking
+from railway_sim.simulation import braking, doors
 from railway_sim.simulation.atp import AtpMonitor, AtpState, SpeedRestriction
 from railway_sim.simulation.clock import SIMULATION_TICK_S, SimulationClock
 from railway_sim.simulation.physics import step as physics_step
@@ -27,7 +29,14 @@ from railway_sim.simulation.train import Train, TrainType
 from railway_sim.timetable.service import Service
 from railway_sim.timetable.stop_pattern import resolve_stop_kind
 
-__all__ = ["STOP_WINDOW_M", "DriverSession", "StationProgress"]
+__all__ = [
+    "STATUS_ITEM_ACTIONS",
+    "STATUS_ITEM_LABELS",
+    "STOP_WINDOW_M",
+    "DriverSession",
+    "StationProgress",
+    "StatusItem",
+]
 
 #: 停車範圍（公尺）。車頭超過停車點加上此距離仍未停妥即為應停未停（§9.2）。
 #: 真實月台長度無可靠公開來源（§27），此為第一版測試值。
@@ -35,6 +44,60 @@ STOP_WINDOW_M = 50.0
 
 #: 開始播報「接近某站」的距離（公尺）。
 APPROACH_ANNOUNCE_M = 800.0
+
+#: 開始播放「到站廣播」的距離（公尺）。
+#:
+#: 比司機員的接近播報（:data:`APPROACH_ANNOUNCE_M`）更早，因為到站廣播是
+#: 完整的四語言錄音，終點站的版本長達一分鐘；用八百公尺起播的話，時速
+#: 一百公里只剩二十九秒，廣播會在到站前被下一則蓋掉。
+BROADCAST_ARRIVAL_M = 1500.0
+
+#: 視為「列車已啟動」的速度（公里／小時）。
+#:
+#: 「下一站」廣播是列車自車站啟動之後才播的，因此需要一個明確的啟動門檻；
+#: 用大於零會在停妥判定的抖動下反覆觸發。
+BROADCAST_DEPART_KMH = 3.0
+
+#: 狀態查詢項目的顯示名稱。
+#:
+#: 介面只負責呈現，項目與內容一律由本模組提供，兩個介面才會完全一致
+#: （§25.5：必要資訊不得只存在於單一介面）。
+STATUS_ITEM_LABELS: tuple[tuple[str, str], ...] = (
+    ("speed", "速度"),
+    ("position", "位置"),
+    ("next_station", "下一站"),
+    ("signal", "前方號誌"),
+    ("train", "列車狀態"),
+    ("doors", "車門狀態"),
+    ("service", "車次資訊"),
+    ("summary", "運轉摘要"),
+)
+
+#: 狀態項目對應的鍵位動作代碼，供介面在選單裡標出按鍵。
+#:
+#: 沒有列在這裡的項目（車次資訊、運轉摘要）沒有專屬快捷鍵，只從選單查詢；
+#: 快捷鍵不必為了湊齊項目而占用一堆字母鍵。
+STATUS_ITEM_ACTIONS: dict[str, str] = {
+    "speed": "announce_speed",
+    "position": "announce_position",
+    "next_station": "announce_next_station",
+    "signal": "announce_signal",
+    "train": "announce_train_status",
+    "doors": "announce_doors",
+}
+
+
+@dataclass(frozen=True)
+class StatusItem:
+    """一項狀態查詢的結果。
+
+    ``text`` 同時是螢幕上顯示的文字與播報出去的文字：兩者必須一致，否則
+    看得到的和聽得到的會不一樣。
+    """
+
+    code: str
+    label: str
+    text: str
 
 
 @dataclass
@@ -70,6 +133,8 @@ class DriverSession:
     bus: EventBus = field(default_factory=EventBus)
     clock: SimulationClock = field(default_factory=SimulationClock)
     incidents: IncidentLog = field(default_factory=IncidentLog)
+    player: AudioPlayer | None = None
+    """播放廣播音檔的後端；``None`` 表示這台機器放不出聲音（§20.1）。"""
 
     route: Route = field(init=False)
     spec: TrainType = field(init=False)
@@ -78,10 +143,16 @@ class DriverSession:
     signals: SignalSystem = field(init=False)
     interlocking: Interlocking = field(init=False)
     atp: AtpMonitor = field(init=False)
+    broadcast: BroadcastSystem = field(init=False)
     stations: list[StationProgress] = field(init=False, default_factory=list)
 
     finished: bool = field(default=False, init=False)
     last_state: AtpState | None = field(default=None, init=False)
+    last_status: StatusItem | None = field(default=None, init=False)
+    """最近一次狀態查詢的結果，供介面顯示該項目（不是整份狀態）。"""
+
+    _broadcast_next_for: str | None = field(default=None, init=False, repr=False)
+    _broadcast_arrived: set[str] = field(default_factory=set, init=False, repr=False)
 
     # ------------------------------------------------------------------
     # 建立
@@ -114,6 +185,17 @@ class DriverSession:
             blocks=self.blocks,
             spec=self.spec,
             station_names=self.data.station_names(),
+        )
+
+        # 車上廣播（§20.2）。沒有廣播設備的車型（DR1000）連文字都不送出，
+        # 因為那台車根本沒有播出任何東西。
+        self.broadcast = BroadcastSystem(
+            library=self.data.broadcasts,
+            announcer=self.announcer,
+            player=self.player,
+            enabled=self.spec.has_broadcast,
+            line_id=self.route.line_id,
+            called_station_ids=tuple(self.service.stop_station_ids),
         )
 
         self._build_station_progress()
@@ -165,10 +247,13 @@ class DriverSession:
     # 操作
     # ------------------------------------------------------------------
     def power_up(self) -> None:
-        """增加電門（D）。"""
+        """增加電門（Z）。"""
         result = braking.power_up(self.train, self.spec)
         if not result.accepted and result.reason == "emergency":
             self.announcer.announce(msg.power_blocked_by_emergency(), Priority.SAFETY)
+            return
+        if not result.accepted and result.reason == "doors_open":
+            self.announcer.announce(msg.power_blocked_by_doors(), Priority.SAFETY)
             return
         if not result.accepted and result.reason == "max_power":
             self.announcer.announce(
@@ -217,6 +302,36 @@ class DriverSession:
             "notch_down", power=result.power_notch, brake=result.brake_notch
         )
 
+    def single_brake(self) -> None:
+        """單手把往制軔方向移動一段（Q，OpenBVE 的 ``SINGLE_BRAKE``）。
+
+        與 :meth:`notch_down` 方向相反：有電門時先減電門，電門為零之後改為
+        加制軔，因此一路按下去就是 ``P5…P1 → 惰行 → B1…B7``。
+        """
+        result = braking.single_brake(self.train, self.spec)
+        if not result.accepted and result.reason == "emergency":
+            self.announcer.announce(
+                msg.emergency_brake_applied(), Priority.SAFETY,
+                dedupe_key="emergency_active",
+            )
+            return
+        if not result.accepted and result.reason == "max_brake":
+            self.announcer.announce(
+                f"制軔已在最高{msg.num_to_zh(self.spec.brake_notches)}段。",
+                Priority.ACTION,
+                dedupe_key="brake_max",
+            )
+            return
+        if result.power_notch > 0:
+            self.announcer.announce(msg.power_notch(result.power_notch), Priority.ACTION)
+        elif result.brake_notch == 0:
+            self.announcer.announce(msg.coasting(), Priority.ACTION)
+        else:
+            self.announcer.announce(msg.brake_notch(result.brake_notch), Priority.ACTION)
+        self.bus.publish(
+            "single_brake", power=result.power_notch, brake=result.brake_notch
+        )
+
     def release_brake(self) -> None:
         """鬆軔（R）。不得自動增加電門（§8.4）。"""
         result = braking.release_brake(self.train, self.spec)
@@ -248,73 +363,113 @@ class DriverSession:
             self.announcer.announce("目前未施加緊急制軔。", Priority.ACTION)
 
     def horn(self) -> None:
-        """鳴笛（H）。"""
+        """鳴笛（Enter）。"""
         self.announcer.announce(msg.horn(), Priority.ACTION)
         self.bus.publish("horn")
 
     # ------------------------------------------------------------------
-    # 查詢播報
+    # 車門（F5／F6，取自 OpenBVE 的 DOORS_LEFT／DOORS_RIGHT）
     # ------------------------------------------------------------------
-    def announce_speed(self) -> None:
-        """播報目前速度與允許速度（V）。"""
-        state = self.last_state or self._evaluate_only()
-        self.announcer.announce(
-            msg.speed_report(self.train.current_speed_kmh, state.permitted_kmh),
-            Priority.ACTION,
-        )
+    def toggle_left_doors(self) -> None:
+        """開關左側車門（F5）。"""
+        self._toggle_doors("left")
 
-    def announce_position(self) -> None:
-        """播報目前位置（P）。"""
-        report = describe_position(
-            self.route,
-            self.train.position_m,
-            self.data.station_names(),
-            self.data.line_names,
+    def toggle_right_doors(self) -> None:
+        """開關右側車門（F6）。"""
+        self._toggle_doors("right")
+
+    def _toggle_doors(self, side: str) -> None:
+        """同一個鍵開也關，與 OpenBVE 的車門鍵一致。"""
+        opening = not (
+            self.train.left_doors_open if side == "left" else self.train.right_doors_open
         )
-        self.announcer.announce(
-            msg.position_report(
+        result = doors.set_doors(self.train, side, opening=opening)
+
+        if not result.accepted:
+            if result.reason == "not_stopped":
+                self.announcer.announce(
+                    msg.door_blocked_by_movement(side), Priority.SAFETY
+                )
+            return
+
+        text = msg.door_opened(side) if result.opened else msg.door_closed(side)
+        self.announcer.announce(text, Priority.NOTICE)
+        # 車門動作有對應的車上廣播（§20.2「車門聲」）。
+        self.broadcast.announce_doors(side, opening=result.opened)
+        self.bus.publish("doors", side=side, open=result.opened)
+
+    # ------------------------------------------------------------------
+    # 狀態查詢
+    # ------------------------------------------------------------------
+    # 每一項只在被查詢時才產生。這是 OpenBVE 無障礙模式的做法，也是本專案
+    # 選擇的做法：常駐顯示整份狀態會讓螢幕閱讀器一直重讀沒有變動的內容，
+    # 玩家反而要自己在一大段文字裡找需要的那一行。
+    def status_item(self, code: str) -> StatusItem:
+        """單一狀態項目。
+
+        ``text`` 就是播報出去的那一句：顯示與朗讀必須是同一份文字。
+
+        Raises:
+            KeyError: 沒有這個項目代碼。
+        """
+        labels = dict(STATUS_ITEM_LABELS)
+        if code not in labels:
+            raise KeyError(f"沒有這個狀態項目：{code}")
+        return StatusItem(code=code, label=labels[code], text=self._status_text(code))
+
+    def status_items(self) -> list[StatusItem]:
+        """所有狀態項目，供介面建立選單。"""
+        return [self.status_item(code) for code, _ in STATUS_ITEM_LABELS]
+
+    def announce_status(self, code: str) -> StatusItem:
+        """查詢並播報一個狀態項目，同時記在 :attr:`last_status`。"""
+        item = self.status_item(code)
+        self.last_status = item
+        self.announcer.announce(item.text, Priority.ACTION)
+        self.bus.publish("status_query", code=item.code, text=item.text)
+        return item
+
+    def _status_text(self, code: str) -> str:
+        state = self.last_state or self._evaluate_only()
+
+        if code == "speed":
+            return msg.speed_report(self.train.current_speed_kmh, state.permitted_kmh)
+
+        if code == "position":
+            report = describe_position(
+                self.route,
+                self.train.position_m,
+                self.data.station_names(),
+                self.data.line_names,
+            )
+            return msg.position_report(
                 report.line_name,
                 report.from_station_name,
                 report.to_station_name,
                 report.distance_to_next_m,
-            ),
-            Priority.ACTION,
-        )
+            )
 
-    def announce_next_station(self) -> None:
-        """播報下一站與停靠別（N）。"""
-        upcoming = self.next_station()
-        if upcoming is None:
-            self.announcer.announce("前方無車站，已至路線終點。", Priority.ACTION)
-            return
-        self.announcer.announce(
-            msg.next_station(
+        if code == "next_station":
+            upcoming = self.next_station()
+            if upcoming is None:
+                return msg.no_station_ahead()
+            return msg.next_station(
                 upcoming.name_zh_tw,
                 upcoming.position_m - self.train.position_m,
                 upcoming.stop_kind,
-            ),
-            Priority.ACTION,
-        )
+            )
 
-    def announce_signal(self) -> None:
-        """播報前方號誌（G，規格 §11.3）。"""
-        state = self.last_state or self._evaluate_only()
-        if state.next_signal_aspect is None or state.next_signal_distance_m is None:
-            self.announcer.announce(msg.no_signal_ahead(), Priority.ACTION)
-            return
-        self.announcer.announce(
-            msg.signal_report(
+        if code == "signal":
+            if state.next_signal_aspect is None or state.next_signal_distance_m is None:
+                return msg.no_signal_ahead()
+            return msg.signal_report(
                 str(state.next_signal_aspect),
                 state.next_signal_distance_m,
                 state.permitted_kmh,
-            ),
-            Priority.ACTION,
-        )
+            )
 
-    def announce_train_status(self) -> None:
-        """播報列車狀態（T）。"""
-        self.announcer.announce(
-            msg.train_status(
+        if code == "train":
+            return msg.train_status(
                 self.service.train_number,
                 self.data.service_class_name(self.service.train_type),
                 self.train.current_speed_kmh,
@@ -322,9 +477,48 @@ class DriverSession:
                 self.train.brake_notch,
                 self.train.emergency_brake,
                 self.train.direction,
-            ),
-            Priority.ACTION,
-        )
+            )
+
+        if code == "doors":
+            return msg.door_status(
+                self.train.left_doors_open, self.train.right_doors_open
+            )
+
+        if code == "service":
+            return msg.service_report(
+                self.service.train_number,
+                self.data.service_class_name(self.service.train_type),
+                self.spec.name_zh_tw,
+                self.route.name_zh_tw,
+            )
+
+        # summary
+        return msg.run_summary(self.clock.clock_text, self.incidents.violation_count)
+
+    # -- 快捷鍵對應的查詢（鍵位表的動作代碼）---------------------------
+    def announce_speed(self) -> None:
+        """播報目前速度與允許速度（V／Ctrl+Shift+S）。"""
+        self.announce_status("speed")
+
+    def announce_position(self) -> None:
+        """播報目前位置（P）。"""
+        self.announce_status("position")
+
+    def announce_next_station(self) -> None:
+        """播報下一站與停靠別（N／Ctrl+Shift+T）。"""
+        self.announce_status("next_station")
+
+    def announce_signal(self) -> None:
+        """播報前方號誌（G／Ctrl+Shift+A，規格 §11.3）。"""
+        self.announce_status("signal")
+
+    def announce_train_status(self) -> None:
+        """播報列車狀態（T）。"""
+        self.announce_status("train")
+
+    def announce_doors(self) -> None:
+        """播報車門狀態（B）。"""
+        self.announce_status("doors")
 
     # ------------------------------------------------------------------
     # 推進
@@ -339,6 +533,7 @@ class DriverSession:
 
         self._update_occupancy()
         self._handle_stations()
+        self._handle_broadcast()
         self._refresh_stop_target()
 
         state, events = self.atp.evaluate(self.train, dt_s)
@@ -460,6 +655,48 @@ class DriverSession:
             self.announcer.announce(msg.missed_stop(progress.name_zh_tw), Priority.EMERGENCY)
             self.bus.publish("missed_stop", station_id=progress.station_id)
 
+    # ------------------------------------------------------------------
+    # 車上廣播（§20.2）
+    # ------------------------------------------------------------------
+    def final_stop(self) -> StationProgress | None:
+        """本班次的終點站（停靠表的最後一站）。"""
+        for progress in reversed(self.stations):
+            if progress.must_stop:
+                return progress
+        return None
+
+    def _handle_broadcast(self) -> None:
+        """依列車狀態決定要播哪一則車上廣播。
+
+        一律以**下一個停靠站**為準，不照路線上的車站順序推進：自強號、
+        區間快會通過許多車站，照順序播就會播出根本不停的站。以停靠站為準
+        的規則對區間車（站站停）同樣成立，因此不需要為車種分開處理。
+        """
+        target = self.next_scheduled_stop()
+        if target is None:
+            return
+
+        # 下一站：列車自車站啟動之後播。用「已播過的站」比對而不是「剛離站」
+        # 這種瞬間事件，中途暫停或列車在站內前後移動都不會重播或漏播。
+        if (
+            self._broadcast_next_for != target.station_id
+            and self.train.current_speed_kmh >= BROADCAST_DEPART_KMH
+        ):
+            self._broadcast_next_for = target.station_id
+            self.broadcast.announce_next_stop(target.station_id, target.name_zh_tw)
+
+        # 到站（終點站則播終點版本）：到達停靠站之前播。
+        distance = target.position_m - self.train.position_m
+        if target.station_id in self._broadcast_arrived or distance > BROADCAST_ARRIVAL_M:
+            return
+        final = self.final_stop()
+        self._broadcast_arrived.add(target.station_id)
+        self.broadcast.announce_arrival(
+            target.station_id,
+            target.name_zh_tw,
+            is_terminus=final is not None and final.station_id == target.station_id,
+        )
+
     def _handle_pass_station(self, progress: StationProgress, position: float) -> None:
         if position >= progress.position_m:
             progress.passed = True
@@ -569,7 +806,26 @@ class DriverSession:
             f"路線長度：{self.route.length_m:.0f} 公尺",
             f"停靠站：{stops or '無'}",
             f"通過站：{passes or '無'}",
+            f"車上廣播：{self.broadcast_status_text()}",
         ]
+
+    def broadcast_status_text(self) -> str:
+        """車上廣播目前的狀態，讓玩家知道「沒有聲音」是哪一種原因。
+
+        分成三種：本型車沒有設備、有設備但這條線還沒有音檔、正常。三種都是
+        合法狀態，說清楚是哪一種才不會被誤認成故障。
+        """
+        if not self.spec.has_broadcast:
+            return f"無（{self.spec.name_zh_tw}沒有車上廣播設備）"
+        covered = sum(
+            1
+            for p in self.stations
+            if p.must_stop and self.data.broadcasts.has(p.station_id, "next")
+        )
+        total = sum(1 for p in self.stations if p.must_stop)
+        if covered == 0:
+            return "本路線尚無廣播音檔，僅提供文字"
+        return f"停靠站 {covered} / {total} 站有廣播音檔"
 
     def status_lines(self) -> list[str]:
         """目前完整狀態的純文字，供介面顯示與螢幕閱讀器閱讀。"""
@@ -593,6 +849,7 @@ class DriverSession:
             f"電門段位：{self.train.power_notch} / {self.spec.power_notches}",
             f"制軔段位：{self.train.brake_notch} / {self.spec.brake_notches}",
             f"緊急制軔：{'動作中' if self.train.emergency_brake else '未動作'}",
+            msg.door_status(self.train.left_doors_open, self.train.right_doors_open),
             f"位置：{report.line_name} {section}",
             f"距離{report.to_station_name}：{report.distance_to_next_m:.0f} 公尺",
         ]
@@ -629,13 +886,17 @@ class DriverSession:
             "power_up": self.power_up,
             "brake_up": self.brake_up,
             "notch_down": self.notch_down,
+            "single_brake": self.single_brake,
             "release_brake": self.release_brake,
             "emergency_brake": self.emergency_brake,
             "release_emergency": self.release_emergency,
             "horn": self.horn,
+            "doors_left": self.toggle_left_doors,
+            "doors_right": self.toggle_right_doors,
             "announce_speed": self.announce_speed,
             "announce_position": self.announce_position,
             "announce_next_station": self.announce_next_station,
             "announce_signal": self.announce_signal,
             "announce_train_status": self.announce_train_status,
+            "announce_doors": self.announce_doors,
         }
