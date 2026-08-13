@@ -137,13 +137,25 @@ def _keycode_to_token(event) -> str | None:
 
 
 class ServicePicker:  # pragma: no cover - 需要圖形環境
-    """開場的車次選擇視窗。
+    """開場的選擇視窗（車次，也用來選鐵路系統）。
 
     視窗版沒有命令列可以下 ``--service``，若不提供選擇畫面，安裝版就永遠
     只能開同一個預設車次。清單支援關鍵字過濾，只用鍵盤即可完成選擇。
+
+    系統選擇沿用同一個視窗而不是另做一個：兩者要做的事完全一樣（從一份清單
+    挑一項），共用之後鍵盤操作、搜尋與螢幕閱讀器行為也一定一致。
     """
 
-    def __init__(self, choices: Sequence[StartChoice], parent=None) -> None:
+    def __init__(
+        self,
+        choices: Sequence[StartChoice],
+        parent=None,
+        *,
+        title: str = "選擇車次",
+        list_label: str = "可駕駛車次（上下鍵選擇，Enter 開始）",
+        search_label: str = "搜尋（車次、車種、車輛型式、起訖站、沿途車站）",
+        accept_label: str = "開始運轉",
+    ) -> None:
         import wx
 
         self.wx = wx
@@ -152,34 +164,32 @@ class ServicePicker:  # pragma: no cover - 需要圖形環境
 
         self.dialog = wx.Dialog(
             parent,
-            title="選擇車次",
+            title=title,
             size=(720, 560),
             style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER,
         )
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        search_label = wx.StaticText(
-            self.dialog, label="搜尋（車次、車種、車輛型式、起訖站、沿途車站）"
-        )
+        search_text = wx.StaticText(self.dialog, label=search_label)
         self.search = wx.TextCtrl(self.dialog)
         self.search.SetName("搜尋")
 
-        list_label = wx.StaticText(self.dialog, label="可駕駛車次（上下鍵選擇，Enter 開始）")
+        list_text = wx.StaticText(self.dialog, label=list_label)
         self.listbox = wx.ListBox(self.dialog, style=wx.LB_SINGLE)
-        self.listbox.SetName("可駕駛車次")
+        self.listbox.SetName(list_label)
 
         self.detail = wx.StaticText(self.dialog, label="")
 
         buttons = wx.StdDialogButtonSizer()
-        ok = wx.Button(self.dialog, wx.ID_OK, "開始運轉")
+        ok = wx.Button(self.dialog, wx.ID_OK, accept_label)
         ok.SetDefault()
         buttons.AddButton(ok)
         buttons.AddButton(wx.Button(self.dialog, wx.ID_CANCEL, "離開"))
         buttons.Realize()
 
-        sizer.Add(search_label, 0, wx.ALL, 6)
+        sizer.Add(search_text, 0, wx.ALL, 6)
         sizer.Add(self.search, 0, wx.EXPAND | wx.ALL, 6)
-        sizer.Add(list_label, 0, wx.ALL, 6)
+        sizer.Add(list_text, 0, wx.ALL, 6)
         sizer.Add(self.listbox, 1, wx.EXPAND | wx.ALL, 6)
         sizer.Add(self.detail, 0, wx.EXPAND | wx.ALL, 6)
         sizer.Add(buttons, 0, wx.ALIGN_CENTER | wx.ALL, 8)
@@ -239,6 +249,7 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         speak: Callable[[str, bool], bool] | None = None,
         *,
         can_change_service: bool = False,
+        can_change_system: bool = False,
     ) -> None:
         import wx
 
@@ -248,6 +259,7 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         self.announcer = announcer
         self.speak = speak
         self.can_change_service = can_change_service
+        self.can_change_system = can_change_system
         self._log_lines: list[str] = []
         self._status_text = ""
         self._last_tick_s = time.perf_counter()
@@ -256,9 +268,15 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         #: 關窗之後由 :func:`run_wx` 讀取：是否要回到車次選擇視窗。
         self.change_service_requested = False
 
+        #: 關窗之後由 :func:`run_wx` 讀取：是否要回到鐵路系統選擇視窗。
+        self.change_system_requested = False
+
         service = session.service
         class_name = session.data.service_class_name(service.train_type)
-        title = f"臺灣鐵路人員模擬器 — 司機員模式 — {class_name}{service.train_number}次"
+        title = (
+            f"臺灣鐵路人員模擬器 — 司機員模式 — {session.data.system.name_zh_tw} — "
+            f"{class_name}{service.train_number}次"
+        )
 
         self.frame = wx.Frame(None, title=title, size=(760, 620))
         panel = wx.Panel(self.frame)
@@ -559,6 +577,8 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         ]
         if self.can_change_service:
             actions.append(("change", "選擇其他車次"))
+        if self.can_change_system:
+            actions.append(("change_system", "選擇其他鐵路系統"))
         actions.append(("quit", "離開遊戲"))
         return actions
 
@@ -588,8 +608,9 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
                 self.show_status()
             elif chosen == "status_item":
                 self.ask_status_item()
-            elif chosen in ("change", "quit"):
+            elif chosen in ("change", "change_system", "quit"):
                 self.change_service_requested = chosen == "change"
+                self.change_system_requested = chosen == "change_system"
                 self.frame.Close()
                 return
             else:
@@ -601,20 +622,26 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
 
 
 def run_wx(
-    choices: Sequence[StartChoice],
-    make_session: Callable[[str], tuple[DriverSession, Announcer]],
+    open_system: Callable[
+        [str], tuple[Sequence[StartChoice], Callable[[str], tuple[DriverSession, Announcer]]]
+    ],
     keymap: Keymap,
     speak: Callable[[str, bool], bool] | None = None,
     *,
+    systems: Sequence[StartChoice] = (),
+    initial_system: str | None = None,
     initial_key: str | None = None,
 ) -> int:  # pragma: no cover - 需要圖形環境
     """啟動 wx 介面。
 
     Args:
-        choices: 車次選擇視窗的選項。
-        make_session: 由 ``StartChoice.key`` 建立 ``(工作階段, 播報器)``。
+        open_system: 由系統代碼取得 ``(車次選項, 建立工作階段的函式)``。
+            資料是按系統分開載入的，因此這裡用回呼而不是先把兩套都讀進來——
+            只玩臺鐵的人不必為了捷運多等一次載入。
         keymap: 鍵位表。
         speak: 選用的語音輸出。
+        systems: 鐵路系統選項。只有一個（或已用 ``--system`` 指定）時不會問。
+        initial_system: 直接使用的系統；``None`` 表示先問。
         initial_key: 直接開始的車次；``None`` 表示先顯示車次選擇視窗。
 
     Returns:
@@ -623,20 +650,49 @@ def run_wx(
     import wx
 
     app = wx.App(False)
+    ask_system = initial_system is None and len(systems) > 1
+    system = initial_system or (systems[0].key if systems else "tra")
     key = initial_key
+
     while True:
+        if ask_system and system is None:
+            system = ServicePicker(
+                systems,
+                title="選擇鐵路系統",
+                list_label="可駕駛的鐵路系統（上下鍵選擇，Enter 確認）",
+                search_label="搜尋",
+                accept_label="選擇",
+            ).ask()
+            if system is None:
+                return 0
+            key = None
+
+        choices, make_session = open_system(system)
         if key is None:
             key = ServicePicker(choices).ask()
             if key is None:
-                return 0
+                if not ask_system:
+                    return 0
+                # 選錯系統的人應該回得去，而不是被迫離開遊戲重開。
+                system = None
+                continue
 
         session, announcer = make_session(key)
         frame = DriverFrame(
-            session, keymap, announcer, speak, can_change_service=bool(choices)
+            session,
+            keymap,
+            announcer,
+            speak,
+            can_change_service=bool(choices),
+            can_change_system=ask_system,
         )
         frame.show()
         app.MainLoop()
 
+        if frame.change_system_requested:
+            system = None
+            key = None
+            continue
         if not frame.change_service_requested:
             return 0
         key = None

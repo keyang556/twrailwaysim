@@ -8,7 +8,7 @@ from railway_sim import data_loader
 def _make_data_dir(root: Path, *, complete: bool = True) -> Path:
     data_dir = root / "data"
     data_dir.mkdir(parents=True)
-    names = data_loader._REQUIRED_FILES if complete else ("stations.json",)
+    names = data_loader.ROOT_REQUIRED_FILES if complete else ("stations.json",)
     for name in names:
         (data_dir / name).write_text("{}", encoding="utf-8")
     return data_dir

@@ -8,6 +8,13 @@
 
 驗證結果放在 :attr:`GameData.issues`，由 ``tests/test_route_rules.py`` 與
 ``tests/test_station_stop.py`` 強制為空。
+
+臺鐵與捷運兩套資料
+------------------
+
+同一組模型可以載入兩個系統的資料，差別只在目錄：臺鐵在 ``data/``、捷運在
+``data/mrt/``（見 :mod:`railway_sim.systems`）。鍵位表與廣播音檔兩邊共用，
+因此在系統目錄裡找不到 ``keymap.json`` 時會退回上層的共用版本。
 """
 
 from __future__ import annotations
@@ -21,16 +28,19 @@ from pathlib import Path
 from typing import Any
 
 from railway_sim.audio.library import BroadcastLibrary, default_announcement_dir
+from railway_sim.audio.mrt_broadcast import BROADCAST_RULES_FILENAME, MrtBroadcastRules
 from railway_sim.railway.route import RegionRules, Route, validate_route
 from railway_sim.railway.station import Station
 from railway_sim.railway.track import Network
 from railway_sim.simulation.train import TrainType
+from railway_sim.systems import DEFAULT_SYSTEM, SYSTEMS, RailSystem, system_data_dir
 from railway_sim.timetable.service import Service
 from railway_sim.timetable.stop_pattern import validate_service
 
 __all__ = [
     "IMPORT_STAGING_PREFIX",
     "GameData",
+    "LineInfo",
     "default_data_dir",
     "heal_interrupted_import",
     "load_game_data",
@@ -39,7 +49,17 @@ __all__ = [
 #: 可用環境變數覆寫資料目錄，方便測試與封裝。
 DATA_DIR_ENV = "RAILWAY_SIM_DATA_DIR"
 
-_REQUIRED_FILES = ("stations.json", "routes.json", "trains.json", "timetables.json", "keymap.json")
+#: 每個系統目錄都要有的資料檔。
+#:
+#: ``keymap.json`` 不在其中：鍵位兩邊共用，捷運目錄裡沒有自己的一份是正常的
+#: （見 :func:`_read_keymap`）。
+_REQUIRED_FILES = ("stations.json", "routes.json", "trains.json", "timetables.json")
+
+#: ``data`` 目錄（而不是某個系統的子目錄）必須具備的資料檔。
+#:
+#: 比 :data:`_REQUIRED_FILES` 多一個共用的 ``keymap.json``：自動尋找資料目錄
+#: 時要找的是**整套可以直接開起來的資料**，缺鍵位表的目錄不算。
+ROOT_REQUIRED_FILES = (*_REQUIRED_FILES, "keymap.json")
 
 #: ``railway_sim.dataset.build.write_dataset`` 匯入時使用的暫存目錄前綴。
 #:
@@ -53,7 +73,7 @@ IMPORT_STAGING_PREFIX = ".import-staging-"
 
 def _contains_required_data(directory: Path) -> bool:
     """Return whether *directory* has a complete automatic data set."""
-    return all((directory / name).is_file() for name in _REQUIRED_FILES)
+    return all((directory / name).is_file() for name in ROOT_REQUIRED_FILES)
 
 
 def default_data_dir() -> Path:
@@ -120,6 +140,37 @@ def heal_interrupted_import(directory: Path) -> None:
         shutil.rmtree(staging, ignore_errors=True)
 
 
+@dataclass(frozen=True)
+class LineInfo:
+    """一條路線（線別）的屬性。
+
+    臺鐵的線別只有名稱，捷運另外帶著 ATO、無人駕駛與廣播樣式——這些是
+    **整條線**的性質，不是某一班車的性質，因此放在線別而不是班次上。
+    """
+
+    id: str
+    name_zh_tw: str
+    ato: bool = False
+    driverless: bool = False
+    """全自動運轉（GoA 4）。車門與發車都由電腦控制，駕駛不需要任何動作。"""
+
+    announcement_style: str = ""
+    """車上廣播的規則樣式，見 :mod:`railway_sim.audio.mrt_broadcast`。"""
+
+    operator: str = ""
+
+    @classmethod
+    def from_dict(cls, line_id: str, raw: dict[str, Any]) -> LineInfo:
+        return cls(
+            id=line_id,
+            name_zh_tw=raw.get("name_zh_tw", line_id),
+            ato=bool(raw.get("ato", False)),
+            driverless=bool(raw.get("driverless", False)),
+            announcement_style=raw.get("announcement_style", ""),
+            operator=raw.get("operator", ""),
+        )
+
+
 @dataclass
 class GameData:
     """載入後的完整遊戲資料。"""
@@ -134,12 +185,20 @@ class GameData:
     services: dict[str, Service]
     line_names: dict[str, str]
     keymap_raw: dict[str, Any]
+    system: RailSystem = SYSTEMS[DEFAULT_SYSTEM]
+    """這份資料屬於哪一個鐵路系統（臺鐵或捷運）。"""
+
+    lines: dict[str, LineInfo] = field(default_factory=dict)
+    """線別屬性。``line_names`` 是它的名稱檢視，兩者一定一致。"""
     broadcasts: BroadcastLibrary = field(default_factory=BroadcastLibrary.empty)
     """車上廣播音檔索引（§20.2）。
 
     空的索引是合法狀態：還沒匯入任何廣播、或某條線暫時還沒有廣播，都只是
     「沒有聲音」，不是資料錯誤，因此**不會**進 :attr:`issues`。
     """
+
+    broadcast_rules: MrtBroadcastRules = field(default_factory=MrtBroadcastRules.empty)
+    """捷運廣播的播放規則。臺鐵沒有這個檔案，空的規則即為「照臺鐵那一套」。"""
 
     issues: list[str] = field(default_factory=list)
 
@@ -168,20 +227,55 @@ class GameData:
     def service_class_name(self, class_id: str) -> str:
         return self.service_classes.get(class_id, class_id)
 
+    def line(self, line_id: str) -> LineInfo:
+        """線別屬性。沒有這條線時回傳一個只有名稱的預設值。
+
+        查不到不是錯誤：舊資料檔的 ``lines`` 區段可能只寫了名稱，甚至整條線
+        沒有登記。這種情況下「沒有 ATO、沒有無人駕駛」正是正確的預設。
+        """
+        return self.lines.get(
+            line_id, LineInfo(id=line_id, name_zh_tw=self.line_names.get(line_id, line_id))
+        )
+
     def raise_on_issues(self) -> None:
         """有資料問題時擲出例外，供正式啟動時 fail fast。"""
         if self.issues:
             raise ValueError("資料驗證未通過：\n" + "\n".join(f"- {i}" for i in self.issues))
 
 
-def load_game_data(data_dir: str | Path | None = None) -> GameData:
-    """載入 ``data`` 目錄下的所有資料檔並執行驗證。
+def _read_keymap(directory: Path, root: Path) -> dict[str, Any]:
+    """讀取鍵位表。系統目錄沒有自己的一份時退回共用的那一份。
+
+    鍵位是**玩家的**設定，不是某一個系統的資料：同一個人不會希望從臺鐵換到
+    捷運就得重設一次按鍵。因此正常情況下只有 ``data/keymap.json`` 一份，
+    系統目錄裡放一份只是為了讓匯入驗證用的暫存目錄能自成一體。
+    """
+    for candidate in (directory / "keymap.json", root / "keymap.json"):
+        if candidate.is_file():
+            return _read_json(candidate)
+    raise FileNotFoundError(f"{directory} 與 {root} 都沒有 keymap.json")
+
+
+def load_game_data(
+    data_dir: str | Path | None = None, *, system: str = DEFAULT_SYSTEM
+) -> GameData:
+    """載入某個系統的所有資料檔並執行驗證。
+
+    Args:
+        data_dir: ``data`` 目錄（**不是**系統子目錄），預設自動尋找。
+        system: 系統代碼，見 :data:`railway_sim.systems.SYSTEMS`。
 
     讀取前一律先呼叫 :func:`heal_interrupted_import`，修復任何殘留的
     中斷匯入，因此即使上一次 ``railway_sim.dataset`` 匯入在寫入正式檔案
     的過程中被強制中止，這裡仍然能載入到一致的（回復成匯入前的）資料。
+
+    Raises:
+        KeyError: 沒有這個系統代碼。
+        FileNotFoundError: 系統目錄缺少資料檔。
     """
-    directory = Path(data_dir) if data_dir is not None else default_data_dir()
+    root = Path(data_dir) if data_dir is not None else default_data_dir()
+    rail_system = SYSTEMS[system]
+    directory = system_data_dir(root, system)
     heal_interrupted_import(directory)
     missing = [name for name in _REQUIRED_FILES if not (directory / name).is_file()]
     if missing:
@@ -199,10 +293,11 @@ def load_game_data(data_dir: str | Path | None = None) -> GameData:
     routes_raw = _read_json(directory / "routes.json")
     network = Network.from_dict(routes_raw)
     region_rules = RegionRules.from_dict(routes_raw.get("region_rules"))
-    line_names = {
-        line_id: info.get("name_zh_tw", line_id)
+    lines = {
+        line_id: LineInfo.from_dict(line_id, info)
         for line_id, info in routes_raw.get("lines", {}).items()
     }
+    line_names = {line_id: info.name_zh_tw for line_id, info in lines.items()}
 
     routes: dict[str, Route] = {}
     for raw in routes_raw.get("routes", ()):
@@ -268,15 +363,25 @@ def load_game_data(data_dir: str | Path | None = None) -> GameData:
                 )
 
     # --- 鍵位 ---------------------------------------------------------
-    keymap_raw = _read_json(directory / "keymap.json")
+    keymap_raw = _read_keymap(directory, root)
 
     # --- 車上廣播（§20.2）----------------------------------------------
     # 掃描資料夾而不是讀清單檔：廣播會改版、新站會通車，把檔案放進資料夾
     # 就該生效；缺檔一律視為「這一站暫時沒有廣播」，不是資料錯誤。
-    broadcasts = BroadcastLibrary.load(default_announcement_dir(directory))
+    #
+    # 音檔放在共用的 data/audio/announcements（依 line_id 分類），兩個系統
+    # 的線別代碼不會相撞，因此不需要各自一份。系統目錄裡有自己的一份時
+    # 優先採用，讓匯入驗證用的暫存目錄能自成一體。
+    announcements = default_announcement_dir(directory)
+    if not announcements.is_dir():
+        announcements = default_announcement_dir(root)
+    broadcasts = BroadcastLibrary.load(announcements)
+    broadcast_rules = MrtBroadcastRules.load(directory / BROADCAST_RULES_FILENAME)
 
     return GameData(
         data_dir=directory,
+        system=rail_system,
+        lines=lines,
         stations=stations,
         network=network,
         routes=routes,
@@ -287,5 +392,6 @@ def load_game_data(data_dir: str | Path | None = None) -> GameData:
         line_names=line_names,
         keymap_raw=keymap_raw,
         broadcasts=broadcasts,
+        broadcast_rules=broadcast_rules,
         issues=issues,
     )

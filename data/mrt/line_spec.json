@@ -1,0 +1,417 @@
+{
+  "meta": {
+    "description": "捷運各線的匯入設定：哪一頁維基百科條目、哪些車站已通車、跑哪些營運模式。",
+    "why": "維基百科的車站表同時列出已通車與規劃中的車站，也不會說哪一種列車停哪幾站。前者只能靠明確的通車車站清單決定，後者來自條目的「列車營運模式」章節，兩者都不是表格能自動推出來的，因此寫成設定檔並逐條註明依據。",
+    "update_note": "新站通車或營運模式調整時，改本檔的 stations／patterns 再重跑 python -m railway_sim.dataset --system mrt --source <條目資料夾> 即可。",
+    "source": "維基百科各線條目（見每一條線的 source_page），使用者於 2026-08-13 提供的離線存檔。",
+    "station_code_policy": "車站代碼直接採用維基百科車站表的「編號」欄（R22、A14a、LB02…）。廣播音檔檔名也用同一組代碼，兩邊才對得起來。"
+  },
+  "lines": [
+    {
+      "id": "wenhu",
+      "code": "BR",
+      "name_zh_tw": "文湖線",
+      "operator": "臺北捷運",
+      "source_page": "文湖線",
+      "max_speed_kmh": 70,
+      "speed_status": "official",
+      "speed_source": "條目技術數據：營運速度每小時70公里",
+      "ato": true,
+      "driverless": true,
+      "driverless_note": "條目號誌系統：CITYFLO 650 CBTC-ATO GoA 4 (UTO)，全線無人駕駛。",
+      "announcement_style": "wenhu",
+      "chains": [
+        [
+          "BR01", "BR02", "BR03", "BR04", "BR05", "BR06", "BR07", "BR08",
+          "BR09", "BR10", "BR11", "BR12", "BR13", "BR14", "BR15", "BR16",
+          "BR17", "BR18", "BR19", "BR20", "BR21", "BR22", "BR23", "BR24"
+        ]
+      ],
+      "patterns": [
+        {
+          "number": "BR1001",
+          "name_zh_tw": "全程車",
+          "from": "BR01",
+          "to": "BR24",
+          "service_class": "metro",
+          "rolling_stock_id": "APM256",
+          "source": "條目：營運路線＝全程車：動物園—南港展覽館"
+        }
+      ]
+    },
+    {
+      "id": "tamsui_xinyi",
+      "code": "R",
+      "name_zh_tw": "淡水信義線",
+      "operator": "臺北捷運",
+      "source_page": "淡水信義線",
+      "max_speed_kmh": 80,
+      "speed_status": "official",
+      "speed_source": "條目技術數據：營運速度80公里每小時",
+      "ato": true,
+      "driverless": false,
+      "announcement_style": "taipei_metro",
+      "chains": [
+        [
+          "R02", "R03", "R04", "R05", "R06", "R07", "R08", "R09", "R10",
+          "R11", "R12", "R13", "R14", "R15", "R16", "R17", "R18", "R19",
+          "R20", "R21", "R22", "R23", "R24", "R25", "R26", "R27", "R28"
+        ]
+      ],
+      "excluded_note": "R01 廣慈／奉天宮尚未通車（條目：預計2026年），因此不列入。",
+      "patterns": [
+        {
+          "number": "R1001",
+          "name_zh_tw": "淡水－象山 全程車",
+          "from": "R28",
+          "to": "R02",
+          "service_class": "metro",
+          "rolling_stock_id": "C381",
+          "source": "條目列車營運模式：「淡水－象山」全程列車"
+        },
+        {
+          "number": "R1003",
+          "name_zh_tw": "北投－象山 區間車",
+          "from": "R22",
+          "to": "R02",
+          "service_class": "metro",
+          "rolling_stock_id": "C301",
+          "source": "條目列車營運模式：「北投－象山」區間列車"
+        },
+        {
+          "number": "R1005",
+          "name_zh_tw": "北投－大安 區間車",
+          "from": "R22",
+          "to": "R05",
+          "service_class": "metro",
+          "rolling_stock_id": "C301",
+          "source": "條目列車營運模式：「北投－大安」區間列車"
+        }
+      ]
+    },
+    {
+      "id": "xinbeitou",
+      "code": "R",
+      "name_zh_tw": "新北投支線",
+      "operator": "臺北捷運",
+      "source_page": "新北投支線",
+      "max_speed_kmh": 25,
+      "speed_status": "official",
+      "speed_source": "條目技術數據：最高速度25km/h",
+      "ato": true,
+      "driverless": false,
+      "announcement_style": "taipei_metro",
+      "chains": [["R22", "R22A"]],
+      "patterns": [
+        {
+          "number": "R1051",
+          "name_zh_tw": "新北投支線",
+          "from": "R22A",
+          "to": "R22",
+          "service_class": "metro",
+          "rolling_stock_id": "C371_3",
+          "source": "條目：北投—新北投，三節車廂為一組"
+        }
+      ]
+    },
+    {
+      "id": "songshan_xindian",
+      "code": "G",
+      "name_zh_tw": "松山新店線",
+      "operator": "臺北捷運",
+      "source_page": "松山新店線",
+      "max_speed_kmh": 80,
+      "speed_status": "official",
+      "speed_source": "條目技術數據：營運速度80公里每小時",
+      "ato": true,
+      "driverless": false,
+      "announcement_style": "taipei_metro",
+      "chains": [
+        [
+          "G01", "G02", "G03", "G04", "G05", "G06", "G07", "G08", "G09",
+          "G10", "G11", "G12", "G13", "G14", "G15", "G16", "G17", "G18", "G19"
+        ]
+      ],
+      "patterns": [
+        {
+          "number": "G1001",
+          "name_zh_tw": "松山－新店 全程車",
+          "from": "G19",
+          "to": "G01",
+          "service_class": "metro",
+          "rolling_stock_id": "C381",
+          "source": "條目列車營運模式：「松山－新店」全程列車"
+        },
+        {
+          "number": "G1003",
+          "name_zh_tw": "松山－台電大樓 區間車",
+          "from": "G19",
+          "to": "G08",
+          "service_class": "metro",
+          "rolling_stock_id": "C371",
+          "source": "條目列車營運模式：「松山－台電大樓」區間列車"
+        },
+        {
+          "number": "G1005",
+          "name_zh_tw": "松山－七張 加班車",
+          "from": "G19",
+          "to": "G03",
+          "service_class": "metro",
+          "rolling_stock_id": "C371",
+          "source": "條目列車營運模式：「七張－松山」加班車"
+        }
+      ]
+    },
+    {
+      "id": "xiaobitan",
+      "code": "G",
+      "name_zh_tw": "小碧潭支線",
+      "operator": "臺北捷運",
+      "source_page": "小碧潭支線",
+      "max_speed_kmh": 80,
+      "speed_status": "official",
+      "speed_source": "條目技術數據：最高速度80km/h",
+      "ato": true,
+      "driverless": false,
+      "announcement_style": "taipei_metro",
+      "chains": [["G03", "G03A"]],
+      "patterns": [
+        {
+          "number": "G1051",
+          "name_zh_tw": "小碧潭支線",
+          "from": "G03A",
+          "to": "G03",
+          "service_class": "metro",
+          "rolling_stock_id": "C371_3",
+          "source": "條目：七張—小碧潭，三節車廂為一組"
+        }
+      ]
+    },
+    {
+      "id": "zhonghe_xinlu",
+      "code": "O",
+      "name_zh_tw": "中和新蘆線",
+      "operator": "臺北捷運",
+      "source_page": "中和新蘆線",
+      "max_speed_kmh": 80,
+      "speed_status": "official",
+      "speed_source": "條目技術數據：營運速度80公里每小時",
+      "ato": true,
+      "driverless": false,
+      "announcement_style": "taipei_metro",
+      "chains": [
+        [
+          "O01", "O02", "O03", "O04", "O05", "O06", "O07", "O08", "O09",
+          "O10", "O11", "O12", "O13", "O14", "O15", "O16", "O17", "O18",
+          "O19", "O20", "O21"
+        ],
+        ["O12", "O50", "O51", "O52", "O53", "O54"]
+      ],
+      "patterns": [
+        {
+          "number": "O1001",
+          "name_zh_tw": "迴龍－南勢角 全程車",
+          "from": "O21",
+          "to": "O01",
+          "service_class": "metro",
+          "rolling_stock_id": "C371",
+          "source": "條目列車營運模式：「迴龍－南勢角」全程列車"
+        },
+        {
+          "number": "O1003",
+          "name_zh_tw": "蘆洲－南勢角 全程車",
+          "from": "O54",
+          "to": "O01",
+          "service_class": "metro",
+          "rolling_stock_id": "C371",
+          "source": "條目列車營運模式：「蘆洲－南勢角」全程列車"
+        }
+      ]
+    },
+    {
+      "id": "bannan",
+      "code": "BL",
+      "name_zh_tw": "板南線",
+      "operator": "臺北捷運",
+      "source_page": "板南線",
+      "max_speed_kmh": 80,
+      "speed_status": "official",
+      "speed_source": "條目技術數據：營運速度80公里每小時",
+      "ato": true,
+      "driverless": false,
+      "announcement_style": "taipei_metro",
+      "chains": [
+        [
+          "BL01", "BL02", "BL03", "BL04", "BL05", "BL06", "BL07", "BL08",
+          "BL09", "BL10", "BL11", "BL12", "BL13", "BL14", "BL15", "BL16",
+          "BL17", "BL18", "BL19", "BL20", "BL21", "BL22", "BL23"
+        ]
+      ],
+      "patterns": [
+        {
+          "number": "BL1001",
+          "name_zh_tw": "頂埔－南港展覽館 全程車",
+          "from": "BL01",
+          "to": "BL23",
+          "service_class": "metro",
+          "rolling_stock_id": "C321",
+          "source": "條目：營運路線＝全程車：頂埔—南港展覽館"
+        },
+        {
+          "number": "BL1003",
+          "name_zh_tw": "亞東醫院－南港展覽館 區間車",
+          "from": "BL05",
+          "to": "BL23",
+          "service_class": "metro",
+          "rolling_stock_id": "C341",
+          "source": "條目：營運路線＝區間車：亞東醫院—南港展覽館"
+        },
+        {
+          "number": "BL1005",
+          "name_zh_tw": "頂埔－昆陽 區間車",
+          "from": "BL01",
+          "to": "BL21",
+          "service_class": "metro",
+          "rolling_stock_id": "C321",
+          "source": "條目註釋：部分班次只到昆陽站"
+        }
+      ]
+    },
+    {
+      "id": "circular",
+      "code": "Y",
+      "name_zh_tw": "環狀線",
+      "operator": "新北捷運",
+      "source_page": "環狀線 (台北都會區)",
+      "max_speed_kmh": 80,
+      "speed_status": "official",
+      "speed_source": "條目技術數據：最高速度80公里每小時",
+      "ato": true,
+      "driverless": true,
+      "driverless_note": "610型安全防護系統：Ansaldo STS 無人駕駛系統（CBTC、ATO、ATC、ATP、ATS）。",
+      "announcement_style": "taipei_metro",
+      "chains": [
+        [
+          "Y07", "Y08", "Y09", "Y10", "Y11", "Y12", "Y13", "Y14", "Y15",
+          "Y16", "Y17", "Y18", "Y19", "Y20"
+        ]
+      ],
+      "excluded_note": "條目車站數目：42（營運中：14），營運區間為西環段大坪林—新北產業園區。",
+      "patterns": [
+        {
+          "number": "Y1001",
+          "name_zh_tw": "新北產業園區－大坪林",
+          "from": "Y20",
+          "to": "Y07",
+          "service_class": "metro",
+          "rolling_stock_id": "C610",
+          "source": "條目列車營運模式：「新北產業園區-大坪林」"
+        }
+      ]
+    },
+    {
+      "id": "sanying",
+      "code": "LB",
+      "name_zh_tw": "三鶯線",
+      "operator": "新北捷運",
+      "source_page": "三鶯線",
+      "max_speed_kmh": 70,
+      "speed_status": "test_data",
+      "speed_source": "條目未列營運或設計速度（規格 §27）。暫用與文湖線相同的 70 公里，僅為第一版測試值。",
+      "ato": true,
+      "driverless": true,
+      "driverless_note": "條目號誌系統：日立軌道義大利 CBTC-ATO GoA 4 (UTO)。",
+      "announcement_style": "sanying",
+      "chains": [
+        [
+          "LB01", "LB02", "LB03", "LB04", "LB05", "LB06", "LB07", "LB08",
+          "LB09", "LB10", "LB11", "LB12"
+        ]
+      ],
+      "excluded_note": "條目車站數目：12站；LB14 大湳屬八德延伸段，尚未通車。",
+      "patterns": [
+        {
+          "number": "LB1001",
+          "name_zh_tw": "全程車",
+          "from": "LB01",
+          "to": "LB12",
+          "service_class": "metro",
+          "rolling_stock_id": "SANYING",
+          "source": "條目：起點站頂埔、終點站鶯桃福德"
+        }
+      ]
+    },
+    {
+      "id": "taoyuan_airport",
+      "code": "A",
+      "name_zh_tw": "桃園機場捷運",
+      "operator": "桃園捷運",
+      "source_page": "桃園機場捷運",
+      "max_speed_kmh": 100,
+      "speed_status": "official",
+      "speed_source": "條目：路線設計最高時速110公里，實際營運最高時速100公里",
+      "ato": true,
+      "driverless": false,
+      "announcement_style": "airport",
+      "chains": [
+        [
+          "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10",
+          "A11", "A12", "A13", "A14a", "A15", "A16", "A17", "A18", "A19",
+          "A20", "A21", "A22"
+        ]
+      ],
+      "excluded_note": "A14 機場第三航廈與 A23 中壢車站尚未通車（條目車站數目：27，營運中：22）。",
+      "patterns": [
+        {
+          "number": "A1001",
+          "name_zh_tw": "普通車",
+          "from": "A1",
+          "to": "A22",
+          "service_class": "commuter",
+          "rolling_stock_id": "TYMC1000",
+          "source": "條目：普通車（Commuter），目的地老街溪，A1～A22每站皆停"
+        },
+        {
+          "number": "A1003",
+          "name_zh_tw": "直達車",
+          "from": "A1",
+          "to": "A13",
+          "service_class": "express",
+          "rolling_stock_id": "TYMC2000",
+          "stops": ["A1", "A3", "A8", "A12", "A13"],
+          "source": "條目：直達車（Express），目的地機場第二航廈，停靠站 A1－A3－A8－A12－A13"
+        },
+        {
+          "number": "A1005",
+          "name_zh_tw": "環北直達車",
+          "from": "A1",
+          "to": "A21",
+          "service_class": "express",
+          "rolling_stock_id": "TYMC2000",
+          "stops": ["A1", "A3", "A8", "A12", "A13", "A18", "A21"],
+          "source": "條目：環北直達車，停靠站 A1－A3－A8－A12－A13－A18－A21"
+        },
+        {
+          "number": "A1007",
+          "name_zh_tw": "北段深夜普通車",
+          "from": "A1",
+          "to": "A13",
+          "service_class": "commuter",
+          "rolling_stock_id": "TYMC1000",
+          "both_directions": false,
+          "source": "條目：北段深夜普通車，由台北車站發車單程，A1～A13"
+        },
+        {
+          "number": "A1009",
+          "name_zh_tw": "南段深夜普通車",
+          "from": "A22",
+          "to": "A12",
+          "service_class": "commuter",
+          "rolling_stock_id": "TYMC1000",
+          "both_directions": false,
+          "source": "條目：南段深夜普通車，由老街溪站發車單程，A22～A12"
+        }
+      ]
+    }
+  ]
+}

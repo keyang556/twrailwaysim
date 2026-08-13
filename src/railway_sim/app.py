@@ -17,6 +17,7 @@ from railway_sim.audio.player import AudioPlayer, create_player
 from railway_sim.data_loader import GameData, load_game_data
 from railway_sim.input.keymap import Keymap
 from railway_sim.roles.driver import DriverSession
+from railway_sim.systems import DEFAULT_SYSTEM, SYSTEMS
 
 __all__ = [
     "build_session",
@@ -27,6 +28,7 @@ __all__ = [
     "start_choice_key",
     "start_choices",
     "start_session",
+    "system_choices",
 ]
 
 #: 預設車次（區間車，停靠成功站）。
@@ -154,8 +156,29 @@ def start_session(
     return build_session(data, scenario, announcer, player), announcer
 
 
+def system_choices() -> list:
+    """開場的系統選擇項目（臺鐵／捷運）。
+
+    兩個介面共用同一份，因此主控台與視窗版看到的選項一定一致（§25.5）。
+    """
+    from railway_sim.ui.wx_app import StartChoice
+
+    return [
+        StartChoice(
+            key=system.id,
+            label=f"{system.name_zh_tw}（{system.id}）",
+            detail=system.description,
+        )
+        for system in SYSTEMS.values()
+    ]
+
+
 def start_choices(data: GameData) -> list:
-    """車次選擇視窗的完整選項：五個預設情境，加上時刻表裡的每一個車次。"""
+    """車次選擇視窗的完整選項。
+
+    情境只屬於臺鐵（成追線、山線海線那幾個），因此捷運模式下只列營運模式，
+    不會出現開不起來的情境。
+    """
     from railway_sim.ui.wx_app import StartChoice
 
     choices = [
@@ -165,6 +188,7 @@ def start_choices(data: GameData) -> list:
             detail=scenario.description,
         )
         for scenario in SCENARIOS.values()
+        if data.system.id == DEFAULT_SYSTEM
     ]
 
     names = data.station_names()
@@ -180,13 +204,18 @@ def start_choices(data: GameData) -> list:
             names.get(sid, "")
             for sid in (*service.stop_station_ids, *service.pass_station_ids)
         )
+        stock_name = stock.name_zh_tw if stock else service.rolling_stock_id
+        # 捷運沒有對外公布的車次，玩家認的是「哪一條線的哪一種營運模式」，
+        # 因此直接用班次名稱；臺鐵維持「車種＋車次」的既有寫法。
+        label = (
+            f"{service.name_zh_tw}　{stock_name}"
+            if data.system.id != DEFAULT_SYSTEM
+            else f"{class_name}{number}次　{origin}－{destination}　{stock_name}"
+        )
         choices.append(
             StartChoice(
                 key=f"{SERVICE_KEY_PREFIX}{number}",
-                label=(
-                    f"{class_name}{number}次　{origin}－{destination}　"
-                    f"{stock.name_zh_tw if stock else service.rolling_stock_id}"
-                ),
+                label=label,
                 detail=(
                     f"路線：{route.name_zh_tw if route else ''}　"
                     f"停靠 {len(service.stop_station_ids)} 站"
@@ -214,9 +243,12 @@ def service_menu_lines(data: GameData, keyword: str = "") -> list[str]:
         stops = service.stop_station_ids
         origin = names.get(stops[0], "") if stops else ""
         destination = names.get(stops[-1], "") if stops else ""
+        # 線別也列出來，「三鶯線」「山線」這種以線為單位的關鍵字才找得到——
+        # 路線名稱只寫起訖站（「頂埔至鶯桃福德」），不含線名。
+        line_name = data.line_names.get(route.line_id, "") if route else ""
         line = (
             f"{number}\t{class_name}\t{service.rolling_stock_id}\t"
-            f"{origin}－{destination}\t{route.name_zh_tw if route else ''}"
+            f"{origin}－{destination}\t{route.name_zh_tw if route else ''}\t{line_name}"
         )
         if keyword:
             along = [
@@ -278,6 +310,67 @@ def _configure_text_stream(stream: object | None) -> None:
         return
 
 
+def _ask_system() -> str:
+    """主控台的系統選擇。
+
+    用 ``input()`` 而不是即時按鍵：這一步在遊戲開始之前，畫面上有完整的選項
+    文字，螢幕閱讀器讀得到；輸入錯了重問一次即可，不需要任何特殊鍵盤處理。
+    """
+    options = list(SYSTEMS.values())
+    print("===== 選擇鐵路系統 =====", flush=True)
+    for index, system in enumerate(options, start=1):
+        print(f"{index}：{system.name_zh_tw}", flush=True)
+        if system.description:
+            print(f"    {system.description}", flush=True)
+    prompt = f"請輸入 1 到 {len(options)}（直接按 Enter 使用{options[0].name_zh_tw}）："
+
+    while True:
+        try:
+            answer = input(prompt).strip()
+        except EOFError:
+            # 非互動式執行（管線、測試）沒有輸入可讀，用預設值繼續。
+            return DEFAULT_SYSTEM
+        if not answer:
+            return options[0].id
+        if answer.isdigit() and 1 <= int(answer) <= len(options):
+            return options[int(answer) - 1].id
+        if answer in SYSTEMS:
+            return answer
+        print(f"請輸入 1 到 {len(options)}。", flush=True)
+
+
+def _ask_service(data: GameData) -> str | None:
+    """主控台的車次選擇。回傳車次；玩家放棄時回傳 ``None``。
+
+    只有沒有預設情境的系統（捷運）會用到：臺鐵的預設情境本來就開得起來，
+    多問一次只是擋路。
+    """
+    numbers = sorted(data.services, key=lambda n: (len(n), n))
+    print(f"===== 選擇{data.system.name_zh_tw}營運模式 =====", flush=True)
+    for index, number in enumerate(numbers, start=1):
+        service = data.services[number]
+        stock = data.train_types.get(service.rolling_stock_id)
+        print(
+            f"{index}：{number}　{service.name_zh_tw}　"
+            f"{stock.name_zh_tw if stock else service.rolling_stock_id}",
+            flush=True,
+        )
+    prompt = f"請輸入 1 到 {len(numbers)}，或直接輸入車次（按 Enter 離開）："
+
+    while True:
+        try:
+            answer = input(prompt).strip()
+        except EOFError:
+            return None
+        if not answer:
+            return None
+        if answer.isdigit() and 1 <= int(answer) <= len(numbers):
+            return numbers[int(answer) - 1]
+        if answer in data.services:
+            return answer
+        print(f"請輸入 1 到 {len(numbers)}，或一個存在的車次。", flush=True)
+
+
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="railway-sim",
@@ -289,6 +382,15 @@ def _build_parser() -> argparse.ArgumentParser:
         choices=("console", "wx"),
         default="console",
         help="介面種類。預設 console：純文字輸出，螢幕閱讀器可直接朗讀。",
+    )
+    parser.add_argument(
+        "--system",
+        choices=tuple(SYSTEMS),
+        default=None,
+        help=(
+            "要駕駛哪一個鐵路系統。tra：臺鐵；mrt：捷運（含 ATO 與自動駕駛）。"
+            "未指定時會先詢問。"
+        ),
     )
     parser.add_argument(
         "--scenario",
@@ -379,9 +481,18 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"    {scenario.description}")
         return 0
 
+    # --- 系統（臺鐵／捷運）--------------------------------------------
+    # 只有主控台會在這裡問；視窗版留到 run_wx 才問，因為它得先開視窗才有
+    # 地方顯示選項，而且要能在遊戲中換系統。
+    system = args.system
+    if system is None and args.ui != "wx":
+        # --check 與 --list-services 不是遊戲流程，問玩家反而擋住自動化用途。
+        inspecting = args.check or args.list_services is not None
+        system = DEFAULT_SYSTEM if inspecting else _ask_system()
+
     # --- 資料驗證 -----------------------------------------------------
     try:
-        data = load_game_data(args.data_dir)
+        data = load_game_data(args.data_dir, system=system or DEFAULT_SYSTEM)
     except (FileNotFoundError, ValueError) as exc:
         print(f"資料載入失敗：{exc}", file=sys.stderr)
         return 2
@@ -413,13 +524,20 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.list_services is not None:
         lines = service_menu_lines(data, args.list_services)
-        print("車次\t車種\t車輛型式\t起訖\t路線")
+        print("車次\t車種\t車輛型式\t起訖\t路線\t線別")
         for line in lines:
             print(line)
         print(f"共 {len(lines)} 個車次。用 --service <車次> 直接駕駛。")
         return 0
 
     # --- 啟動 ---------------------------------------------------------
+    if args.scenario and data.system.id != DEFAULT_SYSTEM:
+        print(
+            f"--scenario 只有臺鐵有；{data.system.name_zh_tw}請改用 --service 指定營運模式，"
+            "或用 --list-services 查詢。",
+            file=sys.stderr,
+        )
+        return 2
     try:
         scenario = resolve_scenario(data, args.scenario, args.service)
     except KeyError as exc:
@@ -445,12 +563,28 @@ def main(argv: list[str] | None = None) -> int:
         # 沒有指定車次時先開車次選擇視窗：視窗版沒有命令列可以下 --service，
         # 少了這一步，安裝版就永遠只能開同一個預設車次。
         initial_key = None if scenario is None else start_choice_key(scenario)
+        loaded: dict[str, GameData] = {data.system.id: data}
+
+        def open_system(system_id: str):
+            """視窗版換系統時才載入那一套資料，並記住已載入的。
+
+            兩套資料一起載入要多花一次完整驗證的時間，只玩其中一邊的人不必付
+            這個代價；換過去之後留在快取裡，來回切換就不會重複載入。
+            """
+            if system_id not in loaded:
+                loaded[system_id] = load_game_data(args.data_dir, system=system_id)
+            game_data = loaded[system_id]
+            return start_choices(game_data), (
+                lambda key: start_session(game_data, key, player)
+            )
+
         try:
             return run_wx(
-                start_choices(data),
-                lambda key: start_session(data, key, player),
+                open_system,
                 keymap,
                 speak,
+                systems=system_choices(),
+                initial_system=system,
                 initial_key=initial_key,
             )
         finally:
@@ -459,10 +593,19 @@ def main(argv: list[str] | None = None) -> int:
 
     from railway_sim.ui.console_app import ConsoleApp
 
+    if scenario is None:
+        if data.system.id == DEFAULT_SYSTEM:
+            scenario = SCENARIOS[DEFAULT_SCENARIO]
+        else:
+            # 捷運沒有預設情境（那幾個情境都是臺鐵的山線海線題目），因此改問
+            # 要開哪一種營運模式——視窗版本來就會問，主控台不該少一步。
+            number = _ask_service(data)
+            if number is None:
+                return 0
+            scenario = scenario_for_service(data, number)
+
     announcer = Announcer()
-    session = build_session(
-        data, scenario or SCENARIOS[DEFAULT_SCENARIO], announcer, player
-    )
+    session = build_session(data, scenario, announcer, player)
     try:
         return ConsoleApp(session, keymap, announcer, speak).run()
     finally:

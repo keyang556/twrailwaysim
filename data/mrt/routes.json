@@ -1,0 +1,3808 @@
+{
+  "meta": {
+    "description": "捷運路網與行駛路徑，依維基百科各線條目的車站表產生。",
+    "length_policy": "站距一律由條目車站表的累計里程相減得出，因此還沒通車的車站（機場捷運 A14、三鶯線 LB07a）不會被算進營運中的區間。",
+    "speed_policy": "區間速限採該線條目的營運速度；條目沒有列的（三鶯線）標記 test_data。",
+    "provenance": {
+      "source": "維基百科各線條目",
+      "generator": "railway_sim.dataset.mrt"
+    }
+  },
+  "lines": {
+    "wenhu": {
+      "name_zh_tw": "文湖線",
+      "code": "BR",
+      "operator": "臺北捷運",
+      "ato": true,
+      "driverless": true,
+      "announcement_style": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表",
+      "driverless_note": "條目號誌系統：CITYFLO 650 CBTC-ATO GoA 4 (UTO)，全線無人駕駛。"
+    },
+    "tamsui_xinyi": {
+      "name_zh_tw": "淡水信義線",
+      "code": "R",
+      "operator": "臺北捷運",
+      "ato": true,
+      "driverless": false,
+      "announcement_style": "taipei_metro",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    "xinbeitou": {
+      "name_zh_tw": "新北投支線",
+      "code": "R",
+      "operator": "臺北捷運",
+      "ato": true,
+      "driverless": false,
+      "announcement_style": "taipei_metro",
+      "max_speed_kmh": 25.0,
+      "verification_status": "official",
+      "source": "維基百科〈新北投支線〉車站表"
+    },
+    "songshan_xindian": {
+      "name_zh_tw": "松山新店線",
+      "code": "G",
+      "operator": "臺北捷運",
+      "ato": true,
+      "driverless": false,
+      "announcement_style": "taipei_metro",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    "xiaobitan": {
+      "name_zh_tw": "小碧潭支線",
+      "code": "G",
+      "operator": "臺北捷運",
+      "ato": true,
+      "driverless": false,
+      "announcement_style": "taipei_metro",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official",
+      "source": "維基百科〈小碧潭支線〉車站表"
+    },
+    "zhonghe_xinlu": {
+      "name_zh_tw": "中和新蘆線",
+      "code": "O",
+      "operator": "臺北捷運",
+      "ato": true,
+      "driverless": false,
+      "announcement_style": "taipei_metro",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    "bannan": {
+      "name_zh_tw": "板南線",
+      "code": "BL",
+      "operator": "臺北捷運",
+      "ato": true,
+      "driverless": false,
+      "announcement_style": "taipei_metro",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    "circular": {
+      "name_zh_tw": "環狀線",
+      "code": "Y",
+      "operator": "新北捷運",
+      "ato": true,
+      "driverless": true,
+      "announcement_style": "taipei_metro",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official",
+      "source": "維基百科〈環狀線 (台北都會區)〉車站表",
+      "driverless_note": "610型安全防護系統：Ansaldo STS 無人駕駛系統（CBTC、ATO、ATC、ATP、ATS）。"
+    },
+    "sanying": {
+      "name_zh_tw": "三鶯線",
+      "code": "LB",
+      "operator": "新北捷運",
+      "ato": true,
+      "driverless": true,
+      "announcement_style": "sanying",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official",
+      "source": "維基百科〈三鶯線〉車站表",
+      "driverless_note": "條目號誌系統：日立軌道義大利 CBTC-ATO GoA 4 (UTO)。"
+    },
+    "taoyuan_airport": {
+      "name_zh_tw": "桃園機場捷運",
+      "code": "A",
+      "operator": "桃園捷運",
+      "ato": true,
+      "driverless": false,
+      "announcement_style": "airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    }
+  },
+  "nodes": [
+    {
+      "id": "STA_BR01",
+      "node_type": "station",
+      "station_id": "BR01",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR02",
+      "node_type": "station",
+      "station_id": "BR02",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR03",
+      "node_type": "station",
+      "station_id": "BR03",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR04",
+      "node_type": "station",
+      "station_id": "BR04",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR05",
+      "node_type": "station",
+      "station_id": "BR05",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR06",
+      "node_type": "station",
+      "station_id": "BR06",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR07",
+      "node_type": "station",
+      "station_id": "BR07",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR08",
+      "node_type": "station",
+      "station_id": "BR08",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR09",
+      "node_type": "station",
+      "station_id": "BR09",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR10",
+      "node_type": "station",
+      "station_id": "BR10",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR11",
+      "node_type": "station",
+      "station_id": "BR11",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR12",
+      "node_type": "station",
+      "station_id": "BR12",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR13",
+      "node_type": "station",
+      "station_id": "BR13",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR14",
+      "node_type": "station",
+      "station_id": "BR14",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR15",
+      "node_type": "station",
+      "station_id": "BR15",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR16",
+      "node_type": "station",
+      "station_id": "BR16",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR17",
+      "node_type": "station",
+      "station_id": "BR17",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR18",
+      "node_type": "station",
+      "station_id": "BR18",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR19",
+      "node_type": "station",
+      "station_id": "BR19",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR20",
+      "node_type": "station",
+      "station_id": "BR20",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR21",
+      "node_type": "station",
+      "station_id": "BR21",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR22",
+      "node_type": "station",
+      "station_id": "BR22",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR23",
+      "node_type": "station",
+      "station_id": "BR23",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_BR24",
+      "node_type": "station",
+      "station_id": "BR24",
+      "line_ids": [
+        "wenhu"
+      ]
+    },
+    {
+      "id": "STA_R02",
+      "node_type": "station",
+      "station_id": "R02",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R03",
+      "node_type": "station",
+      "station_id": "R03",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R04",
+      "node_type": "station",
+      "station_id": "R04",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R05",
+      "node_type": "station",
+      "station_id": "R05",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R06",
+      "node_type": "station",
+      "station_id": "R06",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R07",
+      "node_type": "station",
+      "station_id": "R07",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R08",
+      "node_type": "station",
+      "station_id": "R08",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R09",
+      "node_type": "station",
+      "station_id": "R09",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R10",
+      "node_type": "station",
+      "station_id": "R10",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R11",
+      "node_type": "station",
+      "station_id": "R11",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R12",
+      "node_type": "station",
+      "station_id": "R12",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R13",
+      "node_type": "station",
+      "station_id": "R13",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R14",
+      "node_type": "station",
+      "station_id": "R14",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R15",
+      "node_type": "station",
+      "station_id": "R15",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R16",
+      "node_type": "station",
+      "station_id": "R16",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R17",
+      "node_type": "station",
+      "station_id": "R17",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R18",
+      "node_type": "station",
+      "station_id": "R18",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R19",
+      "node_type": "station",
+      "station_id": "R19",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R20",
+      "node_type": "station",
+      "station_id": "R20",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R21",
+      "node_type": "station",
+      "station_id": "R21",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R22",
+      "node_type": "station",
+      "station_id": "R22",
+      "line_ids": [
+        "tamsui_xinyi",
+        "xinbeitou"
+      ]
+    },
+    {
+      "id": "STA_R23",
+      "node_type": "station",
+      "station_id": "R23",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R24",
+      "node_type": "station",
+      "station_id": "R24",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R25",
+      "node_type": "station",
+      "station_id": "R25",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R26",
+      "node_type": "station",
+      "station_id": "R26",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R27",
+      "node_type": "station",
+      "station_id": "R27",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R28",
+      "node_type": "station",
+      "station_id": "R28",
+      "line_ids": [
+        "tamsui_xinyi"
+      ]
+    },
+    {
+      "id": "STA_R22A",
+      "node_type": "station",
+      "station_id": "R22A",
+      "line_ids": [
+        "xinbeitou"
+      ]
+    },
+    {
+      "id": "STA_G01",
+      "node_type": "station",
+      "station_id": "G01",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G02",
+      "node_type": "station",
+      "station_id": "G02",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G03",
+      "node_type": "station",
+      "station_id": "G03",
+      "line_ids": [
+        "songshan_xindian",
+        "xiaobitan"
+      ]
+    },
+    {
+      "id": "STA_G04",
+      "node_type": "station",
+      "station_id": "G04",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G05",
+      "node_type": "station",
+      "station_id": "G05",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G06",
+      "node_type": "station",
+      "station_id": "G06",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G07",
+      "node_type": "station",
+      "station_id": "G07",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G08",
+      "node_type": "station",
+      "station_id": "G08",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G09",
+      "node_type": "station",
+      "station_id": "G09",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G10",
+      "node_type": "station",
+      "station_id": "G10",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G11",
+      "node_type": "station",
+      "station_id": "G11",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G12",
+      "node_type": "station",
+      "station_id": "G12",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G13",
+      "node_type": "station",
+      "station_id": "G13",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G14",
+      "node_type": "station",
+      "station_id": "G14",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G15",
+      "node_type": "station",
+      "station_id": "G15",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G16",
+      "node_type": "station",
+      "station_id": "G16",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G17",
+      "node_type": "station",
+      "station_id": "G17",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G18",
+      "node_type": "station",
+      "station_id": "G18",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G19",
+      "node_type": "station",
+      "station_id": "G19",
+      "line_ids": [
+        "songshan_xindian"
+      ]
+    },
+    {
+      "id": "STA_G03A",
+      "node_type": "station",
+      "station_id": "G03A",
+      "line_ids": [
+        "xiaobitan"
+      ]
+    },
+    {
+      "id": "STA_O01",
+      "node_type": "station",
+      "station_id": "O01",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O02",
+      "node_type": "station",
+      "station_id": "O02",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O03",
+      "node_type": "station",
+      "station_id": "O03",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O04",
+      "node_type": "station",
+      "station_id": "O04",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O05",
+      "node_type": "station",
+      "station_id": "O05",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O06",
+      "node_type": "station",
+      "station_id": "O06",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O07",
+      "node_type": "station",
+      "station_id": "O07",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O08",
+      "node_type": "station",
+      "station_id": "O08",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O09",
+      "node_type": "station",
+      "station_id": "O09",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O10",
+      "node_type": "station",
+      "station_id": "O10",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O11",
+      "node_type": "station",
+      "station_id": "O11",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O12",
+      "node_type": "station",
+      "station_id": "O12",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O13",
+      "node_type": "station",
+      "station_id": "O13",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O14",
+      "node_type": "station",
+      "station_id": "O14",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O15",
+      "node_type": "station",
+      "station_id": "O15",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O16",
+      "node_type": "station",
+      "station_id": "O16",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O17",
+      "node_type": "station",
+      "station_id": "O17",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O18",
+      "node_type": "station",
+      "station_id": "O18",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O19",
+      "node_type": "station",
+      "station_id": "O19",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O20",
+      "node_type": "station",
+      "station_id": "O20",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O21",
+      "node_type": "station",
+      "station_id": "O21",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O50",
+      "node_type": "station",
+      "station_id": "O50",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O51",
+      "node_type": "station",
+      "station_id": "O51",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O52",
+      "node_type": "station",
+      "station_id": "O52",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O53",
+      "node_type": "station",
+      "station_id": "O53",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_O54",
+      "node_type": "station",
+      "station_id": "O54",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ]
+    },
+    {
+      "id": "STA_BL01",
+      "node_type": "station",
+      "station_id": "BL01",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL02",
+      "node_type": "station",
+      "station_id": "BL02",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL03",
+      "node_type": "station",
+      "station_id": "BL03",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL04",
+      "node_type": "station",
+      "station_id": "BL04",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL05",
+      "node_type": "station",
+      "station_id": "BL05",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL06",
+      "node_type": "station",
+      "station_id": "BL06",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL07",
+      "node_type": "station",
+      "station_id": "BL07",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL08",
+      "node_type": "station",
+      "station_id": "BL08",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL09",
+      "node_type": "station",
+      "station_id": "BL09",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL10",
+      "node_type": "station",
+      "station_id": "BL10",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL11",
+      "node_type": "station",
+      "station_id": "BL11",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL12",
+      "node_type": "station",
+      "station_id": "BL12",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL13",
+      "node_type": "station",
+      "station_id": "BL13",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL14",
+      "node_type": "station",
+      "station_id": "BL14",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL15",
+      "node_type": "station",
+      "station_id": "BL15",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL16",
+      "node_type": "station",
+      "station_id": "BL16",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL17",
+      "node_type": "station",
+      "station_id": "BL17",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL18",
+      "node_type": "station",
+      "station_id": "BL18",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL19",
+      "node_type": "station",
+      "station_id": "BL19",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL20",
+      "node_type": "station",
+      "station_id": "BL20",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL21",
+      "node_type": "station",
+      "station_id": "BL21",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL22",
+      "node_type": "station",
+      "station_id": "BL22",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_BL23",
+      "node_type": "station",
+      "station_id": "BL23",
+      "line_ids": [
+        "bannan"
+      ]
+    },
+    {
+      "id": "STA_Y07",
+      "node_type": "station",
+      "station_id": "Y07",
+      "line_ids": [
+        "circular"
+      ]
+    },
+    {
+      "id": "STA_Y08",
+      "node_type": "station",
+      "station_id": "Y08",
+      "line_ids": [
+        "circular"
+      ]
+    },
+    {
+      "id": "STA_Y09",
+      "node_type": "station",
+      "station_id": "Y09",
+      "line_ids": [
+        "circular"
+      ]
+    },
+    {
+      "id": "STA_Y10",
+      "node_type": "station",
+      "station_id": "Y10",
+      "line_ids": [
+        "circular"
+      ]
+    },
+    {
+      "id": "STA_Y11",
+      "node_type": "station",
+      "station_id": "Y11",
+      "line_ids": [
+        "circular"
+      ]
+    },
+    {
+      "id": "STA_Y12",
+      "node_type": "station",
+      "station_id": "Y12",
+      "line_ids": [
+        "circular"
+      ]
+    },
+    {
+      "id": "STA_Y13",
+      "node_type": "station",
+      "station_id": "Y13",
+      "line_ids": [
+        "circular"
+      ]
+    },
+    {
+      "id": "STA_Y14",
+      "node_type": "station",
+      "station_id": "Y14",
+      "line_ids": [
+        "circular"
+      ]
+    },
+    {
+      "id": "STA_Y15",
+      "node_type": "station",
+      "station_id": "Y15",
+      "line_ids": [
+        "circular"
+      ]
+    },
+    {
+      "id": "STA_Y16",
+      "node_type": "station",
+      "station_id": "Y16",
+      "line_ids": [
+        "circular"
+      ]
+    },
+    {
+      "id": "STA_Y17",
+      "node_type": "station",
+      "station_id": "Y17",
+      "line_ids": [
+        "circular"
+      ]
+    },
+    {
+      "id": "STA_Y18",
+      "node_type": "station",
+      "station_id": "Y18",
+      "line_ids": [
+        "circular"
+      ]
+    },
+    {
+      "id": "STA_Y19",
+      "node_type": "station",
+      "station_id": "Y19",
+      "line_ids": [
+        "circular"
+      ]
+    },
+    {
+      "id": "STA_Y20",
+      "node_type": "station",
+      "station_id": "Y20",
+      "line_ids": [
+        "circular"
+      ]
+    },
+    {
+      "id": "STA_LB01",
+      "node_type": "station",
+      "station_id": "LB01",
+      "line_ids": [
+        "sanying"
+      ]
+    },
+    {
+      "id": "STA_LB02",
+      "node_type": "station",
+      "station_id": "LB02",
+      "line_ids": [
+        "sanying"
+      ]
+    },
+    {
+      "id": "STA_LB03",
+      "node_type": "station",
+      "station_id": "LB03",
+      "line_ids": [
+        "sanying"
+      ]
+    },
+    {
+      "id": "STA_LB04",
+      "node_type": "station",
+      "station_id": "LB04",
+      "line_ids": [
+        "sanying"
+      ]
+    },
+    {
+      "id": "STA_LB05",
+      "node_type": "station",
+      "station_id": "LB05",
+      "line_ids": [
+        "sanying"
+      ]
+    },
+    {
+      "id": "STA_LB06",
+      "node_type": "station",
+      "station_id": "LB06",
+      "line_ids": [
+        "sanying"
+      ]
+    },
+    {
+      "id": "STA_LB07",
+      "node_type": "station",
+      "station_id": "LB07",
+      "line_ids": [
+        "sanying"
+      ]
+    },
+    {
+      "id": "STA_LB08",
+      "node_type": "station",
+      "station_id": "LB08",
+      "line_ids": [
+        "sanying"
+      ]
+    },
+    {
+      "id": "STA_LB09",
+      "node_type": "station",
+      "station_id": "LB09",
+      "line_ids": [
+        "sanying"
+      ]
+    },
+    {
+      "id": "STA_LB10",
+      "node_type": "station",
+      "station_id": "LB10",
+      "line_ids": [
+        "sanying"
+      ]
+    },
+    {
+      "id": "STA_LB11",
+      "node_type": "station",
+      "station_id": "LB11",
+      "line_ids": [
+        "sanying"
+      ]
+    },
+    {
+      "id": "STA_LB12",
+      "node_type": "station",
+      "station_id": "LB12",
+      "line_ids": [
+        "sanying"
+      ]
+    },
+    {
+      "id": "STA_A1",
+      "node_type": "station",
+      "station_id": "A1",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A2",
+      "node_type": "station",
+      "station_id": "A2",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A3",
+      "node_type": "station",
+      "station_id": "A3",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A4",
+      "node_type": "station",
+      "station_id": "A4",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A5",
+      "node_type": "station",
+      "station_id": "A5",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A6",
+      "node_type": "station",
+      "station_id": "A6",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A7",
+      "node_type": "station",
+      "station_id": "A7",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A8",
+      "node_type": "station",
+      "station_id": "A8",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A9",
+      "node_type": "station",
+      "station_id": "A9",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A10",
+      "node_type": "station",
+      "station_id": "A10",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A11",
+      "node_type": "station",
+      "station_id": "A11",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A12",
+      "node_type": "station",
+      "station_id": "A12",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A13",
+      "node_type": "station",
+      "station_id": "A13",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A14a",
+      "node_type": "station",
+      "station_id": "A14a",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A15",
+      "node_type": "station",
+      "station_id": "A15",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A16",
+      "node_type": "station",
+      "station_id": "A16",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A17",
+      "node_type": "station",
+      "station_id": "A17",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A18",
+      "node_type": "station",
+      "station_id": "A18",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A19",
+      "node_type": "station",
+      "station_id": "A19",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A20",
+      "node_type": "station",
+      "station_id": "A20",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A21",
+      "node_type": "station",
+      "station_id": "A21",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    },
+    {
+      "id": "STA_A22",
+      "node_type": "station",
+      "station_id": "A22",
+      "line_ids": [
+        "taoyuan_airport"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "from": "STA_BR01",
+      "to": "STA_BR02",
+      "length_m": 680.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR02",
+      "to": "STA_BR03",
+      "length_m": 510.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR03",
+      "to": "STA_BR04",
+      "length_m": 1140.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR04",
+      "to": "STA_BR05",
+      "length_m": 760.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR05",
+      "to": "STA_BR06",
+      "length_m": 1600.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR06",
+      "to": "STA_BR07",
+      "length_m": 820.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR07",
+      "to": "STA_BR08",
+      "length_m": 1140.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR08",
+      "to": "STA_BR09",
+      "length_m": 750.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR09",
+      "to": "STA_BR10",
+      "length_m": 890.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR10",
+      "to": "STA_BR11",
+      "length_m": 1270.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR11",
+      "to": "STA_BR12",
+      "length_m": 930.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR12",
+      "to": "STA_BR13",
+      "length_m": 1480.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR13",
+      "to": "STA_BR14",
+      "length_m": 2590.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR14",
+      "to": "STA_BR15",
+      "length_m": 1330.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR15",
+      "to": "STA_BR16",
+      "length_m": 1280.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR16",
+      "to": "STA_BR17",
+      "length_m": 830.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR17",
+      "to": "STA_BR18",
+      "length_m": 1010.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR18",
+      "to": "STA_BR19",
+      "length_m": 1130.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR19",
+      "to": "STA_BR20",
+      "length_m": 870.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR20",
+      "to": "STA_BR21",
+      "length_m": 1630.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR21",
+      "to": "STA_BR22",
+      "length_m": 850.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR22",
+      "to": "STA_BR23",
+      "length_m": 1040.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BR23",
+      "to": "STA_BR24",
+      "length_m": 650.0,
+      "line_id": "wenhu",
+      "max_speed_kmh": 70.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R02",
+      "to": "STA_R03",
+      "length_m": 740.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R03",
+      "to": "STA_R04",
+      "length_m": 990.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R04",
+      "to": "STA_R05",
+      "length_m": 990.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R05",
+      "to": "STA_R06",
+      "length_m": 790.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R06",
+      "to": "STA_R07",
+      "length_m": 670.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R07",
+      "to": "STA_R08",
+      "length_m": 1560.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R08",
+      "to": "STA_R09",
+      "length_m": 990.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R09",
+      "to": "STA_R10",
+      "length_m": 630.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R10",
+      "to": "STA_R11",
+      "length_m": 660.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R11",
+      "to": "STA_R12",
+      "length_m": 550.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R12",
+      "to": "STA_R13",
+      "length_m": 530.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R13",
+      "to": "STA_R14",
+      "length_m": 1030.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R14",
+      "to": "STA_R15",
+      "length_m": 1520.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R15",
+      "to": "STA_R16",
+      "length_m": 1090.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R16",
+      "to": "STA_R17",
+      "length_m": 1100.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R17",
+      "to": "STA_R18",
+      "length_m": 880.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R18",
+      "to": "STA_R19",
+      "length_m": 600.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R19",
+      "to": "STA_R20",
+      "length_m": 1260.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R20",
+      "to": "STA_R21",
+      "length_m": 830.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R21",
+      "to": "STA_R22",
+      "length_m": 760.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R22",
+      "to": "STA_R23",
+      "length_m": 1610.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R23",
+      "to": "STA_R24",
+      "length_m": 1450.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R24",
+      "to": "STA_R25",
+      "length_m": 870.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R25",
+      "to": "STA_R26",
+      "length_m": 2860.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R26",
+      "to": "STA_R27",
+      "length_m": 1910.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R27",
+      "to": "STA_R28",
+      "length_m": 2090.0,
+      "line_id": "tamsui_xinyi",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_R22",
+      "to": "STA_R22A",
+      "length_m": 1030.0,
+      "line_id": "xinbeitou",
+      "max_speed_kmh": 25.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G01",
+      "to": "STA_G02",
+      "length_m": 1110.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G02",
+      "to": "STA_G03",
+      "length_m": 900.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G03",
+      "to": "STA_G04",
+      "length_m": 850.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G04",
+      "to": "STA_G05",
+      "length_m": 1150.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G05",
+      "to": "STA_G06",
+      "length_m": 1060.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G06",
+      "to": "STA_G07",
+      "length_m": 1560.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G07",
+      "to": "STA_G08",
+      "length_m": 900.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G08",
+      "to": "STA_G09",
+      "length_m": 880.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G09",
+      "to": "STA_G10",
+      "length_m": 930.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G10",
+      "to": "STA_G11",
+      "length_m": 760.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G11",
+      "to": "STA_G12",
+      "length_m": 820.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G12",
+      "to": "STA_G13",
+      "length_m": 810.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G13",
+      "to": "STA_G14",
+      "length_m": 1260.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G14",
+      "to": "STA_G15",
+      "length_m": 1300.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G15",
+      "to": "STA_G16",
+      "length_m": 990.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G16",
+      "to": "STA_G17",
+      "length_m": 940.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G17",
+      "to": "STA_G18",
+      "length_m": 1200.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G18",
+      "to": "STA_G19",
+      "length_m": 1350.0,
+      "line_id": "songshan_xindian",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_G03",
+      "to": "STA_G03A",
+      "length_m": 1940.0,
+      "line_id": "xiaobitan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O01",
+      "to": "STA_O02",
+      "length_m": 810.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O02",
+      "to": "STA_O03",
+      "length_m": 1080.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O03",
+      "to": "STA_O04",
+      "length_m": 1330.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O04",
+      "to": "STA_O05",
+      "length_m": 2140.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O05",
+      "to": "STA_O06",
+      "length_m": 1580.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O06",
+      "to": "STA_O07",
+      "length_m": 1200.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O07",
+      "to": "STA_O08",
+      "length_m": 1140.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O08",
+      "to": "STA_O09",
+      "length_m": 800.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O09",
+      "to": "STA_O10",
+      "length_m": 950.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O10",
+      "to": "STA_O11",
+      "length_m": 710.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O11",
+      "to": "STA_O12",
+      "length_m": 660.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O12",
+      "to": "STA_O13",
+      "length_m": 1330.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O13",
+      "to": "STA_O14",
+      "length_m": 990.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O14",
+      "to": "STA_O15",
+      "length_m": 870.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O15",
+      "to": "STA_O16",
+      "length_m": 1720.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O16",
+      "to": "STA_O17",
+      "length_m": 1270.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O17",
+      "to": "STA_O18",
+      "length_m": 1020.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O18",
+      "to": "STA_O19",
+      "length_m": 1740.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O19",
+      "to": "STA_O20",
+      "length_m": 1370.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O20",
+      "to": "STA_O21",
+      "length_m": 1400.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O12",
+      "to": "STA_O50",
+      "length_m": 1880.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O50",
+      "to": "STA_O51",
+      "length_m": 1230.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O51",
+      "to": "STA_O52",
+      "length_m": 830.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O52",
+      "to": "STA_O53",
+      "length_m": 900.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_O53",
+      "to": "STA_O54",
+      "length_m": 1170.0,
+      "line_id": "zhonghe_xinlu",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL01",
+      "to": "STA_BL02",
+      "length_m": 1950.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL02",
+      "to": "STA_BL03",
+      "length_m": 1110.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL03",
+      "to": "STA_BL04",
+      "length_m": 1470.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL04",
+      "to": "STA_BL05",
+      "length_m": 1640.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL05",
+      "to": "STA_BL06",
+      "length_m": 1450.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL06",
+      "to": "STA_BL07",
+      "length_m": 650.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL07",
+      "to": "STA_BL08",
+      "length_m": 1280.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL08",
+      "to": "STA_BL09",
+      "length_m": 870.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL09",
+      "to": "STA_BL10",
+      "length_m": 3080.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL10",
+      "to": "STA_BL11",
+      "length_m": 1310.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL11",
+      "to": "STA_BL12",
+      "length_m": 1350.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL12",
+      "to": "STA_BL13",
+      "length_m": 680.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL13",
+      "to": "STA_BL14",
+      "length_m": 940.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL14",
+      "to": "STA_BL15",
+      "length_m": 1120.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL15",
+      "to": "STA_BL16",
+      "length_m": 670.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL16",
+      "to": "STA_BL17",
+      "length_m": 730.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL17",
+      "to": "STA_BL18",
+      "length_m": 840.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL18",
+      "to": "STA_BL19",
+      "length_m": 990.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL19",
+      "to": "STA_BL20",
+      "length_m": 820.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL20",
+      "to": "STA_BL21",
+      "length_m": 1360.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL21",
+      "to": "STA_BL22",
+      "length_m": 1420.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_BL22",
+      "to": "STA_BL23",
+      "length_m": 1090.0,
+      "line_id": "bannan",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_Y07",
+      "to": "STA_Y08",
+      "length_m": 1559.0,
+      "line_id": "circular",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_Y08",
+      "to": "STA_Y09",
+      "length_m": 1116.0,
+      "line_id": "circular",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_Y09",
+      "to": "STA_Y10",
+      "length_m": 849.0,
+      "line_id": "circular",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_Y10",
+      "to": "STA_Y11",
+      "length_m": 1157.0,
+      "line_id": "circular",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_Y11",
+      "to": "STA_Y12",
+      "length_m": 1440.0,
+      "line_id": "circular",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_Y12",
+      "to": "STA_Y13",
+      "length_m": 635.0,
+      "line_id": "circular",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_Y13",
+      "to": "STA_Y14",
+      "length_m": 732.0,
+      "line_id": "circular",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_Y14",
+      "to": "STA_Y15",
+      "length_m": 1392.0,
+      "line_id": "circular",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_Y15",
+      "to": "STA_Y16",
+      "length_m": 952.0,
+      "line_id": "circular",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_Y16",
+      "to": "STA_Y17",
+      "length_m": 1423.0,
+      "line_id": "circular",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_Y17",
+      "to": "STA_Y18",
+      "length_m": 1800.0,
+      "line_id": "circular",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_Y18",
+      "to": "STA_Y19",
+      "length_m": 624.0,
+      "line_id": "circular",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_Y19",
+      "to": "STA_Y20",
+      "length_m": 1560.0,
+      "line_id": "circular",
+      "max_speed_kmh": 80.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_LB01",
+      "to": "STA_LB02",
+      "length_m": 1005.0,
+      "line_id": "sanying",
+      "max_speed_kmh": 70.0,
+      "verification_status": "test_data"
+    },
+    {
+      "from": "STA_LB02",
+      "to": "STA_LB03",
+      "length_m": 1417.0,
+      "line_id": "sanying",
+      "max_speed_kmh": 70.0,
+      "verification_status": "test_data"
+    },
+    {
+      "from": "STA_LB03",
+      "to": "STA_LB04",
+      "length_m": 1397.0,
+      "line_id": "sanying",
+      "max_speed_kmh": 70.0,
+      "verification_status": "test_data"
+    },
+    {
+      "from": "STA_LB04",
+      "to": "STA_LB05",
+      "length_m": 926.0,
+      "line_id": "sanying",
+      "max_speed_kmh": 70.0,
+      "verification_status": "test_data"
+    },
+    {
+      "from": "STA_LB05",
+      "to": "STA_LB06",
+      "length_m": 941.0,
+      "line_id": "sanying",
+      "max_speed_kmh": 70.0,
+      "verification_status": "test_data"
+    },
+    {
+      "from": "STA_LB06",
+      "to": "STA_LB07",
+      "length_m": 1192.0,
+      "line_id": "sanying",
+      "max_speed_kmh": 70.0,
+      "verification_status": "test_data"
+    },
+    {
+      "from": "STA_LB07",
+      "to": "STA_LB08",
+      "length_m": 2980.0,
+      "line_id": "sanying",
+      "max_speed_kmh": 70.0,
+      "verification_status": "test_data"
+    },
+    {
+      "from": "STA_LB08",
+      "to": "STA_LB09",
+      "length_m": 783.0,
+      "line_id": "sanying",
+      "max_speed_kmh": 70.0,
+      "verification_status": "test_data"
+    },
+    {
+      "from": "STA_LB09",
+      "to": "STA_LB10",
+      "length_m": 894.0,
+      "line_id": "sanying",
+      "max_speed_kmh": 70.0,
+      "verification_status": "test_data"
+    },
+    {
+      "from": "STA_LB10",
+      "to": "STA_LB11",
+      "length_m": 1293.0,
+      "line_id": "sanying",
+      "max_speed_kmh": 70.0,
+      "verification_status": "test_data"
+    },
+    {
+      "from": "STA_LB11",
+      "to": "STA_LB12",
+      "length_m": 952.0,
+      "line_id": "sanying",
+      "max_speed_kmh": 70.0,
+      "verification_status": "test_data"
+    },
+    {
+      "from": "STA_A1",
+      "to": "STA_A2",
+      "length_m": 4236.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A2",
+      "to": "STA_A3",
+      "length_m": 3493.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A3",
+      "to": "STA_A4",
+      "length_m": 1369.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A4",
+      "to": "STA_A5",
+      "length_m": 931.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A5",
+      "to": "STA_A6",
+      "length_m": 2804.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A6",
+      "to": "STA_A7",
+      "length_m": 4570.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A7",
+      "to": "STA_A8",
+      "length_m": 2742.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A8",
+      "to": "STA_A9",
+      "length_m": 1205.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A9",
+      "to": "STA_A10",
+      "length_m": 8395.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A10",
+      "to": "STA_A11",
+      "length_m": 1976.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A11",
+      "to": "STA_A12",
+      "length_m": 3155.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A12",
+      "to": "STA_A13",
+      "length_m": 1020.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A13",
+      "to": "STA_A14a",
+      "length_m": 1336.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A14a",
+      "to": "STA_A15",
+      "length_m": 1898.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A15",
+      "to": "STA_A16",
+      "length_m": 2250.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A16",
+      "to": "STA_A17",
+      "length_m": 1580.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A17",
+      "to": "STA_A18",
+      "length_m": 1610.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A18",
+      "to": "STA_A19",
+      "length_m": 1740.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A19",
+      "to": "STA_A20",
+      "length_m": 2960.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A20",
+      "to": "STA_A21",
+      "length_m": 1540.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    },
+    {
+      "from": "STA_A21",
+      "to": "STA_A22",
+      "length_m": 950.0,
+      "line_id": "taoyuan_airport",
+      "max_speed_kmh": 100.0,
+      "verification_status": "official"
+    }
+  ],
+  "routes": [
+    {
+      "id": "R_BR1001",
+      "name_zh_tw": "動物園至南港展覽館",
+      "line_id": "wenhu",
+      "direction": "往南港展覽館",
+      "node_ids": [
+        "STA_BR01",
+        "STA_BR02",
+        "STA_BR03",
+        "STA_BR04",
+        "STA_BR05",
+        "STA_BR06",
+        "STA_BR07",
+        "STA_BR08",
+        "STA_BR09",
+        "STA_BR10",
+        "STA_BR11",
+        "STA_BR12",
+        "STA_BR13",
+        "STA_BR14",
+        "STA_BR15",
+        "STA_BR16",
+        "STA_BR17",
+        "STA_BR18",
+        "STA_BR19",
+        "STA_BR20",
+        "STA_BR21",
+        "STA_BR22",
+        "STA_BR23",
+        "STA_BR24"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_BR1002",
+      "name_zh_tw": "南港展覽館至動物園",
+      "line_id": "wenhu",
+      "direction": "往動物園",
+      "node_ids": [
+        "STA_BR24",
+        "STA_BR23",
+        "STA_BR22",
+        "STA_BR21",
+        "STA_BR20",
+        "STA_BR19",
+        "STA_BR18",
+        "STA_BR17",
+        "STA_BR16",
+        "STA_BR15",
+        "STA_BR14",
+        "STA_BR13",
+        "STA_BR12",
+        "STA_BR11",
+        "STA_BR10",
+        "STA_BR09",
+        "STA_BR08",
+        "STA_BR07",
+        "STA_BR06",
+        "STA_BR05",
+        "STA_BR04",
+        "STA_BR03",
+        "STA_BR02",
+        "STA_BR01"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_R1001",
+      "name_zh_tw": "淡水至象山",
+      "line_id": "tamsui_xinyi",
+      "direction": "往象山",
+      "node_ids": [
+        "STA_R28",
+        "STA_R27",
+        "STA_R26",
+        "STA_R25",
+        "STA_R24",
+        "STA_R23",
+        "STA_R22",
+        "STA_R21",
+        "STA_R20",
+        "STA_R19",
+        "STA_R18",
+        "STA_R17",
+        "STA_R16",
+        "STA_R15",
+        "STA_R14",
+        "STA_R13",
+        "STA_R12",
+        "STA_R11",
+        "STA_R10",
+        "STA_R09",
+        "STA_R08",
+        "STA_R07",
+        "STA_R06",
+        "STA_R05",
+        "STA_R04",
+        "STA_R03",
+        "STA_R02"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_R1002",
+      "name_zh_tw": "象山至淡水",
+      "line_id": "tamsui_xinyi",
+      "direction": "往淡水",
+      "node_ids": [
+        "STA_R02",
+        "STA_R03",
+        "STA_R04",
+        "STA_R05",
+        "STA_R06",
+        "STA_R07",
+        "STA_R08",
+        "STA_R09",
+        "STA_R10",
+        "STA_R11",
+        "STA_R12",
+        "STA_R13",
+        "STA_R14",
+        "STA_R15",
+        "STA_R16",
+        "STA_R17",
+        "STA_R18",
+        "STA_R19",
+        "STA_R20",
+        "STA_R21",
+        "STA_R22",
+        "STA_R23",
+        "STA_R24",
+        "STA_R25",
+        "STA_R26",
+        "STA_R27",
+        "STA_R28"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_R1003",
+      "name_zh_tw": "北投至象山",
+      "line_id": "tamsui_xinyi",
+      "direction": "往象山",
+      "node_ids": [
+        "STA_R22",
+        "STA_R21",
+        "STA_R20",
+        "STA_R19",
+        "STA_R18",
+        "STA_R17",
+        "STA_R16",
+        "STA_R15",
+        "STA_R14",
+        "STA_R13",
+        "STA_R12",
+        "STA_R11",
+        "STA_R10",
+        "STA_R09",
+        "STA_R08",
+        "STA_R07",
+        "STA_R06",
+        "STA_R05",
+        "STA_R04",
+        "STA_R03",
+        "STA_R02"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_R1004",
+      "name_zh_tw": "象山至北投",
+      "line_id": "tamsui_xinyi",
+      "direction": "往北投",
+      "node_ids": [
+        "STA_R02",
+        "STA_R03",
+        "STA_R04",
+        "STA_R05",
+        "STA_R06",
+        "STA_R07",
+        "STA_R08",
+        "STA_R09",
+        "STA_R10",
+        "STA_R11",
+        "STA_R12",
+        "STA_R13",
+        "STA_R14",
+        "STA_R15",
+        "STA_R16",
+        "STA_R17",
+        "STA_R18",
+        "STA_R19",
+        "STA_R20",
+        "STA_R21",
+        "STA_R22"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_R1005",
+      "name_zh_tw": "北投至大安",
+      "line_id": "tamsui_xinyi",
+      "direction": "往大安",
+      "node_ids": [
+        "STA_R22",
+        "STA_R21",
+        "STA_R20",
+        "STA_R19",
+        "STA_R18",
+        "STA_R17",
+        "STA_R16",
+        "STA_R15",
+        "STA_R14",
+        "STA_R13",
+        "STA_R12",
+        "STA_R11",
+        "STA_R10",
+        "STA_R09",
+        "STA_R08",
+        "STA_R07",
+        "STA_R06",
+        "STA_R05"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_R1006",
+      "name_zh_tw": "大安至北投",
+      "line_id": "tamsui_xinyi",
+      "direction": "往北投",
+      "node_ids": [
+        "STA_R05",
+        "STA_R06",
+        "STA_R07",
+        "STA_R08",
+        "STA_R09",
+        "STA_R10",
+        "STA_R11",
+        "STA_R12",
+        "STA_R13",
+        "STA_R14",
+        "STA_R15",
+        "STA_R16",
+        "STA_R17",
+        "STA_R18",
+        "STA_R19",
+        "STA_R20",
+        "STA_R21",
+        "STA_R22"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_R1051",
+      "name_zh_tw": "新北投至北投",
+      "line_id": "xinbeitou",
+      "direction": "往北投",
+      "node_ids": [
+        "STA_R22A",
+        "STA_R22"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_R1052",
+      "name_zh_tw": "北投至新北投",
+      "line_id": "xinbeitou",
+      "direction": "往新北投",
+      "node_ids": [
+        "STA_R22",
+        "STA_R22A"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_G1001",
+      "name_zh_tw": "松山至新店",
+      "line_id": "songshan_xindian",
+      "direction": "往新店",
+      "node_ids": [
+        "STA_G19",
+        "STA_G18",
+        "STA_G17",
+        "STA_G16",
+        "STA_G15",
+        "STA_G14",
+        "STA_G13",
+        "STA_G12",
+        "STA_G11",
+        "STA_G10",
+        "STA_G09",
+        "STA_G08",
+        "STA_G07",
+        "STA_G06",
+        "STA_G05",
+        "STA_G04",
+        "STA_G03",
+        "STA_G02",
+        "STA_G01"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_G1002",
+      "name_zh_tw": "新店至松山",
+      "line_id": "songshan_xindian",
+      "direction": "往松山",
+      "node_ids": [
+        "STA_G01",
+        "STA_G02",
+        "STA_G03",
+        "STA_G04",
+        "STA_G05",
+        "STA_G06",
+        "STA_G07",
+        "STA_G08",
+        "STA_G09",
+        "STA_G10",
+        "STA_G11",
+        "STA_G12",
+        "STA_G13",
+        "STA_G14",
+        "STA_G15",
+        "STA_G16",
+        "STA_G17",
+        "STA_G18",
+        "STA_G19"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_G1003",
+      "name_zh_tw": "松山至台電大樓",
+      "line_id": "songshan_xindian",
+      "direction": "往台電大樓",
+      "node_ids": [
+        "STA_G19",
+        "STA_G18",
+        "STA_G17",
+        "STA_G16",
+        "STA_G15",
+        "STA_G14",
+        "STA_G13",
+        "STA_G12",
+        "STA_G11",
+        "STA_G10",
+        "STA_G09",
+        "STA_G08"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_G1004",
+      "name_zh_tw": "台電大樓至松山",
+      "line_id": "songshan_xindian",
+      "direction": "往松山",
+      "node_ids": [
+        "STA_G08",
+        "STA_G09",
+        "STA_G10",
+        "STA_G11",
+        "STA_G12",
+        "STA_G13",
+        "STA_G14",
+        "STA_G15",
+        "STA_G16",
+        "STA_G17",
+        "STA_G18",
+        "STA_G19"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_G1005",
+      "name_zh_tw": "松山至七張",
+      "line_id": "songshan_xindian",
+      "direction": "往七張",
+      "node_ids": [
+        "STA_G19",
+        "STA_G18",
+        "STA_G17",
+        "STA_G16",
+        "STA_G15",
+        "STA_G14",
+        "STA_G13",
+        "STA_G12",
+        "STA_G11",
+        "STA_G10",
+        "STA_G09",
+        "STA_G08",
+        "STA_G07",
+        "STA_G06",
+        "STA_G05",
+        "STA_G04",
+        "STA_G03"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_G1006",
+      "name_zh_tw": "七張至松山",
+      "line_id": "songshan_xindian",
+      "direction": "往松山",
+      "node_ids": [
+        "STA_G03",
+        "STA_G04",
+        "STA_G05",
+        "STA_G06",
+        "STA_G07",
+        "STA_G08",
+        "STA_G09",
+        "STA_G10",
+        "STA_G11",
+        "STA_G12",
+        "STA_G13",
+        "STA_G14",
+        "STA_G15",
+        "STA_G16",
+        "STA_G17",
+        "STA_G18",
+        "STA_G19"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_G1051",
+      "name_zh_tw": "小碧潭至七張",
+      "line_id": "xiaobitan",
+      "direction": "往七張",
+      "node_ids": [
+        "STA_G03A",
+        "STA_G03"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_G1052",
+      "name_zh_tw": "七張至小碧潭",
+      "line_id": "xiaobitan",
+      "direction": "往小碧潭",
+      "node_ids": [
+        "STA_G03",
+        "STA_G03A"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_O1001",
+      "name_zh_tw": "迴龍至南勢角",
+      "line_id": "zhonghe_xinlu",
+      "direction": "往南勢角",
+      "node_ids": [
+        "STA_O21",
+        "STA_O20",
+        "STA_O19",
+        "STA_O18",
+        "STA_O17",
+        "STA_O16",
+        "STA_O15",
+        "STA_O14",
+        "STA_O13",
+        "STA_O12",
+        "STA_O11",
+        "STA_O10",
+        "STA_O09",
+        "STA_O08",
+        "STA_O07",
+        "STA_O06",
+        "STA_O05",
+        "STA_O04",
+        "STA_O03",
+        "STA_O02",
+        "STA_O01"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_O1002",
+      "name_zh_tw": "南勢角至迴龍",
+      "line_id": "zhonghe_xinlu",
+      "direction": "往迴龍",
+      "node_ids": [
+        "STA_O01",
+        "STA_O02",
+        "STA_O03",
+        "STA_O04",
+        "STA_O05",
+        "STA_O06",
+        "STA_O07",
+        "STA_O08",
+        "STA_O09",
+        "STA_O10",
+        "STA_O11",
+        "STA_O12",
+        "STA_O13",
+        "STA_O14",
+        "STA_O15",
+        "STA_O16",
+        "STA_O17",
+        "STA_O18",
+        "STA_O19",
+        "STA_O20",
+        "STA_O21"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_O1003",
+      "name_zh_tw": "蘆洲至南勢角",
+      "line_id": "zhonghe_xinlu",
+      "direction": "往南勢角",
+      "node_ids": [
+        "STA_O54",
+        "STA_O53",
+        "STA_O52",
+        "STA_O51",
+        "STA_O50",
+        "STA_O12",
+        "STA_O11",
+        "STA_O10",
+        "STA_O09",
+        "STA_O08",
+        "STA_O07",
+        "STA_O06",
+        "STA_O05",
+        "STA_O04",
+        "STA_O03",
+        "STA_O02",
+        "STA_O01"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_O1004",
+      "name_zh_tw": "南勢角至蘆洲",
+      "line_id": "zhonghe_xinlu",
+      "direction": "往蘆洲",
+      "node_ids": [
+        "STA_O01",
+        "STA_O02",
+        "STA_O03",
+        "STA_O04",
+        "STA_O05",
+        "STA_O06",
+        "STA_O07",
+        "STA_O08",
+        "STA_O09",
+        "STA_O10",
+        "STA_O11",
+        "STA_O12",
+        "STA_O50",
+        "STA_O51",
+        "STA_O52",
+        "STA_O53",
+        "STA_O54"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_BL1001",
+      "name_zh_tw": "頂埔至南港展覽館",
+      "line_id": "bannan",
+      "direction": "往南港展覽館",
+      "node_ids": [
+        "STA_BL01",
+        "STA_BL02",
+        "STA_BL03",
+        "STA_BL04",
+        "STA_BL05",
+        "STA_BL06",
+        "STA_BL07",
+        "STA_BL08",
+        "STA_BL09",
+        "STA_BL10",
+        "STA_BL11",
+        "STA_BL12",
+        "STA_BL13",
+        "STA_BL14",
+        "STA_BL15",
+        "STA_BL16",
+        "STA_BL17",
+        "STA_BL18",
+        "STA_BL19",
+        "STA_BL20",
+        "STA_BL21",
+        "STA_BL22",
+        "STA_BL23"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_BL1002",
+      "name_zh_tw": "南港展覽館至頂埔",
+      "line_id": "bannan",
+      "direction": "往頂埔",
+      "node_ids": [
+        "STA_BL23",
+        "STA_BL22",
+        "STA_BL21",
+        "STA_BL20",
+        "STA_BL19",
+        "STA_BL18",
+        "STA_BL17",
+        "STA_BL16",
+        "STA_BL15",
+        "STA_BL14",
+        "STA_BL13",
+        "STA_BL12",
+        "STA_BL11",
+        "STA_BL10",
+        "STA_BL09",
+        "STA_BL08",
+        "STA_BL07",
+        "STA_BL06",
+        "STA_BL05",
+        "STA_BL04",
+        "STA_BL03",
+        "STA_BL02",
+        "STA_BL01"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_BL1003",
+      "name_zh_tw": "亞東醫院至南港展覽館",
+      "line_id": "bannan",
+      "direction": "往南港展覽館",
+      "node_ids": [
+        "STA_BL05",
+        "STA_BL06",
+        "STA_BL07",
+        "STA_BL08",
+        "STA_BL09",
+        "STA_BL10",
+        "STA_BL11",
+        "STA_BL12",
+        "STA_BL13",
+        "STA_BL14",
+        "STA_BL15",
+        "STA_BL16",
+        "STA_BL17",
+        "STA_BL18",
+        "STA_BL19",
+        "STA_BL20",
+        "STA_BL21",
+        "STA_BL22",
+        "STA_BL23"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_BL1004",
+      "name_zh_tw": "南港展覽館至亞東醫院",
+      "line_id": "bannan",
+      "direction": "往亞東醫院",
+      "node_ids": [
+        "STA_BL23",
+        "STA_BL22",
+        "STA_BL21",
+        "STA_BL20",
+        "STA_BL19",
+        "STA_BL18",
+        "STA_BL17",
+        "STA_BL16",
+        "STA_BL15",
+        "STA_BL14",
+        "STA_BL13",
+        "STA_BL12",
+        "STA_BL11",
+        "STA_BL10",
+        "STA_BL09",
+        "STA_BL08",
+        "STA_BL07",
+        "STA_BL06",
+        "STA_BL05"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_BL1005",
+      "name_zh_tw": "頂埔至昆陽",
+      "line_id": "bannan",
+      "direction": "往昆陽",
+      "node_ids": [
+        "STA_BL01",
+        "STA_BL02",
+        "STA_BL03",
+        "STA_BL04",
+        "STA_BL05",
+        "STA_BL06",
+        "STA_BL07",
+        "STA_BL08",
+        "STA_BL09",
+        "STA_BL10",
+        "STA_BL11",
+        "STA_BL12",
+        "STA_BL13",
+        "STA_BL14",
+        "STA_BL15",
+        "STA_BL16",
+        "STA_BL17",
+        "STA_BL18",
+        "STA_BL19",
+        "STA_BL20",
+        "STA_BL21"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_BL1006",
+      "name_zh_tw": "昆陽至頂埔",
+      "line_id": "bannan",
+      "direction": "往頂埔",
+      "node_ids": [
+        "STA_BL21",
+        "STA_BL20",
+        "STA_BL19",
+        "STA_BL18",
+        "STA_BL17",
+        "STA_BL16",
+        "STA_BL15",
+        "STA_BL14",
+        "STA_BL13",
+        "STA_BL12",
+        "STA_BL11",
+        "STA_BL10",
+        "STA_BL09",
+        "STA_BL08",
+        "STA_BL07",
+        "STA_BL06",
+        "STA_BL05",
+        "STA_BL04",
+        "STA_BL03",
+        "STA_BL02",
+        "STA_BL01"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_Y1001",
+      "name_zh_tw": "新北產業園區至大坪林",
+      "line_id": "circular",
+      "direction": "往大坪林",
+      "node_ids": [
+        "STA_Y20",
+        "STA_Y19",
+        "STA_Y18",
+        "STA_Y17",
+        "STA_Y16",
+        "STA_Y15",
+        "STA_Y14",
+        "STA_Y13",
+        "STA_Y12",
+        "STA_Y11",
+        "STA_Y10",
+        "STA_Y09",
+        "STA_Y08",
+        "STA_Y07"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_Y1002",
+      "name_zh_tw": "大坪林至新北產業園區",
+      "line_id": "circular",
+      "direction": "往新北產業園區",
+      "node_ids": [
+        "STA_Y07",
+        "STA_Y08",
+        "STA_Y09",
+        "STA_Y10",
+        "STA_Y11",
+        "STA_Y12",
+        "STA_Y13",
+        "STA_Y14",
+        "STA_Y15",
+        "STA_Y16",
+        "STA_Y17",
+        "STA_Y18",
+        "STA_Y19",
+        "STA_Y20"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_LB1001",
+      "name_zh_tw": "頂埔至鶯桃福德",
+      "line_id": "sanying",
+      "direction": "往鶯桃福德",
+      "node_ids": [
+        "STA_LB01",
+        "STA_LB02",
+        "STA_LB03",
+        "STA_LB04",
+        "STA_LB05",
+        "STA_LB06",
+        "STA_LB07",
+        "STA_LB08",
+        "STA_LB09",
+        "STA_LB10",
+        "STA_LB11",
+        "STA_LB12"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_LB1002",
+      "name_zh_tw": "鶯桃福德至頂埔",
+      "line_id": "sanying",
+      "direction": "往頂埔",
+      "node_ids": [
+        "STA_LB12",
+        "STA_LB11",
+        "STA_LB10",
+        "STA_LB09",
+        "STA_LB08",
+        "STA_LB07",
+        "STA_LB06",
+        "STA_LB05",
+        "STA_LB04",
+        "STA_LB03",
+        "STA_LB02",
+        "STA_LB01"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_A1001",
+      "name_zh_tw": "台北車站至老街溪",
+      "line_id": "taoyuan_airport",
+      "direction": "往老街溪",
+      "node_ids": [
+        "STA_A1",
+        "STA_A2",
+        "STA_A3",
+        "STA_A4",
+        "STA_A5",
+        "STA_A6",
+        "STA_A7",
+        "STA_A8",
+        "STA_A9",
+        "STA_A10",
+        "STA_A11",
+        "STA_A12",
+        "STA_A13",
+        "STA_A14a",
+        "STA_A15",
+        "STA_A16",
+        "STA_A17",
+        "STA_A18",
+        "STA_A19",
+        "STA_A20",
+        "STA_A21",
+        "STA_A22"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_A1002",
+      "name_zh_tw": "老街溪至台北車站",
+      "line_id": "taoyuan_airport",
+      "direction": "往台北車站",
+      "node_ids": [
+        "STA_A22",
+        "STA_A21",
+        "STA_A20",
+        "STA_A19",
+        "STA_A18",
+        "STA_A17",
+        "STA_A16",
+        "STA_A15",
+        "STA_A14a",
+        "STA_A13",
+        "STA_A12",
+        "STA_A11",
+        "STA_A10",
+        "STA_A9",
+        "STA_A8",
+        "STA_A7",
+        "STA_A6",
+        "STA_A5",
+        "STA_A4",
+        "STA_A3",
+        "STA_A2",
+        "STA_A1"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_A1003",
+      "name_zh_tw": "台北車站至機場第二航廈",
+      "line_id": "taoyuan_airport",
+      "direction": "往機場第二航廈",
+      "node_ids": [
+        "STA_A1",
+        "STA_A2",
+        "STA_A3",
+        "STA_A4",
+        "STA_A5",
+        "STA_A6",
+        "STA_A7",
+        "STA_A8",
+        "STA_A9",
+        "STA_A10",
+        "STA_A11",
+        "STA_A12",
+        "STA_A13"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_A1004",
+      "name_zh_tw": "機場第二航廈至台北車站",
+      "line_id": "taoyuan_airport",
+      "direction": "往台北車站",
+      "node_ids": [
+        "STA_A13",
+        "STA_A12",
+        "STA_A11",
+        "STA_A10",
+        "STA_A9",
+        "STA_A8",
+        "STA_A7",
+        "STA_A6",
+        "STA_A5",
+        "STA_A4",
+        "STA_A3",
+        "STA_A2",
+        "STA_A1"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_A1005",
+      "name_zh_tw": "台北車站至環北",
+      "line_id": "taoyuan_airport",
+      "direction": "往環北",
+      "node_ids": [
+        "STA_A1",
+        "STA_A2",
+        "STA_A3",
+        "STA_A4",
+        "STA_A5",
+        "STA_A6",
+        "STA_A7",
+        "STA_A8",
+        "STA_A9",
+        "STA_A10",
+        "STA_A11",
+        "STA_A12",
+        "STA_A13",
+        "STA_A14a",
+        "STA_A15",
+        "STA_A16",
+        "STA_A17",
+        "STA_A18",
+        "STA_A19",
+        "STA_A20",
+        "STA_A21"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_A1006",
+      "name_zh_tw": "環北至台北車站",
+      "line_id": "taoyuan_airport",
+      "direction": "往台北車站",
+      "node_ids": [
+        "STA_A21",
+        "STA_A20",
+        "STA_A19",
+        "STA_A18",
+        "STA_A17",
+        "STA_A16",
+        "STA_A15",
+        "STA_A14a",
+        "STA_A13",
+        "STA_A12",
+        "STA_A11",
+        "STA_A10",
+        "STA_A9",
+        "STA_A8",
+        "STA_A7",
+        "STA_A6",
+        "STA_A5",
+        "STA_A4",
+        "STA_A3",
+        "STA_A2",
+        "STA_A1"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_A1007",
+      "name_zh_tw": "台北車站至機場第二航廈",
+      "line_id": "taoyuan_airport",
+      "direction": "往機場第二航廈",
+      "node_ids": [
+        "STA_A1",
+        "STA_A2",
+        "STA_A3",
+        "STA_A4",
+        "STA_A5",
+        "STA_A6",
+        "STA_A7",
+        "STA_A8",
+        "STA_A9",
+        "STA_A10",
+        "STA_A11",
+        "STA_A12",
+        "STA_A13"
+      ],
+      "verification_status": "official"
+    },
+    {
+      "id": "R_A1009",
+      "name_zh_tw": "老街溪至機場第一航廈",
+      "line_id": "taoyuan_airport",
+      "direction": "往機場第一航廈",
+      "node_ids": [
+        "STA_A22",
+        "STA_A21",
+        "STA_A20",
+        "STA_A19",
+        "STA_A18",
+        "STA_A17",
+        "STA_A16",
+        "STA_A15",
+        "STA_A14a",
+        "STA_A13",
+        "STA_A12"
+      ],
+      "verification_status": "official"
+    }
+  ]
+}

@@ -1,0 +1,2726 @@
+{
+  "meta": {
+    "description": "捷運車站資料，依維基百科各線條目的車站表產生。",
+    "id_policy": "車站代碼直接採用條目的「編號」欄（R22、A14a、LB02…）；廣播音檔檔名也用同一組代碼。",
+    "stop_rules_policy": "stop_rules 由營運模式反推：某一種車種只要有一種營運模式停靠本站，本站就辦理該車種停靠。台北捷運各線都是各站停車，因此只有機場捷運的直達車會真正篩掉車站。",
+    "provenance": {
+      "source": "維基百科各線條目",
+      "generator": "railway_sim.dataset.mrt"
+    }
+  },
+  "stations": [
+    {
+      "id": "A1",
+      "name_zh_tw": "台北車站",
+      "name_en": "Taipei Main Station",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true,
+        "express": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A10",
+      "name_zh_tw": "山鼻",
+      "name_en": "Shanbi",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A11",
+      "name_zh_tw": "坑口",
+      "name_en": "Kengkou",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A12",
+      "name_zh_tw": "機場第一航廈",
+      "name_en": "Airport Terminal 1",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true,
+        "express": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A13",
+      "name_zh_tw": "機場第二航廈",
+      "name_en": "Airport Terminal 2",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true,
+        "express": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A14a",
+      "name_zh_tw": "機場旅館",
+      "name_en": "Airport Hotel",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A15",
+      "name_zh_tw": "大園",
+      "name_en": "Dayuan",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A16",
+      "name_zh_tw": "橫山",
+      "name_en": "Hengshan",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A17",
+      "name_zh_tw": "領航",
+      "name_en": "Linghang",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A18",
+      "name_zh_tw": "高鐵桃園站",
+      "name_en": "Taoyuan HSR Station",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true,
+        "express": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A19",
+      "name_zh_tw": "桃園體育園區",
+      "name_en": "Taoyuan Sports Park",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A2",
+      "name_zh_tw": "三重",
+      "name_en": "Sanchong",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A20",
+      "name_zh_tw": "興南",
+      "name_en": "Xingnan",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A21",
+      "name_zh_tw": "環北",
+      "name_en": "Huanbei",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true,
+        "express": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A22",
+      "name_zh_tw": "老街溪",
+      "name_en": "Laojie River",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A3",
+      "name_zh_tw": "新北產業園區",
+      "name_en": "New Taipei Industrial Park",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true,
+        "express": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A4",
+      "name_zh_tw": "新莊副都心",
+      "name_en": "Xinzhuang Fuduxin",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A5",
+      "name_zh_tw": "泰山",
+      "name_en": "Taishan",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A6",
+      "name_zh_tw": "泰山貴和",
+      "name_en": "Taishan Guihe",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A7",
+      "name_zh_tw": "體育大學",
+      "name_en": "National Taiwan Sport University",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A8",
+      "name_zh_tw": "長庚醫院",
+      "name_en": "Chang Gung Memorial Hospital",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true,
+        "express": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "A9",
+      "name_zh_tw": "林口",
+      "name_en": "Linkou",
+      "line_ids": [
+        "taoyuan_airport"
+      ],
+      "stop_rules": {
+        "commuter": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈桃園機場捷運〉車站表"
+    },
+    {
+      "id": "BL01",
+      "name_zh_tw": "頂埔",
+      "name_en": "Dingpu",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL02",
+      "name_zh_tw": "永寧",
+      "name_en": "Yongning",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL03",
+      "name_zh_tw": "土城",
+      "name_en": "Tucheng",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL04",
+      "name_zh_tw": "海山",
+      "name_en": "Haishan",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL05",
+      "name_zh_tw": "亞東醫院",
+      "name_en": "Far Eastern Hospital",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL06",
+      "name_zh_tw": "府中",
+      "name_en": "Fuzhong",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL07",
+      "name_zh_tw": "板橋",
+      "name_en": "Banqiao",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL08",
+      "name_zh_tw": "新埔",
+      "name_en": "Xinpu",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL09",
+      "name_zh_tw": "江子翠",
+      "name_en": "Jiangzicui",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL10",
+      "name_zh_tw": "龍山寺",
+      "name_en": "Longshan Temple",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL11",
+      "name_zh_tw": "西門",
+      "name_en": "Ximen",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL12",
+      "name_zh_tw": "台北車站",
+      "name_en": "Taipei Main Station",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL13",
+      "name_zh_tw": "善導寺",
+      "name_en": "Shandao Temple",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL14",
+      "name_zh_tw": "忠孝新生",
+      "name_en": "Zhongxiao Xinsheng",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL15",
+      "name_zh_tw": "忠孝復興",
+      "name_en": "Zhongxiao Fuxing",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL16",
+      "name_zh_tw": "忠孝敦化",
+      "name_en": "Zhongxiao Dunhwa",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL17",
+      "name_zh_tw": "國父紀念館",
+      "name_en": "Sun Yet-Sen Memorial Hall",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL18",
+      "name_zh_tw": "市政府",
+      "name_en": "Taipei City Hall",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL19",
+      "name_zh_tw": "永春",
+      "name_en": "Yongchun",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL20",
+      "name_zh_tw": "後山埤",
+      "name_en": "Houshanpi",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL21",
+      "name_zh_tw": "昆陽",
+      "name_en": "Kunyang",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL22",
+      "name_zh_tw": "南港",
+      "name_en": "Nangang",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BL23",
+      "name_zh_tw": "南港展覽館",
+      "name_en": "Taipei Nangang Exhibition Center",
+      "line_ids": [
+        "bannan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈板南線〉車站表"
+    },
+    {
+      "id": "BR01",
+      "name_zh_tw": "動物園",
+      "name_en": "Taipei Zoo",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR02",
+      "name_zh_tw": "木柵",
+      "name_en": "Muzha",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR03",
+      "name_zh_tw": "萬芳社區",
+      "name_en": "Wanfang Community",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR04",
+      "name_zh_tw": "萬芳醫院",
+      "name_en": "Wanfang Hospital",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR05",
+      "name_zh_tw": "辛亥",
+      "name_en": "Xinhai",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR06",
+      "name_zh_tw": "麟光",
+      "name_en": "Linguang",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR07",
+      "name_zh_tw": "六張犁",
+      "name_en": "Liuzhangli",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR08",
+      "name_zh_tw": "科技大樓",
+      "name_en": "Technology Building",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR09",
+      "name_zh_tw": "大安",
+      "name_en": "Daan",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR10",
+      "name_zh_tw": "忠孝復興",
+      "name_en": "Zhongxiao Fuxing",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR11",
+      "name_zh_tw": "南京復興",
+      "name_en": "Nanjing Fuxing",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR12",
+      "name_zh_tw": "中山國中",
+      "name_en": "Zhongshan Junior High School",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR13",
+      "name_zh_tw": "松山機場",
+      "name_en": "Songshan Airport",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR14",
+      "name_zh_tw": "大直",
+      "name_en": "Dazhi",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR15",
+      "name_zh_tw": "劍南路",
+      "name_en": "Jiannan Road",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR16",
+      "name_zh_tw": "西湖",
+      "name_en": "Xihu",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR17",
+      "name_zh_tw": "港墘",
+      "name_en": "Gangqian",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR18",
+      "name_zh_tw": "文德",
+      "name_en": "Wende",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR19",
+      "name_zh_tw": "內湖",
+      "name_en": "Neihu",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR20",
+      "name_zh_tw": "大湖公園",
+      "name_en": "Dahu Park",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR21",
+      "name_zh_tw": "葫洲",
+      "name_en": "Huzhou",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR22",
+      "name_zh_tw": "東湖",
+      "name_en": "Donghu",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR23",
+      "name_zh_tw": "南港軟體園區",
+      "name_en": "Nangang Software Park",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "BR24",
+      "name_zh_tw": "南港展覽館",
+      "name_en": "Taipei Nangang Exhibition Center",
+      "line_ids": [
+        "wenhu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈文湖線〉車站表"
+    },
+    {
+      "id": "G01",
+      "name_zh_tw": "新店",
+      "name_en": "Xindian",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G02",
+      "name_zh_tw": "新店區公所",
+      "name_en": "Xindian District Office",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G03",
+      "name_zh_tw": "七張",
+      "name_en": "Qizhang",
+      "line_ids": [
+        "songshan_xindian",
+        "xiaobitan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": true,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G03A",
+      "name_zh_tw": "小碧潭",
+      "name_en": "Xiaobitan",
+      "line_ids": [
+        "xiaobitan"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈小碧潭支線〉車站表"
+    },
+    {
+      "id": "G04",
+      "name_zh_tw": "大坪林",
+      "name_en": "Dapinglin",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G05",
+      "name_zh_tw": "景美",
+      "name_en": "Jingmei",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G06",
+      "name_zh_tw": "萬隆",
+      "name_en": "Wanlong",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G07",
+      "name_zh_tw": "公館",
+      "name_en": "Gongguan",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G08",
+      "name_zh_tw": "台電大樓",
+      "name_en": "Taipower Building",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G09",
+      "name_zh_tw": "古亭",
+      "name_en": "Guting",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G10",
+      "name_zh_tw": "中正紀念堂",
+      "name_en": "Chiang Kai-Shek Memorial Hall",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G11",
+      "name_zh_tw": "小南門",
+      "name_en": "Xiaonanmen",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G12",
+      "name_zh_tw": "西門",
+      "name_en": "Ximen",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G13",
+      "name_zh_tw": "北門",
+      "name_en": "Beimen",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G14",
+      "name_zh_tw": "中山",
+      "name_en": "Zhongshan",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G15",
+      "name_zh_tw": "松江南京",
+      "name_en": "Songjiang Nanjing",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G16",
+      "name_zh_tw": "南京復興",
+      "name_en": "Nanjing Fuxing",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G17",
+      "name_zh_tw": "台北小巨蛋",
+      "name_en": "Taipei Arena",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G18",
+      "name_zh_tw": "南京三民",
+      "name_en": "Nanjing Sanmin",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "G19",
+      "name_zh_tw": "松山",
+      "name_en": "Songshan",
+      "line_ids": [
+        "songshan_xindian"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈松山新店線〉車站表"
+    },
+    {
+      "id": "LB01",
+      "name_zh_tw": "頂埔",
+      "name_en": "Dingpu",
+      "line_ids": [
+        "sanying"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈三鶯線〉車站表"
+    },
+    {
+      "id": "LB02",
+      "name_zh_tw": "媽祖田",
+      "name_en": "Mazutian",
+      "line_ids": [
+        "sanying"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈三鶯線〉車站表"
+    },
+    {
+      "id": "LB03",
+      "name_zh_tw": "長壽山",
+      "name_en": "Changshoushan",
+      "line_ids": [
+        "sanying"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈三鶯線〉車站表"
+    },
+    {
+      "id": "LB04",
+      "name_zh_tw": "橫溪",
+      "name_en": "Hengxi",
+      "line_ids": [
+        "sanying"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈三鶯線〉車站表"
+    },
+    {
+      "id": "LB05",
+      "name_zh_tw": "龍埔",
+      "name_en": "Longpu",
+      "line_ids": [
+        "sanying"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈三鶯線〉車站表"
+    },
+    {
+      "id": "LB06",
+      "name_zh_tw": "三峽",
+      "name_en": "Sanxia",
+      "line_ids": [
+        "sanying"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈三鶯線〉車站表"
+    },
+    {
+      "id": "LB07",
+      "name_zh_tw": "臺北大學",
+      "name_en": "National Taipei University",
+      "line_ids": [
+        "sanying"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈三鶯線〉車站表"
+    },
+    {
+      "id": "LB08",
+      "name_zh_tw": "鶯歌車站",
+      "name_en": "Yingge Station",
+      "line_ids": [
+        "sanying"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈三鶯線〉車站表"
+    },
+    {
+      "id": "LB09",
+      "name_zh_tw": "陶瓷老街",
+      "name_en": "Ceramics Old Street",
+      "line_ids": [
+        "sanying"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈三鶯線〉車站表"
+    },
+    {
+      "id": "LB10",
+      "name_zh_tw": "國華",
+      "name_en": "Guohua",
+      "line_ids": [
+        "sanying"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈三鶯線〉車站表"
+    },
+    {
+      "id": "LB11",
+      "name_zh_tw": "永吉公園",
+      "name_en": "Yongji Park",
+      "line_ids": [
+        "sanying"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈三鶯線〉車站表"
+    },
+    {
+      "id": "LB12",
+      "name_zh_tw": "鶯桃福德",
+      "name_en": "Yingtao Fude",
+      "line_ids": [
+        "sanying"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈三鶯線〉車站表"
+    },
+    {
+      "id": "O01",
+      "name_zh_tw": "南勢角",
+      "name_en": "Nanshijiao",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O02",
+      "name_zh_tw": "景安",
+      "name_en": "Jingan",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O03",
+      "name_zh_tw": "永安市場",
+      "name_en": "Yongan Market",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O04",
+      "name_zh_tw": "頂溪",
+      "name_en": "Dingxi",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O05",
+      "name_zh_tw": "古亭",
+      "name_en": "Guting",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O06",
+      "name_zh_tw": "東門",
+      "name_en": "Dongmen",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O07",
+      "name_zh_tw": "忠孝新生",
+      "name_en": "Zhongxiao Xinsheng",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O08",
+      "name_zh_tw": "松江南京",
+      "name_en": "Songjiang Nanjing",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O09",
+      "name_zh_tw": "行天宮",
+      "name_en": "Xingtian Temple",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O10",
+      "name_zh_tw": "中山國小",
+      "name_en": "Zhongshan Elementary School",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O11",
+      "name_zh_tw": "民權西路",
+      "name_en": "Minquan West Road",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O12",
+      "name_zh_tw": "大橋頭",
+      "name_en": "Daqiaotou",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": true,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O13",
+      "name_zh_tw": "台北橋",
+      "name_en": "Taipei Bridge",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O14",
+      "name_zh_tw": "菜寮",
+      "name_en": "Cailiao",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O15",
+      "name_zh_tw": "三重",
+      "name_en": "Sanchong",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O16",
+      "name_zh_tw": "先嗇宮",
+      "name_en": "Xianse Temple",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O17",
+      "name_zh_tw": "頭前庄",
+      "name_en": "Touqianzhuang",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O18",
+      "name_zh_tw": "新莊",
+      "name_en": "Xinzhuang",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O19",
+      "name_zh_tw": "輔大",
+      "name_en": "Fu Jen University",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O20",
+      "name_zh_tw": "丹鳳",
+      "name_en": "Danfeng",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O21",
+      "name_zh_tw": "迴龍",
+      "name_en": "Huilong",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O50",
+      "name_zh_tw": "三重國小",
+      "name_en": "Sanchong Elementary School",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O51",
+      "name_zh_tw": "三和國中",
+      "name_en": "Sanhe Junior High School",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O52",
+      "name_zh_tw": "徐匯中學",
+      "name_en": "St. Ignatius High School",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O53",
+      "name_zh_tw": "三民高中",
+      "name_en": "Sanmin Senior High School",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "O54",
+      "name_zh_tw": "蘆洲",
+      "name_en": "Luzhou",
+      "line_ids": [
+        "zhonghe_xinlu"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈中和新蘆線〉車站表"
+    },
+    {
+      "id": "R02",
+      "name_zh_tw": "象山",
+      "name_en": "Xiangshan",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R03",
+      "name_zh_tw": "台北101/世貿",
+      "name_en": "Taipei 101/World Trade Center",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R04",
+      "name_zh_tw": "信義安和",
+      "name_en": "Xinyi Anhe",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R05",
+      "name_zh_tw": "大安",
+      "name_en": "Daan",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R06",
+      "name_zh_tw": "大安森林公園",
+      "name_en": "Daan Park",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R07",
+      "name_zh_tw": "東門",
+      "name_en": "Dongmen",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R08",
+      "name_zh_tw": "中正紀念堂",
+      "name_en": "Chiang Kai-Shek Memorial Hall",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R09",
+      "name_zh_tw": "台大醫院",
+      "name_en": "NTU Hospital",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R10",
+      "name_zh_tw": "台北車站",
+      "name_en": "Taipei Main Station",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R11",
+      "name_zh_tw": "中山",
+      "name_en": "Zhongshan",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R12",
+      "name_zh_tw": "雙連",
+      "name_en": "Shuanglian",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R13",
+      "name_zh_tw": "民權西路",
+      "name_en": "Minquan West Road",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R14",
+      "name_zh_tw": "圓山",
+      "name_en": "Yuanshan",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R15",
+      "name_zh_tw": "劍潭",
+      "name_en": "Jiantan",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R16",
+      "name_zh_tw": "士林",
+      "name_en": "Shilin",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R17",
+      "name_zh_tw": "芝山",
+      "name_en": "Zhishan",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R18",
+      "name_zh_tw": "明德",
+      "name_en": "Mingde",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R19",
+      "name_zh_tw": "石牌",
+      "name_en": "Shipai",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R20",
+      "name_zh_tw": "唭哩岸",
+      "name_en": "Qilian",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R21",
+      "name_zh_tw": "奇岩",
+      "name_en": "Qiyan",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R22",
+      "name_zh_tw": "北投",
+      "name_en": "Beitou",
+      "line_ids": [
+        "tamsui_xinyi",
+        "xinbeitou"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": true,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R22A",
+      "name_zh_tw": "新北投",
+      "name_en": "Xinbeitou",
+      "line_ids": [
+        "xinbeitou"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈新北投支線〉車站表"
+    },
+    {
+      "id": "R23",
+      "name_zh_tw": "復興崗",
+      "name_en": "Fuxinggang",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R24",
+      "name_zh_tw": "忠義",
+      "name_en": "Zhongyi",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R25",
+      "name_zh_tw": "關渡",
+      "name_en": "Guandu",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R26",
+      "name_zh_tw": "竹圍",
+      "name_en": "Zhuwei",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R27",
+      "name_zh_tw": "紅樹林",
+      "name_en": "Hongshulin",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "R28",
+      "name_zh_tw": "淡水",
+      "name_en": "Tamsui",
+      "line_ids": [
+        "tamsui_xinyi"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈淡水信義線〉車站表"
+    },
+    {
+      "id": "Y07",
+      "name_zh_tw": "大坪林",
+      "name_en": "Dapinglin",
+      "line_ids": [
+        "circular"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈環狀線 (台北都會區)〉車站表"
+    },
+    {
+      "id": "Y08",
+      "name_zh_tw": "十四張",
+      "name_en": "Shisizhang",
+      "line_ids": [
+        "circular"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈環狀線 (台北都會區)〉車站表"
+    },
+    {
+      "id": "Y09",
+      "name_zh_tw": "秀朗橋",
+      "name_en": "Xiulang Bridge",
+      "line_ids": [
+        "circular"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈環狀線 (台北都會區)〉車站表"
+    },
+    {
+      "id": "Y10",
+      "name_zh_tw": "景平",
+      "name_en": "Jingping",
+      "line_ids": [
+        "circular"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈環狀線 (台北都會區)〉車站表"
+    },
+    {
+      "id": "Y11",
+      "name_zh_tw": "景安",
+      "name_en": "Jingan",
+      "line_ids": [
+        "circular"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈環狀線 (台北都會區)〉車站表"
+    },
+    {
+      "id": "Y12",
+      "name_zh_tw": "中和",
+      "name_en": "Zhonghe",
+      "line_ids": [
+        "circular"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈環狀線 (台北都會區)〉車站表"
+    },
+    {
+      "id": "Y13",
+      "name_zh_tw": "橋和",
+      "name_en": "Qiaohe",
+      "line_ids": [
+        "circular"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈環狀線 (台北都會區)〉車站表"
+    },
+    {
+      "id": "Y14",
+      "name_zh_tw": "中原",
+      "name_en": "Zhongyuan",
+      "line_ids": [
+        "circular"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈環狀線 (台北都會區)〉車站表"
+    },
+    {
+      "id": "Y15",
+      "name_zh_tw": "板新",
+      "name_en": "Banxin",
+      "line_ids": [
+        "circular"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈環狀線 (台北都會區)〉車站表"
+    },
+    {
+      "id": "Y16",
+      "name_zh_tw": "板橋",
+      "name_en": "Banqiao",
+      "line_ids": [
+        "circular"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈環狀線 (台北都會區)〉車站表"
+    },
+    {
+      "id": "Y17",
+      "name_zh_tw": "新埔民生",
+      "name_en": "Xinpu Minsheng",
+      "line_ids": [
+        "circular"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈環狀線 (台北都會區)〉車站表"
+    },
+    {
+      "id": "Y18",
+      "name_zh_tw": "頭前庄",
+      "name_en": "Touqianzhuang",
+      "line_ids": [
+        "circular"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈環狀線 (台北都會區)〉車站表"
+    },
+    {
+      "id": "Y19",
+      "name_zh_tw": "幸福",
+      "name_en": "Xingfu",
+      "line_ids": [
+        "circular"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈環狀線 (台北都會區)〉車站表"
+    },
+    {
+      "id": "Y20",
+      "name_zh_tw": "新北產業園區",
+      "name_en": "New Taipei Industrial Park",
+      "line_ids": [
+        "circular"
+      ],
+      "stop_rules": {
+        "metro": true
+      },
+      "platforms": [],
+      "platform_count": null,
+      "is_operational_node": false,
+      "verification_status": "official",
+      "source": "維基百科〈環狀線 (台北都會區)〉車站表"
+    }
+  ]
+}

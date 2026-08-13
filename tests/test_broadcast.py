@@ -16,10 +16,10 @@ from pathlib import Path
 import pytest
 
 from railway_sim.accessibility.announcer import Announcer
-from railway_sim.audio.broadcast import BroadcastSystem
+from railway_sim.audio.broadcast import BROADCAST_DEPART_KMH, BroadcastSystem
 from railway_sim.audio.library import BroadcastLibrary
 from railway_sim.data_loader import GameData
-from railway_sim.roles.driver import BROADCAST_DEPART_KMH, DriverSession
+from railway_sim.roles.driver import DriverSession
 from tests.conftest import ManualClock, drive_to
 
 
