@@ -48,8 +48,15 @@ from railway_sim.accessibility.announcer import Announcement, Announcer, Priorit
 from railway_sim.input.keyboard import KeyDispatcher
 from railway_sim.input.keymap import Keymap
 from railway_sim.roles.driver import STATUS_ITEM_ACTIONS, DriverSession
+from railway_sim.systems import DEFAULT_SYSTEM
 
-__all__ = ["DriverFrame", "ServicePicker", "StartChoice", "run_wx"]
+__all__ = [
+    "DriverFrame",
+    "ServicePicker",
+    "StartChoice",
+    "initial_system_choice",
+    "run_wx",
+]
 
 #: 計時器間隔（毫秒）。實際推進量仍以 ``time.perf_counter()`` 為準。
 _TIMER_MS = 50
@@ -621,6 +628,24 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         self.log_ctrl.SetFocus()
 
 
+def initial_system_choice(
+    initial_system: str | None, systems: Sequence[StartChoice]
+) -> tuple[bool, str | None]:
+    """開場要不要問系統、以及一開始用哪一個。
+
+    回傳 ``(要不要問, 一開始的系統)``。要問的時候系統一定是 ``None``——
+    :func:`run_wx` 的迴圈就是用「系統還沒決定」當作該開選擇視窗的條件，
+    先填一個預設值進去會讓選擇視窗永遠不出現，直接跳進第一個系統的車次清單。
+
+    這段判斷抽出來是為了測得到：``run_wx`` 本身要有圖形環境才跑得起來。
+    """
+    if initial_system is not None:
+        return False, initial_system
+    if len(systems) > 1:
+        return True, None
+    return False, systems[0].key if systems else DEFAULT_SYSTEM
+
+
 def run_wx(
     open_system: Callable[
         [str], tuple[Sequence[StartChoice], Callable[[str], tuple[DriverSession, Announcer]]]
@@ -650,8 +675,7 @@ def run_wx(
     import wx
 
     app = wx.App(False)
-    ask_system = initial_system is None and len(systems) > 1
-    system = initial_system or (systems[0].key if systems else "tra")
+    ask_system, system = initial_system_choice(initial_system, systems)
     key = initial_key
 
     while True:

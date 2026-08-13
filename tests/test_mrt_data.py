@@ -236,6 +236,44 @@ class TestSelection:
         assert "--scenario 只有臺鐵有" in capsys.readouterr().err
 
 
+class TestWxSystemChoice:
+    """視窗版開場要不要問系統。
+
+    ``run_wx`` 用「系統還沒決定」當作該開選擇視窗的條件，因此**要問的時候
+    一定不能先填預設值**——填了選擇視窗就永遠不會出現，玩家會被直接丟進第一個
+    系統的車次清單，選不到捷運。
+    """
+
+    def _systems(self):
+        from railway_sim.app import system_choices
+
+        return system_choices()
+
+    def test_沒指定系統時保留未決定狀態(self):
+        from railway_sim.ui.wx_app import initial_system_choice
+
+        ask, system = initial_system_choice(None, self._systems())
+        assert ask
+        assert system is None
+
+    def test_指定系統時不再詢問(self):
+        from railway_sim.ui.wx_app import initial_system_choice
+
+        assert initial_system_choice("mrt", self._systems()) == (False, "mrt")
+
+    def test_只有一個系統時直接用它(self):
+        from railway_sim.ui.wx_app import initial_system_choice
+
+        only = self._systems()[1:]
+        assert initial_system_choice(None, only) == (False, "mrt")
+
+    def test_沒有系統選項時退回預設(self):
+        from railway_sim.systems import DEFAULT_SYSTEM
+        from railway_sim.ui.wx_app import initial_system_choice
+
+        assert initial_system_choice(None, ()) == (False, DEFAULT_SYSTEM)
+
+
 class TestSystemIsolation:
     """兩套資料互不干擾。"""
 
