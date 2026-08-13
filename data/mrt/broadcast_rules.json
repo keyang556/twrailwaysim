@@ -1,0 +1,122 @@
+{
+  "meta": {
+    "description": "捷運車上廣播的播放規則：什麼時候播、播哪一個版本。",
+    "why": "音檔本身看不出播放時機——同一站的『到站』與『終點』是兩個檔案，往哪一站的廣播又要看這班車實際開到哪裡。這些規則各線不同，寫成資料檔才改得動，程式不寫死任何站號。",
+    "clip_naming": "音檔為 <車站代碼>.<種類>[.<版本>]。種類：arrive 到站前、next 離站後的下一站、terminus 本站為終點、destination 往○○（以終點站代碼命名）、notice 宣導（代碼固定為 NOTICE）。",
+    "source": "使用者於 2026-08-13 指定的各線播放規則。"
+  },
+  "styles": {
+    "taipei_metro": {
+      "destination_timing": "before_departure",
+      "note": "往○○的廣播在發車之前、列車還沒啟動時立即播放，內容依這班車的實際終點站決定。"
+    },
+    "wenhu": {
+      "destination_timing": "after_departure",
+      "note": "往動物園／往南港展覽館的廣播在發車之後播放。"
+    },
+    "sanying": {
+      "destination_timing": "none",
+      "note": "只有下一站與到站兩種廣播：奇數檔為下一站（前一站離站後立即播放），偶數檔為到站（到站前播放）。"
+    },
+    "airport": {
+      "destination_timing": "none",
+      "note": "預設全部是到站前播放；另有幾站有離站後的下一站廣播，列在 next_stations。"
+    }
+  },
+  "lines": {
+    "wenhu": { "next_stations": [] },
+    "tamsui_xinyi": {
+      "next_stations": [],
+      "arrival_variants": [
+        {
+          "station_id": "R21",
+          "variant": "terminus_next",
+          "when_terminus": ["R22"],
+          "note": "19-1奇岩：往北投的列車到達奇岩時播放；非北投終點的列車播正常版本。"
+        },
+        {
+          "station_id": "R22",
+          "variant": "from_branch",
+          "when_origin": ["R22A"],
+          "note": "20-2北投：從新北投開來的列車到達北投時播放。"
+        }
+      ],
+      "notices": [
+        {
+          "from_station_id": "R26",
+          "to_station_id": "R27",
+          "note": "宣導：從竹圍到紅樹林行駛之間播放。"
+        }
+      ]
+    },
+    "xinbeitou": {
+      "next_stations": [],
+      "arrival_variants": [
+        {
+          "station_id": "R22",
+          "variant": "from_branch",
+          "when_origin": ["R22A"],
+          "note": "20-2北投：新北投往北投的列車播放。"
+        }
+      ]
+    },
+    "songshan_xindian": {
+      "next_stations": [],
+      "arrival_variants": [
+        {
+          "station_id": "G03",
+          "variant": "from_branch",
+          "when_origin": ["G03A"],
+          "note": "2-1七張：從小碧潭開來的列車播放；其餘列車播正常版本。"
+        }
+      ],
+      "notices": [
+        {
+          "from_station_id": "G10",
+          "to_station_id": "G09",
+          "when_terminus": ["G08"],
+          "note": "宣導：往台電大樓方向過了中正紀念堂之後播放；往新店的不播放。"
+        }
+      ]
+    },
+    "xiaobitan": {
+      "next_stations": [],
+      "arrival_variants": [
+        {
+          "station_id": "G03",
+          "variant": "from_branch",
+          "when_origin": ["G03A"],
+          "note": "2-1七張：小碧潭往七張的列車播放。"
+        }
+      ]
+    },
+    "zhonghe_xinlu": { "next_stations": [] },
+    "bannan": { "next_stations": [] },
+    "circular": { "next_stations": [] },
+    "sanying": { "next_stations": "all" },
+    "taoyuan_airport": {
+      "next_stations": [
+        { "station_id": "A1", "note": "1-1台北車站" },
+        { "station_id": "A2", "note": "2-1三重" },
+        { "station_id": "A3", "note": "3-1新北產業園區" },
+        { "station_id": "A18", "note": "18-1高鐵桃園站" },
+        {
+          "station_id": "A13",
+          "variant": "express",
+          "when_service_class": ["express"],
+          "when_terminus": ["A13"],
+          "note": "13-1機場第二航廈：終點為機場第二航廈的直達車才播；普通車不播。"
+        }
+      ],
+      "arrival_variants": [
+        {
+          "station_id": "A13",
+          "variant": "express",
+          "when_service_class": ["express"],
+          "when_terminus": ["A13"],
+          "note": "13-2機場第二航廈：該直達車的終點到站前廣播；普通車播 13機場第二航廈。"
+        }
+      ]
+    }
+  }
+}

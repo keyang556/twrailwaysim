@@ -1,9 +1,299 @@
 {
   "meta": {
     "description": "由 railway_sim.audio.importer 產生的匯入紀錄，僅供追溯。遊戲執行時是掃描資料夾建立索引，不讀本檔，因此手動增刪音檔不需要同步修改這裡。",
-    "count": 124
+    "count": 299
   },
   "entries": [
+    {
+      "file": "bannan/BL01.arrive.ogg",
+      "station_id": "BL01",
+      "station_name": "頂埔",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "23頂埔.ogg",
+      "source_dir": "板南線",
+      "sha256": "a7fe7a95c59283c3e8615870265d444cb79cd8c5713f2d6f41243751fbe705d6"
+    },
+    {
+      "file": "bannan/BL01.destination.ogg",
+      "station_id": "BL01",
+      "station_name": "頂埔",
+      "kind": "destination",
+      "variant": "",
+      "source_name": "往頂埔.ogg",
+      "source_dir": "板南線",
+      "sha256": "a0e929a02d2dfa4d8e0501e18f1a5625ce2838de06375bc9f269c47c16273571"
+    },
+    {
+      "file": "bannan/BL02.arrive.ogg",
+      "station_id": "BL02",
+      "station_name": "永寧",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "1永明.ogg",
+      "source_dir": "板南線",
+      "sha256": "9675bd6ba53b01408ef6a1b7869d7390c672c0fe680b06578d5af679bde69dca"
+    },
+    {
+      "file": "bannan/BL03.arrive.ogg",
+      "station_id": "BL03",
+      "station_name": "土城",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "2土城.ogg",
+      "source_dir": "板南線",
+      "sha256": "8c0d1d8e00677d7a8e285e9daa3206cfbbbdd3878329c3ad29e94be43c31a633"
+    },
+    {
+      "file": "bannan/BL04.arrive.ogg",
+      "station_id": "BL04",
+      "station_name": "海山",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "3海珊.ogg",
+      "source_dir": "板南線",
+      "sha256": "2e16d46aaf54e6a7f551e09f8db5e1f24d3de083367dce50ad854ca4d23076a6"
+    },
+    {
+      "file": "bannan/BL05.arrive.ogg",
+      "station_id": "BL05",
+      "station_name": "亞東醫院",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "4亞東醫院.ogg",
+      "source_dir": "板南線",
+      "sha256": "c1ef19b19221588e757cf7c8fbb21200dd07affe9c73d95c64026336fd638509"
+    },
+    {
+      "file": "bannan/BL05.destination.ogg",
+      "station_id": "BL05",
+      "station_name": "亞東醫院",
+      "kind": "destination",
+      "variant": "",
+      "source_name": "往亞東醫院.ogg",
+      "source_dir": "板南線",
+      "sha256": "1ceb866cfdfc2529bf36d64c05e9050c2d550172fceb2000096c9c4d6fbeb2f2"
+    },
+    {
+      "file": "bannan/BL05.terminus.ogg",
+      "station_id": "BL05",
+      "station_name": "亞東醫院",
+      "kind": "terminus",
+      "variant": "",
+      "source_name": "4-1亞東醫院.ogg",
+      "source_dir": "板南線",
+      "sha256": "0da58b50310547c79e01cc714e32032e94c04034f1d5cf5612530eaa4578f27f"
+    },
+    {
+      "file": "bannan/BL06.arrive.ogg",
+      "station_id": "BL06",
+      "station_name": "府中",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "5府中.ogg",
+      "source_dir": "板南線",
+      "sha256": "aded5ceae4b9f7d4d0236bea9c3552940b312828a1a632f150935e779f38a7be"
+    },
+    {
+      "file": "bannan/BL07.arrive.ogg",
+      "station_id": "BL07",
+      "station_name": "板橋",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "6板橋.ogg",
+      "source_dir": "板南線",
+      "sha256": "2c609870d594c778e5b88d4af7baf5e16d400caeae6763df4dfb35ed431058c5"
+    },
+    {
+      "file": "bannan/BL08.arrive.ogg",
+      "station_id": "BL08",
+      "station_name": "新埔",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "7新埔.ogg",
+      "source_dir": "板南線",
+      "sha256": "06b62e2767bebe70d910ba4f7e42330b61b03273d04fc3deb2c8b34272fc8fd5"
+    },
+    {
+      "file": "bannan/BL09.arrive.ogg",
+      "station_id": "BL09",
+      "station_name": "江子翠",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "8江子翠.ogg",
+      "source_dir": "板南線",
+      "sha256": "91eb0591c5bbbaa2888dbcef3a78396f691ec0468379593b70c9ec0201b71dc5"
+    },
+    {
+      "file": "bannan/BL10.arrive.ogg",
+      "station_id": "BL10",
+      "station_name": "龍山寺",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "9龍山寺.ogg",
+      "source_dir": "板南線",
+      "sha256": "014bd020d872f5e9581320b45a3de0650b5fdfc7e04c64c79fdf88786c9222bd"
+    },
+    {
+      "file": "bannan/BL11.arrive.ogg",
+      "station_id": "BL11",
+      "station_name": "西門",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "10西門.ogg",
+      "source_dir": "板南線",
+      "sha256": "f6e9b8c966b11da3b6c0d4ad109935b2d0f35a8666889f679db2ba067b043998"
+    },
+    {
+      "file": "bannan/BL12.arrive.ogg",
+      "station_id": "BL12",
+      "station_name": "台北車站",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "11台北車站.ogg",
+      "source_dir": "板南線",
+      "sha256": "914c9045c1e96d62008014bbb213c855c015736dc8d2dc027eb802ae8489b89b"
+    },
+    {
+      "file": "bannan/BL13.arrive.ogg",
+      "station_id": "BL13",
+      "station_name": "善導寺",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "12善導寺.ogg",
+      "source_dir": "板南線",
+      "sha256": "4f77b9f8a2184cf1dc6a0222591b6d38c0968103c2f4b70b28062ba0b1b03d6e"
+    },
+    {
+      "file": "bannan/BL14.arrive.ogg",
+      "station_id": "BL14",
+      "station_name": "忠孝新生",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "13忠孝新生.ogg",
+      "source_dir": "板南線",
+      "sha256": "5f0a1f14f25d87133744b53b48e04a6641c0b19e4770764b1c256eaac5731719"
+    },
+    {
+      "file": "bannan/BL15.arrive.ogg",
+      "station_id": "BL15",
+      "station_name": "忠孝復興",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "14忠孝復興.ogg",
+      "source_dir": "板南線",
+      "sha256": "1515fd95a2fbd930383a4a5814b2cb8bd28e1881dad8fd0432909a3a357fe0af"
+    },
+    {
+      "file": "bannan/BL16.arrive.ogg",
+      "station_id": "BL16",
+      "station_name": "忠孝敦化",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "15忠孝敦化.ogg",
+      "source_dir": "板南線",
+      "sha256": "20decc05d9e62bbb83b5ba8732018f47838b9191a2d18fd685e04407ccc1a322"
+    },
+    {
+      "file": "bannan/BL17.arrive.ogg",
+      "station_id": "BL17",
+      "station_name": "國父紀念館",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "16國父紀念館.ogg",
+      "source_dir": "板南線",
+      "sha256": "991016a43388bbe9486ca4a1705e08d4b4b81499658085a4a7ddba7f31af3dfe"
+    },
+    {
+      "file": "bannan/BL18.arrive.ogg",
+      "station_id": "BL18",
+      "station_name": "市政府",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "17市政府.ogg",
+      "source_dir": "板南線",
+      "sha256": "5252e4e51dc893f8b646fd5dda98c7066eb03f320ddfd87d1d6c2a999569fd40"
+    },
+    {
+      "file": "bannan/BL19.arrive.ogg",
+      "station_id": "BL19",
+      "station_name": "永春",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "18永春.ogg",
+      "source_dir": "板南線",
+      "sha256": "e27772802279a67527f274925628209bf5fc22096571758691cabb08788f9e88"
+    },
+    {
+      "file": "bannan/BL20.arrive.ogg",
+      "station_id": "BL20",
+      "station_name": "後山埤",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "19後山埤.ogg",
+      "source_dir": "板南線",
+      "sha256": "63534ddb5133f7abce897d846cc23c6e3673fb42655d82624965812f859b01be"
+    },
+    {
+      "file": "bannan/BL21.arrive.ogg",
+      "station_id": "BL21",
+      "station_name": "昆陽",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "20昆陽.ogg",
+      "source_dir": "板南線",
+      "sha256": "3f0af52060ac6333f5a69156274a6fda2aba9e0cf016faf40d87a9826f6d8aa5"
+    },
+    {
+      "file": "bannan/BL21.destination.ogg",
+      "station_id": "BL21",
+      "station_name": "昆陽",
+      "kind": "destination",
+      "variant": "",
+      "source_name": "往昆陽.ogg",
+      "source_dir": "板南線",
+      "sha256": "371acfe856cc49a826ab3e72e093f1ebb5b5a2464fa38180a0e2571d761f3b3e"
+    },
+    {
+      "file": "bannan/BL21.terminus.ogg",
+      "station_id": "BL21",
+      "station_name": "昆陽",
+      "kind": "terminus",
+      "variant": "",
+      "source_name": "20-1昆陽.ogg",
+      "source_dir": "板南線",
+      "sha256": "09857ff8cfe257de48547df65170fdb0ae2279cbcd0fa55691365b9f8871e9ee"
+    },
+    {
+      "file": "bannan/BL22.arrive.ogg",
+      "station_id": "BL22",
+      "station_name": "南港",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "21南港.ogg",
+      "source_dir": "板南線",
+      "sha256": "00b4cf77971a9ada43b7f0b90f906c591087d437b789838c6b3b6a4ed2dc0b4d"
+    },
+    {
+      "file": "bannan/BL23.arrive.ogg",
+      "station_id": "BL23",
+      "station_name": "南港展覽館",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "22南港展覽館.ogg",
+      "source_dir": "板南線",
+      "sha256": "f61580797c4068eb2a70d119f67d8cb980ee8e82a37b8ac8da82e0018ee59840"
+    },
+    {
+      "file": "bannan/BL23.destination.ogg",
+      "station_id": "BL23",
+      "station_name": "南港展覽館",
+      "kind": "destination",
+      "variant": "",
+      "source_name": "往南港展覽館.ogg",
+      "source_dir": "板南線",
+      "sha256": "34f78eace9712e5990a28509a68ba3870f69e5e6370dd8defc8b486bea36c914"
+    },
     {
       "file": "mountain/CHANGHUA.arrive.ogg",
       "station_id": "CHANGHUA",
@@ -473,6 +763,1406 @@
       "source_name": "1造橋.ogg",
       "source_dir": "2山線",
       "sha256": "58603196c6cd0a34bf679810ddf7699120f9fc0d95e4427ba0145621c2addacc"
+    },
+    {
+      "file": "sanying/LB01.arrive.ogg",
+      "station_id": "LB01",
+      "station_name": "頂埔",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "24頂埔.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "880f800b5843d681e8a4f74302b2f7ac7e97e8e3b5e1354f0bbc3bfcb432e99a"
+    },
+    {
+      "file": "sanying/LB01.next.ogg",
+      "station_id": "LB01",
+      "station_name": "頂埔",
+      "kind": "next",
+      "variant": "",
+      "source_name": "23頂埔.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "36e7ace7fe3dcf39790420f9f4b6b03b6773f66b164f4c847dbd9836cd194bd0"
+    },
+    {
+      "file": "sanying/LB02.arrive.ogg",
+      "station_id": "LB02",
+      "station_name": "媽祖田",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "2媽祖田.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "9d5e46e412f5cb82a7f6372fbbaa354b6db6d696c169a41eaf25ca0871298606"
+    },
+    {
+      "file": "sanying/LB02.next.ogg",
+      "station_id": "LB02",
+      "station_name": "媽祖田",
+      "kind": "next",
+      "variant": "",
+      "source_name": "1媽祖田.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "3dd92b025ef8ca9fbeb115f0b1a73511ab7e7fcc378a8c3b6c6966c80723e9d7"
+    },
+    {
+      "file": "sanying/LB03.arrive.ogg",
+      "station_id": "LB03",
+      "station_name": "長壽山",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "4長壽山.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "a6651be0c4dc1ec10dafda7b48b2fd15da1c3fe09d95b3d8ce97b449a18d3a81"
+    },
+    {
+      "file": "sanying/LB03.next.ogg",
+      "station_id": "LB03",
+      "station_name": "長壽山",
+      "kind": "next",
+      "variant": "",
+      "source_name": "3長壽山.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "e6dfb5ddbdd515a85c82be26e98eaf244c7ef4747a46c737c27810e18ad247cf"
+    },
+    {
+      "file": "sanying/LB04.arrive.ogg",
+      "station_id": "LB04",
+      "station_name": "橫溪",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "6橫溪.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "fc63835e1de69248bdeb3f96a3a4e4351ea9cdbc663270421f2ac4971e7a7c66"
+    },
+    {
+      "file": "sanying/LB04.next.ogg",
+      "station_id": "LB04",
+      "station_name": "橫溪",
+      "kind": "next",
+      "variant": "",
+      "source_name": "5橫溪.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "3af1a6afd96505fef15ff6244cca955a55a635815a137b67972c98f6b06166a1"
+    },
+    {
+      "file": "sanying/LB05.arrive.ogg",
+      "station_id": "LB05",
+      "station_name": "龍埔",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "8籠埔.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "74853a7e1893584c32c087e76020ab8e7e1e1a06aca03c6cfbd1cc9d6d2d1e82"
+    },
+    {
+      "file": "sanying/LB05.next.ogg",
+      "station_id": "LB05",
+      "station_name": "龍埔",
+      "kind": "next",
+      "variant": "",
+      "source_name": "7籠埔.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "aa2b19d38020e274a69fcf91f614343e7c8b3af34cafc8f9cc9b08392978cb8d"
+    },
+    {
+      "file": "sanying/LB06.arrive.ogg",
+      "station_id": "LB06",
+      "station_name": "三峽",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "10三峽.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "94f894b991601a796e40ba40e8c21f632fbbd9c446db6f085259630c87a58431"
+    },
+    {
+      "file": "sanying/LB06.next.ogg",
+      "station_id": "LB06",
+      "station_name": "三峽",
+      "kind": "next",
+      "variant": "",
+      "source_name": "9三峽.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "eca77c672053558ff6f0aaf62b8b645478862866d3f65cd6adee47c45862038d"
+    },
+    {
+      "file": "sanying/LB07.arrive.ogg",
+      "station_id": "LB07",
+      "station_name": "臺北大學",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "12台北大學.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "fc66150ee323e3272541dc7410519566f1a171b686fe87453282f26ef598b95e"
+    },
+    {
+      "file": "sanying/LB07.next.ogg",
+      "station_id": "LB07",
+      "station_name": "臺北大學",
+      "kind": "next",
+      "variant": "",
+      "source_name": "11台北大學.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "9c67d1450b0d97ef8efb89283ec6568f5961850f4a779ef72157eb57f46e89d8"
+    },
+    {
+      "file": "sanying/LB08.arrive.ogg",
+      "station_id": "LB08",
+      "station_name": "鶯歌車站",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "14鶯歌車站.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "282a09bdd7fcef01f7d54c1f9e96d764ae47666670b26d2f45e934e904368f80"
+    },
+    {
+      "file": "sanying/LB08.next.ogg",
+      "station_id": "LB08",
+      "station_name": "鶯歌車站",
+      "kind": "next",
+      "variant": "",
+      "source_name": "13鶯歌車站.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "01391e6b00b7666c7cba25ab266acb57c60e5923454508a5de2ed7a9a979babe"
+    },
+    {
+      "file": "sanying/LB09.arrive.ogg",
+      "station_id": "LB09",
+      "station_name": "陶瓷老街",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "16陶瓷老街.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "d07a32f608b4bb4f4e33341a3d01428f7acd9e616f2a54db6f64144380bdd776"
+    },
+    {
+      "file": "sanying/LB09.next.ogg",
+      "station_id": "LB09",
+      "station_name": "陶瓷老街",
+      "kind": "next",
+      "variant": "",
+      "source_name": "15陶瓷老街.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "b8d107164804a47c799bd652d3269f60a8b7fc6e21a3371d4c6ef88b6004c055"
+    },
+    {
+      "file": "sanying/LB10.arrive.ogg",
+      "station_id": "LB10",
+      "station_name": "國華",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "18國華.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "1043b25abd093769989179c9ebf05e47bdcf7393b319d3141b562a876b301aa9"
+    },
+    {
+      "file": "sanying/LB10.next.ogg",
+      "station_id": "LB10",
+      "station_name": "國華",
+      "kind": "next",
+      "variant": "",
+      "source_name": "17國華.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "d79a27ee7979c812d087c22c5bb98912e7adbb261f715a3b5684d2f9b7d26c41"
+    },
+    {
+      "file": "sanying/LB11.arrive.ogg",
+      "station_id": "LB11",
+      "station_name": "永吉公園",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "20永吉公園.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "61ac7dbd8fbc10de76cb5f9eab0ddf11178455c010ee1fe902f6a5bcfbc94d13"
+    },
+    {
+      "file": "sanying/LB11.next.ogg",
+      "station_id": "LB11",
+      "station_name": "永吉公園",
+      "kind": "next",
+      "variant": "",
+      "source_name": "19永吉公園.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "50adb5f96a5c49f4297c28031e2c74011bdcf0c1d5c2be360a163a05535eebd3"
+    },
+    {
+      "file": "sanying/LB12.arrive.ogg",
+      "station_id": "LB12",
+      "station_name": "鶯桃福德",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "22櫻桃福德.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "674ee47cc220faac03f75943e2545e254b54e65787ddc48bb64aad228e190d05"
+    },
+    {
+      "file": "sanying/LB12.next.ogg",
+      "station_id": "LB12",
+      "station_name": "鶯桃福德",
+      "kind": "next",
+      "variant": "",
+      "source_name": "21櫻桃福德.ogg",
+      "source_dir": "三鶯線",
+      "sha256": "3b95c48f7540925c329138f98cf92fd28befd998bc4b3bbd03e929d3c1625a9f"
+    },
+    {
+      "file": "songshan_xindian/G01.arrive.ogg",
+      "station_id": "G01",
+      "station_name": "新店",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "19新店.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "edbff53d75bb9ef49a591ce1b7e33f3da470ce61a51e70b0d357de090e6fbcd1"
+    },
+    {
+      "file": "songshan_xindian/G01.destination.ogg",
+      "station_id": "G01",
+      "station_name": "新店",
+      "kind": "destination",
+      "variant": "",
+      "source_name": "往新店.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "863c7e0c60451fd3c57e0b245acdd23c914dfbd9c0ae3ebf242591317ddc6109"
+    },
+    {
+      "file": "songshan_xindian/G02.arrive.ogg",
+      "station_id": "G02",
+      "station_name": "新店區公所",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "1新店區公所.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "835b090c4754b8b19f3aa82e21a806a5fd6af32f56765f8194454394b6acc353"
+    },
+    {
+      "file": "songshan_xindian/G03.arrive.ogg",
+      "station_id": "G03",
+      "station_name": "七張",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "2七張.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "2cbd164bdbb4bd6ccab291542c9dddf25888314c4c9fdfe8078a6b4b3ba3fa77"
+    },
+    {
+      "file": "songshan_xindian/G03.destination.ogg",
+      "station_id": "G03",
+      "station_name": "七張",
+      "kind": "destination",
+      "variant": "",
+      "source_name": "往七張.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "dda109d461440044fdb9452d5f08ea9511086e4e78c50c4d883aa001eff2aa64"
+    },
+    {
+      "file": "songshan_xindian/G04.arrive.ogg",
+      "station_id": "G04",
+      "station_name": "大坪林",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "3大坪林.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "fcc248d12e7d22d3b6847eefa1b37b7b868fca9e9c8b0ebf9ec4a06cea251b8c"
+    },
+    {
+      "file": "songshan_xindian/G05.arrive.ogg",
+      "station_id": "G05",
+      "station_name": "景美",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "4景美.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "b95d4b37ad66ded4d0f0ca03be5f7321bfda92de49d56ed73bb0411af99f41ef"
+    },
+    {
+      "file": "songshan_xindian/G06.arrive.ogg",
+      "station_id": "G06",
+      "station_name": "萬隆",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "5萬隆.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "e9cd694f47d9e8ff3cd57438ca855535ba7d4ff7b606a1aaa74e92ab028001ad"
+    },
+    {
+      "file": "songshan_xindian/G07.arrive.ogg",
+      "station_id": "G07",
+      "station_name": "公館",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "6公館.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "f72c8d7dde0e2fbf0a3a90097df1a53e7caf297b3b37adaf195a2acc6b8733b2"
+    },
+    {
+      "file": "songshan_xindian/G08.arrive.ogg",
+      "station_id": "G08",
+      "station_name": "台電大樓",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "7台電大樓.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "c518971eb6936a6ea65b49341eda096d22a70719b724a1eb6b131438a99955c1"
+    },
+    {
+      "file": "songshan_xindian/G08.destination.ogg",
+      "station_id": "G08",
+      "station_name": "台電大樓",
+      "kind": "destination",
+      "variant": "",
+      "source_name": "往台電大樓.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "92d0616df23097bb2020e564e46784e2b46e7f08bb258a3fd1c1e57b1a76d436"
+    },
+    {
+      "file": "songshan_xindian/G08.terminus.ogg",
+      "station_id": "G08",
+      "station_name": "台電大樓",
+      "kind": "terminus",
+      "variant": "",
+      "source_name": "7-1台電大樓.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "265d0ac4c2b0325b59730d78f6c52cce032b67c0a992c7d0476a72c887b9233d"
+    },
+    {
+      "file": "songshan_xindian/G09.arrive.ogg",
+      "station_id": "G09",
+      "station_name": "古亭",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "8古亭.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "b07762168049197910a63e810a5b6746f51a6e83490e341291a1635217c5aa30"
+    },
+    {
+      "file": "songshan_xindian/G10.arrive.ogg",
+      "station_id": "G10",
+      "station_name": "中正紀念堂",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "9中正紀念堂.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "c33ab08b127613af6eab6a91696a6316e35080a7ea534e74cd0631f72725e7f0"
+    },
+    {
+      "file": "songshan_xindian/G11.arrive.ogg",
+      "station_id": "G11",
+      "station_name": "小南門",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "10小南門.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "e8d20ac86c4d1cfee3f42d40399ac7d0813a709a48149d233f884276511b7b08"
+    },
+    {
+      "file": "songshan_xindian/G12.arrive.ogg",
+      "station_id": "G12",
+      "station_name": "西門",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "11西門.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "f8abaae42ea946643e5e18aa9577803f1345e4c342f75f6cc238536890abea5d"
+    },
+    {
+      "file": "songshan_xindian/G13.arrive.ogg",
+      "station_id": "G13",
+      "station_name": "北門",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "12北門.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "858bed167366b89dbb3ed8a46cac29a1cd12128dd601f9e1a975fb9c6454ef32"
+    },
+    {
+      "file": "songshan_xindian/G14.arrive.ogg",
+      "station_id": "G14",
+      "station_name": "中山",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "13中山.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "eadc925372f2a6a8633d5afc847e009b3b15073cfd71d2d0a97cb64cdee3bb90"
+    },
+    {
+      "file": "songshan_xindian/G15.arrive.ogg",
+      "station_id": "G15",
+      "station_name": "松江南京",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "14松江南京.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "fbe6a1675def9093139c95282579cc48475ef70c3a9e4557b927368bf3c809e4"
+    },
+    {
+      "file": "songshan_xindian/G16.arrive.ogg",
+      "station_id": "G16",
+      "station_name": "南京復興",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "15南京復興.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "0d6a8dc9a12e0d3b08ac297b16cf6c278a09c15b1834b2221be4c5ad1001c549"
+    },
+    {
+      "file": "songshan_xindian/G17.arrive.ogg",
+      "station_id": "G17",
+      "station_name": "台北小巨蛋",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "16台北小巨蛋.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "84babc824a624ef8b1c80dd18dd49b383885333f179be8e798e25d87c4987024"
+    },
+    {
+      "file": "songshan_xindian/G18.arrive.ogg",
+      "station_id": "G18",
+      "station_name": "南京三民",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "17南京三名.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "577a3affe75d493931e12e187334df52295f4b64e4ff1ce0870f49e4522c1eb5"
+    },
+    {
+      "file": "songshan_xindian/G19.arrive.ogg",
+      "station_id": "G19",
+      "station_name": "松山",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "18松山.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "dc7f4a93f50ee80c2ee7e9ae7c7e2f4c262a9899813ba398576870a23b9dbdd5"
+    },
+    {
+      "file": "songshan_xindian/G19.destination.ogg",
+      "station_id": "G19",
+      "station_name": "松山",
+      "kind": "destination",
+      "variant": "",
+      "source_name": "往松山.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "5b25c564bbe39ff7ecaf413764d68e0dc4ee3c3661c00f88585b98a412e27900"
+    },
+    {
+      "file": "songshan_xindian/NOTICE.notice.ogg",
+      "station_id": "NOTICE",
+      "station_name": "NOTICE",
+      "kind": "notice",
+      "variant": "",
+      "source_name": "宣導.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "f9028d2cdce315f6292b62ef3b424c3da35f899f559d927ea03d733908998efe"
+    },
+    {
+      "file": "tamsui_xinyi/NOTICE.notice.alt.ogg",
+      "station_id": "NOTICE",
+      "station_name": "NOTICE",
+      "kind": "notice",
+      "variant": "alt",
+      "source_name": "宣導1.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "64df12b945dfe3e2cbef87484a45b3e4128077af00178059c4c7fb3a3c5de302"
+    },
+    {
+      "file": "tamsui_xinyi/NOTICE.notice.ogg",
+      "station_id": "NOTICE",
+      "station_name": "NOTICE",
+      "kind": "notice",
+      "variant": "",
+      "source_name": "宣導.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "15bca6514a72d4122e1fbb491e016380ffe969bc3bfb81ccb050f1e5c15332f9"
+    },
+    {
+      "file": "tamsui_xinyi/R02.arrive.ogg",
+      "station_id": "R02",
+      "station_name": "象山",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "27巷山.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "725fd603fd4485a450c1fb17593d7f4a0c73c0bc1f66c2d97955d74be8e01293"
+    },
+    {
+      "file": "tamsui_xinyi/R02.destination.ogg",
+      "station_id": "R02",
+      "station_name": "象山",
+      "kind": "destination",
+      "variant": "",
+      "source_name": "往象山.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "5c2ae588d1c2c3898396f87ab8dc7b29ae1f7ce65518248b04ab2f4d509fa7a9"
+    },
+    {
+      "file": "tamsui_xinyi/R03.arrive.ogg",
+      "station_id": "R03",
+      "station_name": "台北101/世貿",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "1台北101世貿.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "95d43c61493c3fa039252e2fc93919d77df1e7b241ae321e0751b3ad30d1be05"
+    },
+    {
+      "file": "tamsui_xinyi/R04.arrive.ogg",
+      "station_id": "R04",
+      "station_name": "信義安和",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "2信義安和.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "890713474de9300be523a0f651cb68bf496cd8028c3a27c8d16471753543dec8"
+    },
+    {
+      "file": "tamsui_xinyi/R05.arrive.ogg",
+      "station_id": "R05",
+      "station_name": "大安",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "3大安.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "c75398f8d6dcf5ef35fa643cd2835fd4113fd3b1a001a2038b1fda20f158e86c"
+    },
+    {
+      "file": "tamsui_xinyi/R05.destination.ogg",
+      "station_id": "R05",
+      "station_name": "大安",
+      "kind": "destination",
+      "variant": "",
+      "source_name": "往大安.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "69d63f005117e8ae0e9231eaa3be53d077a3140e64721c147c21b0391cc11fcb"
+    },
+    {
+      "file": "tamsui_xinyi/R05.terminus.ogg",
+      "station_id": "R05",
+      "station_name": "大安",
+      "kind": "terminus",
+      "variant": "",
+      "source_name": "3-1大安.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "f18602850c262e8324c032f8ff5002364980aac703531bdea3e29724efe69d6e"
+    },
+    {
+      "file": "tamsui_xinyi/R06.arrive.ogg",
+      "station_id": "R06",
+      "station_name": "大安森林公園",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "4大安森林公園.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "a24b42077699dbc9122efde4d05efba2720c67c3297b9944e844eb78d066562e"
+    },
+    {
+      "file": "tamsui_xinyi/R07.arrive.ogg",
+      "station_id": "R07",
+      "station_name": "東門",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "5東門.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "e3d56eb3a3b39fb67270797588f88e98bcb2d34ec3131dbd16740653528e7520"
+    },
+    {
+      "file": "tamsui_xinyi/R08.arrive.ogg",
+      "station_id": "R08",
+      "station_name": "中正紀念堂",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "6中正紀念堂.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "8c08ff95f0372138a444a03c01b38bb192e22596a24adc2c0e2d679bbba291fb"
+    },
+    {
+      "file": "tamsui_xinyi/R09.arrive.ogg",
+      "station_id": "R09",
+      "station_name": "台大醫院",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "7臺大醫院.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "d84c957865e08520802d066b95bcf7835c90e8d7eb79525f2c5a841faa4e2b46"
+    },
+    {
+      "file": "tamsui_xinyi/R10.arrive.ogg",
+      "station_id": "R10",
+      "station_name": "台北車站",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "8台北車站.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "7149dd9bef3b87c8a405b1cc422d06e9a8316d97834729be6644898833cc02c3"
+    },
+    {
+      "file": "tamsui_xinyi/R11.arrive.ogg",
+      "station_id": "R11",
+      "station_name": "中山",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "9中山.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "594854bbeee363c3900122f5aa6dfe4707a624545f7c48ad86808e27a145697c"
+    },
+    {
+      "file": "tamsui_xinyi/R12.arrive.ogg",
+      "station_id": "R12",
+      "station_name": "雙連",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "10雙連.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "bbf25a6372f12d33fb21291a69810bb177b2b0f8958746a38e583eb5c522914d"
+    },
+    {
+      "file": "tamsui_xinyi/R13.arrive.ogg",
+      "station_id": "R13",
+      "station_name": "民權西路",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "11明權西路.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "61e1c7937c59485e6af661190029c3d59e9082c52ac0931dbce9b86a726a5b5d"
+    },
+    {
+      "file": "tamsui_xinyi/R14.arrive.ogg",
+      "station_id": "R14",
+      "station_name": "圓山",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "12圓山.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "38ac0ac7222d629d16cb9a623ecd1eaf9437a4038d30f7b30bebbac84e5a4818"
+    },
+    {
+      "file": "tamsui_xinyi/R15.arrive.ogg",
+      "station_id": "R15",
+      "station_name": "劍潭",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "13劍潭.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "d65c8f4f1220b4da4311a4893789004c2bca2ef6d15ac1a8aab420372e726db1"
+    },
+    {
+      "file": "tamsui_xinyi/R16.arrive.ogg",
+      "station_id": "R16",
+      "station_name": "士林",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "14士林.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "a685fef613349bdb9f6858bd7422e748a184dcce6093c338f8a0166a5af28c8c"
+    },
+    {
+      "file": "tamsui_xinyi/R17.arrive.ogg",
+      "station_id": "R17",
+      "station_name": "芝山",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "15芝山.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "dd6122119bea0ab02012bbece8dc41320a1cbd6d7981b2527a43de9d87d76f61"
+    },
+    {
+      "file": "tamsui_xinyi/R18.arrive.ogg",
+      "station_id": "R18",
+      "station_name": "明德",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "16明德.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "98268001f80bf8c6f03263a276c13bf88e90bfacdec2b8f9b9db0a4e94668978"
+    },
+    {
+      "file": "tamsui_xinyi/R19.arrive.ogg",
+      "station_id": "R19",
+      "station_name": "石牌",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "17石牌.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "6a41affcf6e332dca7283ebe2610e0e0d4c147ec04e786fd6efb4529ca92ff07"
+    },
+    {
+      "file": "tamsui_xinyi/R20.arrive.ogg",
+      "station_id": "R20",
+      "station_name": "唭哩岸",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "18七里案.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "6ce865fd110351e7988873bc26018b8d3e14553d332118297c5de0e42c7c6a4c"
+    },
+    {
+      "file": "tamsui_xinyi/R21.arrive.ogg",
+      "station_id": "R21",
+      "station_name": "奇岩",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "19奇岩.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "cd1f957bacddc14d75a4abb4d46be5de0084e0da8c3b1e46f3a76424e3364af7"
+    },
+    {
+      "file": "tamsui_xinyi/R21.arrive.terminus_next.ogg",
+      "station_id": "R21",
+      "station_name": "奇岩",
+      "kind": "arrive",
+      "variant": "terminus_next",
+      "source_name": "19-1奇岩.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "3457009ba9294c7275e48ebfe1d3094c509dfbecdc579ef494901f3f5bdf1c96"
+    },
+    {
+      "file": "tamsui_xinyi/R22.arrive.ogg",
+      "station_id": "R22",
+      "station_name": "北投",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "20北投.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "29f97c8dd41b2535e91643b5098a4c4b9d5fad7717a26293db6e0ae66e38b949"
+    },
+    {
+      "file": "tamsui_xinyi/R22.destination.ogg",
+      "station_id": "R22",
+      "station_name": "北投",
+      "kind": "destination",
+      "variant": "",
+      "source_name": "往北投.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "9f848b959aa31e20ff52f5f7eb0af872152a354eae970e4660f686f0db36b4d5"
+    },
+    {
+      "file": "tamsui_xinyi/R22.terminus.ogg",
+      "station_id": "R22",
+      "station_name": "北投",
+      "kind": "terminus",
+      "variant": "",
+      "source_name": "20-1北投.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "c587f1514da59f23e27af5241486ca8c813453b2128ce96520b559b5ec9f7b51"
+    },
+    {
+      "file": "tamsui_xinyi/R23.arrive.ogg",
+      "station_id": "R23",
+      "station_name": "復興崗",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "21復興崗.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "5485a13e38b198ed5a9dd957b37cd807a6c171315a908da39202d4d7f2b3d180"
+    },
+    {
+      "file": "tamsui_xinyi/R24.arrive.ogg",
+      "station_id": "R24",
+      "station_name": "忠義",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "22忠義.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "00d7b70e9b1e9337c653e604cfe88576a0f6e7fd550970c4b660ce97a2c33b11"
+    },
+    {
+      "file": "tamsui_xinyi/R25.arrive.ogg",
+      "station_id": "R25",
+      "station_name": "關渡",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "23關渡.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "2e9b1ccf0a23e2eb65b890e2e6397c7ee114253ce081439c54bd9332daf7dbcf"
+    },
+    {
+      "file": "tamsui_xinyi/R26.arrive.ogg",
+      "station_id": "R26",
+      "station_name": "竹圍",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "24竹圍.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "78bb8eb6fbb3c7e1ae1206bae2944985f259e9ae2ab93a4452e803e242670473"
+    },
+    {
+      "file": "tamsui_xinyi/R27.arrive.ogg",
+      "station_id": "R27",
+      "station_name": "紅樹林",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "25紅樹林.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "3630987170818b6134390d1547d6e45b9647c6bc451038db1553ba69d924d05e"
+    },
+    {
+      "file": "tamsui_xinyi/R28.arrive.ogg",
+      "station_id": "R28",
+      "station_name": "淡水",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "26淡水.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "a97816e58cdb6c2357f8c32d3fe434207859f948b31cccd31187cd2b8369b20d"
+    },
+    {
+      "file": "tamsui_xinyi/R28.destination.ogg",
+      "station_id": "R28",
+      "station_name": "淡水",
+      "kind": "destination",
+      "variant": "",
+      "source_name": "往淡水.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "a515a27d6ac7951f07150f9bbd88af869311efb345114ff51e8d8b2266e4cc14"
+    },
+    {
+      "file": "taoyuan_airport/A1.arrive.ogg",
+      "station_id": "A1",
+      "station_name": "台北車站",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "1台北車站.ogg",
+      "source_dir": "機捷",
+      "sha256": "cf2aa3627f200b49f37366d32aea198b65d1aa84377144e8f781de482a97c06c"
+    },
+    {
+      "file": "taoyuan_airport/A1.next.ogg",
+      "station_id": "A1",
+      "station_name": "台北車站",
+      "kind": "next",
+      "variant": "",
+      "source_name": "1-1台北車站.ogg",
+      "source_dir": "機捷",
+      "sha256": "2be4ef46e7600fe79c1d67eade35b867c0a0951d28a75343ec466ec35182cc3f"
+    },
+    {
+      "file": "taoyuan_airport/A10.arrive.ogg",
+      "station_id": "A10",
+      "station_name": "山鼻",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "10山埤.ogg",
+      "source_dir": "機捷",
+      "sha256": "35d1e435093c20a184175d65ead977f74ad7e3873cf5eccf19ac4bd0440e7bd0"
+    },
+    {
+      "file": "taoyuan_airport/A11.arrive.ogg",
+      "station_id": "A11",
+      "station_name": "坑口",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "11坑口.ogg",
+      "source_dir": "機捷",
+      "sha256": "025f62e5670a0aa463bb9431994038912ffc66448106fbeaee168d4dd1cac148"
+    },
+    {
+      "file": "taoyuan_airport/A12.arrive.ogg",
+      "station_id": "A12",
+      "station_name": "機場第一航廈",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "12機場第一航廈.ogg",
+      "source_dir": "機捷",
+      "sha256": "21806066df69b4da2e4a676fed25e79aee38c20ef4d908ccb1cabe78b29a38bd"
+    },
+    {
+      "file": "taoyuan_airport/A13.arrive.ogg",
+      "station_id": "A13",
+      "station_name": "機場第二航廈",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "13機場第二航廈.ogg",
+      "source_dir": "機捷",
+      "sha256": "bc807c21790501d01e41856d8049626bb8c58d3d8672799486aef0883321a1bf"
+    },
+    {
+      "file": "taoyuan_airport/A13.next.express.ogg",
+      "station_id": "A13",
+      "station_name": "機場第二航廈",
+      "kind": "next",
+      "variant": "express",
+      "source_name": "13-1機場第二航廈.ogg",
+      "source_dir": "機捷",
+      "sha256": "529b4ba770182d6200cde6ed399ef4d02d52204c043f8be09f97646257413c61"
+    },
+    {
+      "file": "taoyuan_airport/A13.terminus.express.ogg",
+      "station_id": "A13",
+      "station_name": "機場第二航廈",
+      "kind": "terminus",
+      "variant": "express",
+      "source_name": "13-2機場第二航廈.ogg",
+      "source_dir": "機捷",
+      "sha256": "726d36b383e3f3e3f4506a63fc75085550b48f44c076af1f26f0048590681c17"
+    },
+    {
+      "file": "taoyuan_airport/A14a.arrive.ogg",
+      "station_id": "A14a",
+      "station_name": "機場旅館",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "14機場旅館.ogg",
+      "source_dir": "機捷",
+      "sha256": "e7af1af0dd1c16eb35c7a56b07247f533d585ea338add0b7649483b10b61f269"
+    },
+    {
+      "file": "taoyuan_airport/A15.arrive.ogg",
+      "station_id": "A15",
+      "station_name": "大園",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "15大園.ogg",
+      "source_dir": "機捷",
+      "sha256": "971b89b200840b27d99c8e4d124749322878f701902c1b6c62806288dad3b066"
+    },
+    {
+      "file": "taoyuan_airport/A16.arrive.ogg",
+      "station_id": "A16",
+      "station_name": "橫山",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "16橫山.ogg",
+      "source_dir": "機捷",
+      "sha256": "641417be520f86bc73ba368048181fcfdbbc1e9819fb8e6b5e2b2f9f6b50f676"
+    },
+    {
+      "file": "taoyuan_airport/A17.arrive.ogg",
+      "station_id": "A17",
+      "station_name": "領航",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "17領航.ogg",
+      "source_dir": "機捷",
+      "sha256": "3b91377d21f1840ce25e5c06f5a420d4c013e3d00727ee28f0a4fc88a0c93d3a"
+    },
+    {
+      "file": "taoyuan_airport/A18.arrive.ogg",
+      "station_id": "A18",
+      "station_name": "高鐵桃園站",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "18高鐵桃園站.ogg",
+      "source_dir": "機捷",
+      "sha256": "fda76d3ba93d00a0e79c2d6f1f75ed2ef7ad69135d69dedf05a558cf60a9ffb8"
+    },
+    {
+      "file": "taoyuan_airport/A18.next.ogg",
+      "station_id": "A18",
+      "station_name": "高鐵桃園站",
+      "kind": "next",
+      "variant": "",
+      "source_name": "18-1高鐵桃園站.ogg",
+      "source_dir": "機捷",
+      "sha256": "17685dd838368c9c8d3a262ab78a35268ce77e45c7face95407198a6a086e7da"
+    },
+    {
+      "file": "taoyuan_airport/A19.arrive.ogg",
+      "station_id": "A19",
+      "station_name": "桃園體育園區",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "19桃園體育園區.ogg",
+      "source_dir": "機捷",
+      "sha256": "1f82f1aead35b10a135b06c2ef4abe14976a66ba795809e46478d3b81061b0d6"
+    },
+    {
+      "file": "taoyuan_airport/A2.arrive.ogg",
+      "station_id": "A2",
+      "station_name": "三重",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "2三重.ogg",
+      "source_dir": "機捷",
+      "sha256": "9a5ce71b43e4504079a066f4fc600df769b37fc1801607006fd8aeb81e75d890"
+    },
+    {
+      "file": "taoyuan_airport/A2.next.ogg",
+      "station_id": "A2",
+      "station_name": "三重",
+      "kind": "next",
+      "variant": "",
+      "source_name": "2-1三重.ogg",
+      "source_dir": "機捷",
+      "sha256": "cc67bac1af585be9f482e9b966b0c40c04e952103bc6944ec4b34dc460cf5f01"
+    },
+    {
+      "file": "taoyuan_airport/A20.arrive.ogg",
+      "station_id": "A20",
+      "station_name": "興南",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "20興南.ogg",
+      "source_dir": "機捷",
+      "sha256": "b2ada5bc13b997261991b4298694ed2d2e0f478b6fc5f5f54ce772b4143276a8"
+    },
+    {
+      "file": "taoyuan_airport/A21.arrive.ogg",
+      "station_id": "A21",
+      "station_name": "環北",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "21環北.ogg",
+      "source_dir": "機捷",
+      "sha256": "5814adec296d6c8dea154a1506f105e6a6fa601bcab8b53143f1903fb5cdf55f"
+    },
+    {
+      "file": "taoyuan_airport/A21.terminus.ogg",
+      "station_id": "A21",
+      "station_name": "環北",
+      "kind": "terminus",
+      "variant": "",
+      "source_name": "21-1環北.ogg",
+      "source_dir": "機捷",
+      "sha256": "8abde6417485b477ac2de53cc3a7fec77981e3d91b24a50b9afe842341f18bdd"
+    },
+    {
+      "file": "taoyuan_airport/A22.arrive.ogg",
+      "station_id": "A22",
+      "station_name": "老街溪",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "22老街溪.ogg",
+      "source_dir": "機捷",
+      "sha256": "dc23d9e4ce9f410123d764a2d015725ef78802a3599ff91583f20e0af545ae77"
+    },
+    {
+      "file": "taoyuan_airport/A3.arrive.ogg",
+      "station_id": "A3",
+      "station_name": "新北產業園區",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "3新北產業園區.ogg",
+      "source_dir": "機捷",
+      "sha256": "e2816d499a08b5b62f261e0c727bf47893e41f261e3ce4d2476bbb5282e7cf24"
+    },
+    {
+      "file": "taoyuan_airport/A3.next.ogg",
+      "station_id": "A3",
+      "station_name": "新北產業園區",
+      "kind": "next",
+      "variant": "",
+      "source_name": "3-1新北產業園區.ogg",
+      "source_dir": "機捷",
+      "sha256": "9d7cd19c49ff88832ef461dde19e6dbebf7e3f8687433b5418dc8d5bc3b61574"
+    },
+    {
+      "file": "taoyuan_airport/A4.arrive.ogg",
+      "station_id": "A4",
+      "station_name": "新莊副都心",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "4新裝富督興.ogg",
+      "source_dir": "機捷",
+      "sha256": "38ba9d64c6350879139e806235f72bee593eb43a78b4b2f8f8282eff67d71367"
+    },
+    {
+      "file": "taoyuan_airport/A5.arrive.ogg",
+      "station_id": "A5",
+      "station_name": "泰山",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "5泰山.ogg",
+      "source_dir": "機捷",
+      "sha256": "e6874acddbcdd89657a0ed1220a301758b3b20a727b1e5a6cc4bcfde83871d7c"
+    },
+    {
+      "file": "taoyuan_airport/A6.arrive.ogg",
+      "station_id": "A6",
+      "station_name": "泰山貴和",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "6泰山桂河.ogg",
+      "source_dir": "機捷",
+      "sha256": "e0286665e6e2941e5888215da34cb3d9234b15b631b70fa96e51d72ec18aed55"
+    },
+    {
+      "file": "taoyuan_airport/A7.arrive.ogg",
+      "station_id": "A7",
+      "station_name": "體育大學",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "7體育大學.ogg",
+      "source_dir": "機捷",
+      "sha256": "e3331d8832b5be2d8bf05b833a72ef2ec64a3fb18b4de60171faeaed7ffa4ea9"
+    },
+    {
+      "file": "taoyuan_airport/A8.arrive.ogg",
+      "station_id": "A8",
+      "station_name": "長庚醫院",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "8長庚醫院.ogg",
+      "source_dir": "機捷",
+      "sha256": "677b7c55aa970abe4617f83e7fad9b7fa18cab5888b19325d5e7d60804eba5ef"
+    },
+    {
+      "file": "taoyuan_airport/A9.arrive.ogg",
+      "station_id": "A9",
+      "station_name": "林口",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "9領口.ogg",
+      "source_dir": "機捷",
+      "sha256": "1a8316e777d232c6515cf70e3c6f6459c5142e7e99c1ddd479d08edd40b1e516"
+    },
+    {
+      "file": "wenhu/BR01.arrive.ogg",
+      "station_id": "BR01",
+      "station_name": "動物園",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "1動物園.ogg",
+      "source_dir": "文弧線",
+      "sha256": "1b0b684d4b2b9f5283357f7d1350586a3305cca6fda731f12b67d25e18a6510b"
+    },
+    {
+      "file": "wenhu/BR01.destination.ogg",
+      "station_id": "BR01",
+      "station_name": "動物園",
+      "kind": "destination",
+      "variant": "",
+      "source_name": "往動物園.ogg",
+      "source_dir": "文弧線",
+      "sha256": "dc806593ce46bbeaffecf75e238b3d5e644307d40be0daac2f0f0a8f95dc2088"
+    },
+    {
+      "file": "wenhu/BR02.arrive.ogg",
+      "station_id": "BR02",
+      "station_name": "木柵",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "2木柵.ogg",
+      "source_dir": "文弧線",
+      "sha256": "db77bce19304a4be59b7072f6c55cd50a2279d9dc3c1e59891669638cd2f6b75"
+    },
+    {
+      "file": "wenhu/BR03.arrive.ogg",
+      "station_id": "BR03",
+      "station_name": "萬芳社區",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "3萬芳社區.ogg",
+      "source_dir": "文弧線",
+      "sha256": "9fd273b323e7c3b7563ce90ecd2d685b7d6b996a786b9c81065029b92069450e"
+    },
+    {
+      "file": "wenhu/BR04.arrive.ogg",
+      "station_id": "BR04",
+      "station_name": "萬芳醫院",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "4萬芳醫院.ogg",
+      "source_dir": "文弧線",
+      "sha256": "6affdc8cc28b4e33db6f31f3b5c2a9aefafb474e7f2a036a27a7c099b6e625e2"
+    },
+    {
+      "file": "wenhu/BR05.arrive.ogg",
+      "station_id": "BR05",
+      "station_name": "辛亥",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "5辛亥.ogg",
+      "source_dir": "文弧線",
+      "sha256": "680c7338866e5014f41c7be36701431951b0ecbef36793041a4187e1213a56f9"
+    },
+    {
+      "file": "wenhu/BR06.arrive.ogg",
+      "station_id": "BR06",
+      "station_name": "麟光",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "6麟光.ogg",
+      "source_dir": "文弧線",
+      "sha256": "49cfcbdfe194422d4b3962d1abc5adda0fa3ce001f2f2cb30e70fb515d9850af"
+    },
+    {
+      "file": "wenhu/BR07.arrive.ogg",
+      "station_id": "BR07",
+      "station_name": "六張犁",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "7六張犁.ogg",
+      "source_dir": "文弧線",
+      "sha256": "5c209edc5f775435f688f0c8ea9e7dad731c1cfed9986d298b37ecde3dc1e0be"
+    },
+    {
+      "file": "wenhu/BR08.arrive.ogg",
+      "station_id": "BR08",
+      "station_name": "科技大樓",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "8科技大樓.ogg",
+      "source_dir": "文弧線",
+      "sha256": "156d86fbc84d025bbeccd32c42b4df2875fd2405e96ec968299cd64d0abe683a"
+    },
+    {
+      "file": "wenhu/BR09.arrive.ogg",
+      "station_id": "BR09",
+      "station_name": "大安",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "9大安.ogg",
+      "source_dir": "文弧線",
+      "sha256": "5f1441cc682615a0ee1633795b918b80ef8b04156ab8dbc0ec197c341c2b8f2b"
+    },
+    {
+      "file": "wenhu/BR10.arrive.ogg",
+      "station_id": "BR10",
+      "station_name": "忠孝復興",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "10忠孝復興.ogg",
+      "source_dir": "文弧線",
+      "sha256": "a5e8fb956ead4c93a592e062bfd8a3212f93bc57f0cede47b83cdb10cf331dca"
+    },
+    {
+      "file": "wenhu/BR11.arrive.ogg",
+      "station_id": "BR11",
+      "station_name": "南京復興",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "11南京復興.ogg",
+      "source_dir": "文弧線",
+      "sha256": "f7b94ec16565187e6ba00790365cfb0778281e44e8dcddfe80202b409ba5afc1"
+    },
+    {
+      "file": "wenhu/BR12.arrive.ogg",
+      "station_id": "BR12",
+      "station_name": "中山國中",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "12中山國中.ogg",
+      "source_dir": "文弧線",
+      "sha256": "251a48e92cf92991d44bccf61eb35b38e12798c4183817c15441d9a88d0f834d"
+    },
+    {
+      "file": "wenhu/BR13.arrive.ogg",
+      "station_id": "BR13",
+      "station_name": "松山機場",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "13松山機場.ogg",
+      "source_dir": "文弧線",
+      "sha256": "a11fed160ee4045a021648535d98e29cad9f90260978f74f41ddbda6902362df"
+    },
+    {
+      "file": "wenhu/BR14.arrive.ogg",
+      "station_id": "BR14",
+      "station_name": "大直",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "14大直.ogg",
+      "source_dir": "文弧線",
+      "sha256": "0ee1dba17f435df26867783a0207b680ac2079930f0d49818703e42d1c511354"
+    },
+    {
+      "file": "wenhu/BR15.arrive.ogg",
+      "station_id": "BR15",
+      "station_name": "劍南路",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "15劍南路.ogg",
+      "source_dir": "文弧線",
+      "sha256": "72a39a8aa9b6b8cf857d92e87360a7dfbebb9171d492f438857ec2b4606c85b8"
+    },
+    {
+      "file": "wenhu/BR16.arrive.ogg",
+      "station_id": "BR16",
+      "station_name": "西湖",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "16西湖.ogg",
+      "source_dir": "文弧線",
+      "sha256": "512fb0e8141f5dc1ef6a0a785345fbe8e736c6331e6ba4268827acb785d83217"
+    },
+    {
+      "file": "wenhu/BR17.arrive.ogg",
+      "station_id": "BR17",
+      "station_name": "港墘",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "17港前.ogg",
+      "source_dir": "文弧線",
+      "sha256": "e9a019c528aec22d58e779235fc82e4f1b3e3af6ba545d48c55b11b852bd00cf"
+    },
+    {
+      "file": "wenhu/BR18.arrive.ogg",
+      "station_id": "BR18",
+      "station_name": "文德",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "18文德.ogg",
+      "source_dir": "文弧線",
+      "sha256": "9a0a28ce272f3b03dd2abe61217cd1439fd3d097060f732a65aef12cb5debc93"
+    },
+    {
+      "file": "wenhu/BR19.arrive.ogg",
+      "station_id": "BR19",
+      "station_name": "內湖",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "19內湖.ogg",
+      "source_dir": "文弧線",
+      "sha256": "9848f90ca7751c35ef14219eaeb8790c37160ee7c1aa29946d335194a3e255ae"
+    },
+    {
+      "file": "wenhu/BR20.arrive.ogg",
+      "station_id": "BR20",
+      "station_name": "大湖公園",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "20大湖公園.ogg",
+      "source_dir": "文弧線",
+      "sha256": "0571f3ca72b226e98bcb11b658cb835452a41643eaa5232588545b16c79eb941"
+    },
+    {
+      "file": "wenhu/BR21.arrive.ogg",
+      "station_id": "BR21",
+      "station_name": "葫洲",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "21湖州.ogg",
+      "source_dir": "文弧線",
+      "sha256": "7fe44345476ec05e5cc41051dda6f3450e5835c6890c3aca8fd0671c49f91ef0"
+    },
+    {
+      "file": "wenhu/BR22.arrive.ogg",
+      "station_id": "BR22",
+      "station_name": "東湖",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "22東湖.ogg",
+      "source_dir": "文弧線",
+      "sha256": "b4e6416739db946c582576a3b33127536875f87e41b945b8f258fdbeeb4af37e"
+    },
+    {
+      "file": "wenhu/BR23.arrive.ogg",
+      "station_id": "BR23",
+      "station_name": "南港軟體園區",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "23南港軟體園區.ogg",
+      "source_dir": "文弧線",
+      "sha256": "53a3c20f43326e66963cd6fc5df8f5d14a8a48fc6dec8e474aa890f46c6125b0"
+    },
+    {
+      "file": "wenhu/BR24.arrive.ogg",
+      "station_id": "BR24",
+      "station_name": "南港展覽館",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "24南港展覽館.ogg",
+      "source_dir": "文弧線",
+      "sha256": "0fcee961bd3ef5ba9576907d993706b3004a1f3f6486ad60866c8c52b1fe4eaf"
+    },
+    {
+      "file": "wenhu/BR24.destination.ogg",
+      "station_id": "BR24",
+      "station_name": "南港展覽館",
+      "kind": "destination",
+      "variant": "",
+      "source_name": "往南港.ogg",
+      "source_dir": "文弧線",
+      "sha256": "c4e575651e2dae4e3bb31a4fbbcb2924d100b0ea86decfd34ad3b58de4a3dff5"
     },
     {
       "file": "west_north/BADU.arrive.ogg",
@@ -1243,6 +2933,66 @@
       "source_name": "36竹南.ogg",
       "source_dir": "1縱貫北",
       "sha256": "5aa6b29faa0adb38f30c9c1235148e9177e300adbda18ab75afc97fe95953bf3"
+    },
+    {
+      "file": "xiaobitan/G03.terminus.from_branch.ogg",
+      "station_id": "G03",
+      "station_name": "七張",
+      "kind": "terminus",
+      "variant": "from_branch",
+      "source_name": "2-1七張.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "5261b457176ad086a58a812959f433578005938a83956df278496c83e7a822ed"
+    },
+    {
+      "file": "xiaobitan/G03A.arrive.ogg",
+      "station_id": "G03A",
+      "station_name": "小碧潭",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "20小碧潭.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "06530cf6e48d75d40f34ff35b540a8d70e7fc4295bebd71097d02d9dc74f1f55"
+    },
+    {
+      "file": "xiaobitan/G03A.destination.ogg",
+      "station_id": "G03A",
+      "station_name": "小碧潭",
+      "kind": "destination",
+      "variant": "",
+      "source_name": "往小碧潭.ogg",
+      "source_dir": "松山新店線",
+      "sha256": "f5e7a34345591e7fade4216f8f9efc4bad4c324109be77c84870abb5861a558a"
+    },
+    {
+      "file": "xinbeitou/R22.terminus.from_branch.ogg",
+      "station_id": "R22",
+      "station_name": "北投",
+      "kind": "terminus",
+      "variant": "from_branch",
+      "source_name": "20-2北投.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "e29cb2c8ef0792609b33570941634d70aedb1ebd6d1e32bc004785313f137eb2"
+    },
+    {
+      "file": "xinbeitou/R22A.arrive.ogg",
+      "station_id": "R22A",
+      "station_name": "新北投",
+      "kind": "arrive",
+      "variant": "",
+      "source_name": "28新北投.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "4debe34a031215bda79877cc3dd0df593cff75df8d3982addd05571bc47432fa"
+    },
+    {
+      "file": "xinbeitou/R22A.destination.ogg",
+      "station_id": "R22A",
+      "station_name": "新北投",
+      "kind": "destination",
+      "variant": "",
+      "source_name": "往新北投.ogg",
+      "source_dir": "淡水信義線",
+      "sha256": "2fa3193744dba5353b3c7fa9a5b6735d17c0852aa3c4c58fec5375158274792e"
     }
   ],
   "unresolved": []

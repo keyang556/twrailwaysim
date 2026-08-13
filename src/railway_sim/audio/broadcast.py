@@ -32,6 +32,14 @@
 DR1000 型柴油客車沒有車上廣播設備，因此這型車不播廣播，也不送出廣播
 文字——沒有播出來的東西不應該假裝有。由 ``trains.json`` 的
 ``has_broadcast`` 決定，不是寫死車型代碼。
+
+播放時機由廣播系統自己決定
+--------------------------
+
+:meth:`BroadcastSystem.update` 每個模擬步長收到一份 :class:`RunState`，自己
+判斷該播什麼。運轉端只負責描述「現在的狀況」，不必知道任何一條線的廣播
+規則——捷運的規則（往○○、宣導、終點變體）與臺鐵完全不同，全部收在
+:mod:`railway_sim.audio.mrt_broadcast` 的子類別裡，運轉端一行都不用改。
 """
 
 from __future__ import annotations
@@ -44,7 +52,43 @@ from railway_sim.accessibility.announcer import Announcer, Priority
 from railway_sim.audio.library import BroadcastLibrary
 from railway_sim.audio.player import AudioPlayer
 
-__all__ = ["BroadcastSystem"]
+__all__ = ["BROADCAST_DEPART_KMH", "BroadcastSystem", "RunState"]
+
+#: 視為「列車已啟動」的速度（公里／小時）。
+#:
+#: 「下一站」廣播是列車自車站啟動之後才播的，因此需要一個明確的啟動門檻；
+#: 用大於零會在停妥判定的抖動下反覆觸發。
+BROADCAST_DEPART_KMH = 3.0
+
+
+@dataclass(frozen=True)
+class RunState:
+    """一個模擬步長裡與廣播有關的運轉狀況。
+
+    只描述**事實**，不含任何「該播什麼」的判斷——那是廣播系統的責任。
+
+    Attributes:
+        at_station_id: 目前停妥在哪一個停靠站；行進中為 ``None``。
+        next_stop_id: 前方第一個停靠站；全部跑完為 ``None``。
+        previous_stop_id: 最近停靠過的車站，用來判斷「從哪裡來」與區間位置。
+        origin_id: 本班次的起站。
+        terminus_id: 本班次的終點站。
+        service_class: 車種代碼（機捷的直達車與普通車廣播不同）。
+    """
+
+    speed_kmh: float
+    at_station_id: str | None
+    next_stop_id: str | None
+    next_stop_name: str
+    distance_to_next_stop_m: float
+    previous_stop_id: str | None
+    origin_id: str
+    terminus_id: str
+    service_class: str = ""
+
+    @property
+    def moving(self) -> bool:
+        return self.speed_kmh >= BROADCAST_DEPART_KMH
 
 
 @dataclass
@@ -69,6 +113,47 @@ class BroadcastSystem:
 
     played: list[str] = field(default_factory=list, init=False)
     """已播出的音檔索引鍵，供測試與診斷使用。"""
+
+    #: 開始播放「到站廣播」的距離（公尺）。
+    #:
+    #: 比司機員的接近播報更早，因為到站廣播是完整的四語言錄音，終點站的版本
+    #: 長達一分鐘；用八百公尺起播的話，時速一百公里只剩二十九秒，廣播會在
+    #: 到站前被下一則蓋掉。捷運的站距短得多，因此子類別會改小這個值。
+    arrival_distance_m: float = 1500.0
+
+    _next_announced_for: str | None = field(default=None, init=False, repr=False)
+    _arrival_announced: set[str] = field(default_factory=set, init=False, repr=False)
+
+    # ------------------------------------------------------------------
+    # 播放時機
+    # ------------------------------------------------------------------
+    def update(self, state: RunState) -> None:
+        """依目前運轉狀況播放該播的廣播。
+
+        一律以**下一個停靠站**為準，不照路線上的車站順序推進：自強號、區間快
+        會通過許多車站，照順序播就會播出根本不停的站。
+
+        「下一站」用「已播過的站」比對而不是「剛離站」這種瞬間事件，中途暫停
+        或列車在站內前後移動都不會重播或漏播。
+        """
+        if not self.enabled or state.next_stop_id is None:
+            return
+
+        if self._next_announced_for != state.next_stop_id and state.moving:
+            self._next_announced_for = state.next_stop_id
+            self.announce_next_stop(state.next_stop_id, state.next_stop_name)
+
+        if (
+            state.next_stop_id not in self._arrival_announced
+            and state.at_station_id is None
+            and state.distance_to_next_stop_m <= self.arrival_distance_m
+        ):
+            self._arrival_announced.add(state.next_stop_id)
+            self.announce_arrival(
+                state.next_stop_id,
+                state.next_stop_name,
+                is_terminus=state.next_stop_id == state.terminus_id,
+            )
 
     # ------------------------------------------------------------------
     def announce_next_stop(self, station_id: str, name_zh_tw: str) -> bool:

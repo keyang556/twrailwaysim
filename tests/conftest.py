@@ -25,8 +25,14 @@ class ManualClock:
 
 @pytest.fixture(scope="session")
 def game_data() -> GameData:
-    """載入 data 目錄的正式資料。"""
+    """載入 data 目錄的正式資料（臺鐵）。"""
     return load_game_data()
+
+
+@pytest.fixture(scope="session")
+def mrt_data() -> GameData:
+    """載入 data/mrt 目錄的正式資料（捷運）。"""
+    return load_game_data(system="mrt")
 
 
 @pytest.fixture

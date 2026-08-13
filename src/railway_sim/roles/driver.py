@@ -11,7 +11,8 @@ from dataclasses import dataclass, field
 
 from railway_sim.accessibility import messages as msg
 from railway_sim.accessibility.announcer import Announcer, Priority
-from railway_sim.audio.broadcast import BroadcastSystem
+from railway_sim.audio.broadcast import BroadcastSystem, RunState
+from railway_sim.audio.mrt_broadcast import MrtBroadcastSystem
 from railway_sim.audio.player import AudioPlayer
 from railway_sim.data_loader import GameData
 from railway_sim.events.event_bus import EventBus
@@ -21,6 +22,7 @@ from railway_sim.railway.interlocking import Interlocking
 from railway_sim.railway.route import Route, RouteStop
 from railway_sim.railway.signal import SignalSystem
 from railway_sim.simulation import braking, doors
+from railway_sim.simulation.ato import DEFAULT_DOOR_SIDE, AtoController
 from railway_sim.simulation.atp import AtpMonitor, AtpState, SpeedRestriction
 from railway_sim.simulation.clock import SIMULATION_TICK_S, SimulationClock
 from railway_sim.simulation.physics import step as physics_step
@@ -44,19 +46,6 @@ STOP_WINDOW_M = 50.0
 
 #: 開始播報「接近某站」的距離（公尺）。
 APPROACH_ANNOUNCE_M = 800.0
-
-#: 開始播放「到站廣播」的距離（公尺）。
-#:
-#: 比司機員的接近播報（:data:`APPROACH_ANNOUNCE_M`）更早，因為到站廣播是
-#: 完整的四語言錄音，終點站的版本長達一分鐘；用八百公尺起播的話，時速
-#: 一百公里只剩二十九秒，廣播會在到站前被下一則蓋掉。
-BROADCAST_ARRIVAL_M = 1500.0
-
-#: 視為「列車已啟動」的速度（公里／小時）。
-#:
-#: 「下一站」廣播是列車自車站啟動之後才播的，因此需要一個明確的啟動門檻；
-#: 用大於零會在停妥判定的抖動下反覆觸發。
-BROADCAST_DEPART_KMH = 3.0
 
 #: 狀態查詢項目的顯示名稱。
 #:
@@ -143,6 +132,7 @@ class DriverSession:
     signals: SignalSystem = field(init=False)
     interlocking: Interlocking = field(init=False)
     atp: AtpMonitor = field(init=False)
+    ato: AtoController = field(init=False)
     broadcast: BroadcastSystem = field(init=False)
     stations: list[StationProgress] = field(init=False, default_factory=list)
 
@@ -151,8 +141,8 @@ class DriverSession:
     last_status: StatusItem | None = field(default=None, init=False)
     """最近一次狀態查詢的結果，供介面顯示該項目（不是整份狀態）。"""
 
-    _broadcast_next_for: str | None = field(default=None, init=False, repr=False)
-    _broadcast_arrived: set[str] = field(default_factory=set, init=False, repr=False)
+    _previous_stop_id: str | None = field(default=None, init=False, repr=False)
+    """最近停妥過的停靠站。廣播用它判斷「從哪裡來」與目前在哪一個區間。"""
 
     # ------------------------------------------------------------------
     # 建立
@@ -187,20 +177,47 @@ class DriverSession:
             station_names=self.data.station_names(),
         )
 
-        # 車上廣播（§20.2）。沒有廣播設備的車型（DR1000）連文字都不送出，
-        # 因為那台車根本沒有播出任何東西。
-        self.broadcast = BroadcastSystem(
-            library=self.data.broadcasts,
-            announcer=self.announcer,
-            player=self.player,
-            enabled=self.spec.has_broadcast,
-            line_id=self.route.line_id,
-            called_station_ids=tuple(self.service.stop_station_ids),
+        # 自動駕駛（§20.3）。臺鐵沒有 ATO，因此系統本身就不支援時直接關掉，
+        # 不是「有按鍵但沒反應」。
+        line = self.data.line(self.route.line_id)
+        self.ato = AtoController(
+            spec=self.spec,
+            available=self.data.system.supports_ato and line.ato,
+            driverless=line.driverless,
         )
+
+        self.broadcast = self._build_broadcast()
 
         self._build_station_progress()
         self._update_occupancy()
         self._refresh_stop_target()
+
+    def _build_broadcast(self) -> BroadcastSystem:
+        """建立車上廣播（§20.2）。
+
+        沒有廣播設備的車型（DR1000）連文字都不送出，因為那台車根本沒有播出
+        任何東西。捷運與臺鐵的播放時機規則不同，因此用不同的實作；判斷依據是
+        **這條線登記的廣播樣式**，不是「哪一個系統」——樣式寫在資料裡，日後
+        多一種樣式不必改這裡。
+        """
+        common = {
+            "library": self.data.broadcasts,
+            "announcer": self.announcer,
+            "player": self.player,
+            "enabled": self.spec.has_broadcast,
+            "line_id": self.route.line_id,
+            "called_station_ids": tuple(self.service.stop_station_ids),
+        }
+        style = self.data.line(self.route.line_id).announcement_style
+        if not style:
+            return BroadcastSystem(**common)  # type: ignore[arg-type]
+
+        final = self.service.stop_station_ids[-1] if self.service.stop_station_ids else ""
+        return MrtBroadcastSystem(
+            **common,  # type: ignore[arg-type]
+            rules=self.data.broadcast_rules.for_line(self.route.line_id, style),
+            terminus_name=self.data.stations[final].name_zh_tw if final else "",
+        )
 
     def _build_station_progress(self) -> None:
         """依班次停靠表建立每站的停靠別（§9.1）。"""
@@ -247,7 +264,15 @@ class DriverSession:
     # 操作
     # ------------------------------------------------------------------
     def power_up(self) -> None:
-        """增加電門（Z）。"""
+        """增加電門（Z）。
+
+        自動駕駛中，這個鍵就是**發車鍵**：ATO 已經在控制電門，再手動加一段
+        沒有意義，而「關門之後啟動列車」正是駕駛在自動駕駛下唯一要做的操作
+        （§20.3）。想手動加電門請先解除自動駕駛。
+        """
+        if self.ato.engaged:
+            self.ato_depart()
+            return
         result = braking.power_up(self.train, self.spec)
         if not result.accepted and result.reason == "emergency":
             self.announcer.announce(msg.power_blocked_by_emergency(), Priority.SAFETY)
@@ -366,6 +391,114 @@ class DriverSession:
         """鳴笛（Enter）。"""
         self.announcer.announce(msg.horn(), Priority.ACTION)
         self.bus.publish("horn")
+
+    # ------------------------------------------------------------------
+    # 自動駕駛（Alt+Shift+U，§20.3）
+    # ------------------------------------------------------------------
+    def toggle_ato(self) -> None:
+        """啟動或解除自動駕駛（Alt＋Shift＋U）。
+
+        臺鐵沒有 ATO，因此在臺鐵模式下會明確說「本系統沒有自動駕駛功能」，
+        而不是靜靜地沒反應——按鍵一定要有回饋（§7.2）。
+        """
+        if self.ato.engaged:
+            self.ato.disengage()
+            self.announcer.announce(msg.ato_disengaged(), Priority.NOTICE)
+            self.bus.publish("ato", engaged=False)
+            return
+        if not self.ato.engage():
+            self.announcer.announce(msg.ato_unavailable(), Priority.ACTION)
+            return
+        # 接手時先把手動殘留的段位清掉，控制律下一個步長就會重新給值。
+        self.train.power_notch = 0
+        self.announcer.announce(
+            msg.ato_engaged(driverless=self.ato.driverless), Priority.NOTICE
+        )
+        # 就地登記目前停在哪一站，否則玩家一啟動就按發車，會在下一個步長被
+        # 「剛到站」的重設吃掉。
+        self._register_stop(self.stopped_at())
+        self.bus.publish("ato", engaged=True, driverless=self.ato.driverless)
+
+    def _register_stop(self, here: StationProgress | None) -> None:
+        """登記目前停妥的車站，換站時提醒駕駛該發車了。
+
+        ATO 不會自己開走，駕駛不知道「現在輪到我」就會一直等下去；無人駕駛線
+        不需要這一句，因為根本不用駕駛動手。
+        """
+        if not self.ato.arrive_at(here.station_id if here is not None else None):
+            return
+        if here is not None and not self.ato.driverless:
+            self.announcer.announce(
+                msg.ato_awaiting_departure(here.name_zh_tw), Priority.NOTICE
+            )
+
+    def ato_depart(self) -> None:
+        """自動駕駛的發車鍵（F4）。
+
+        關門之後按下，列車才會啟動；這是一般捷運線上駕駛唯一要做的操作。
+        無人駕駛線不需要按——停站時間到了電腦自己會關門發車；在車門已經關上
+        的空檔按下去只會讓它早一點開走。
+        """
+        if not self.ato.engaged:
+            self.announcer.announce(msg.ato_not_engaged(), Priority.ACTION)
+            return
+        if self.train.any_door_open:
+            self.announcer.announce(msg.power_blocked_by_doors(), Priority.SAFETY)
+            return
+        self.ato.authorise_departure()
+        self.announcer.announce(msg.ato_departed(), Priority.ACTION)
+        self.bus.publish("ato_depart")
+
+    def _drive_with_ato(self, dt_s: float) -> None:
+        """把 ATO 的決定寫進列車狀態。
+
+        ATO 是電腦，直接給段位而不是一段一段推手把；但它不會覆蓋緊急制軔，
+        也不會在車門開著時加電門（決策本身就已經排除這兩種情況）。
+        """
+        if not self.ato.engaged:
+            return
+
+        here = self.stopped_at()
+        if self.train.is_stopped:
+            self._register_stop(here)
+        if self.ato.driverless:
+            self._drive_doors(dt_s, here)
+
+        holding = (
+            here is not None
+            and not self.ato.departure_authorised
+            and self.train.is_stopped
+        )
+        target = self.next_scheduled_stop()
+        state = self.last_state or self._evaluate_only()
+        decision = self.ato.decide(
+            self.train,
+            permitted_kmh=state.permitted_kmh,
+            distance_to_stop_m=(
+                target.position_m - self.train.position_m if target is not None else None
+            ),
+            holding=holding,
+        )
+        if decision.reason == "emergency":
+            return
+        self.train.power_notch = decision.power_notch
+        self.train.brake_notch = decision.brake_notch
+
+    def _drive_doors(self, dt_s: float, here: StationProgress | None) -> None:
+        """無人駕駛的車門與發車（文湖線、環狀線、三鶯線）。
+
+        月台在哪一側不在來源資料裡（§22、§27），因此固定開
+        :data:`~railway_sim.simulation.ato.DEFAULT_DOOR_SIDE` 那一側並在文件
+        中說明，不假裝知道每一站的開門方向。
+        """
+        if here is None or not self.train.is_stopped:
+            return
+        if not self.train.any_door_open and self.ato.dwell_remaining_s > 0.0:
+            self._toggle_doors(DEFAULT_DOOR_SIDE)
+        if self.ato.tick_dwell(dt_s):
+            if self.train.any_door_open:
+                self._toggle_doors(DEFAULT_DOOR_SIDE)
+            self.ato.authorise_departure()
 
     # ------------------------------------------------------------------
     # 車門（F5／F6，取自 OpenBVE 的 DOORS_LEFT／DOORS_RIGHT）
@@ -528,6 +661,7 @@ class DriverSession:
         if self.finished:
             return
 
+        self._drive_with_ato(dt_s)
         physics_step(self.train, self.spec, dt_s)
         self.clock.elapsed_s += dt_s
 
@@ -665,37 +799,59 @@ class DriverSession:
                 return progress
         return None
 
-    def _handle_broadcast(self) -> None:
-        """依列車狀態決定要播哪一則車上廣播。
+    def first_stop(self) -> StationProgress | None:
+        """本班次的起站（停靠表的第一站）。"""
+        for progress in self.stations:
+            if progress.must_stop:
+                return progress
+        return None
+
+    def stopped_at(self) -> StationProgress | None:
+        """目前停妥於哪一個停靠站；行進中或停在站外時回傳 ``None``。"""
+        if not self.train.is_stopped:
+            return None
+        for progress in self.stations:
+            if not progress.must_stop:
+                continue
+            if abs(self.train.position_m - progress.position_m) <= STOP_WINDOW_M:
+                return progress
+        return None
+
+    def run_state(self) -> RunState:
+        """整理出廣播需要知道的運轉狀況。
 
         一律以**下一個停靠站**為準，不照路線上的車站順序推進：自強號、
         區間快會通過許多車站，照順序播就會播出根本不停的站。以停靠站為準
         的規則對區間車（站站停）同樣成立，因此不需要為車種分開處理。
         """
         target = self.next_scheduled_stop()
-        if target is None:
-            return
-
-        # 下一站：列車自車站啟動之後播。用「已播過的站」比對而不是「剛離站」
-        # 這種瞬間事件，中途暫停或列車在站內前後移動都不會重播或漏播。
-        if (
-            self._broadcast_next_for != target.station_id
-            and self.train.current_speed_kmh >= BROADCAST_DEPART_KMH
-        ):
-            self._broadcast_next_for = target.station_id
-            self.broadcast.announce_next_stop(target.station_id, target.name_zh_tw)
-
-        # 到站（終點站則播終點版本）：到達停靠站之前播。
-        distance = target.position_m - self.train.position_m
-        if target.station_id in self._broadcast_arrived or distance > BROADCAST_ARRIVAL_M:
-            return
+        here = self.stopped_at()
         final = self.final_stop()
-        self._broadcast_arrived.add(target.station_id)
-        self.broadcast.announce_arrival(
-            target.station_id,
-            target.name_zh_tw,
-            is_terminus=final is not None and final.station_id == target.station_id,
+        origin = self.first_stop()
+        return RunState(
+            speed_kmh=self.train.current_speed_kmh,
+            at_station_id=here.station_id if here is not None else None,
+            next_stop_id=target.station_id if target is not None else None,
+            next_stop_name=target.name_zh_tw if target is not None else "",
+            distance_to_next_stop_m=(
+                target.position_m - self.train.position_m if target is not None else 0.0
+            ),
+            previous_stop_id=self._previous_stop_id,
+            origin_id=origin.station_id if origin is not None else "",
+            terminus_id=final.station_id if final is not None else "",
+            service_class=self.service.train_type,
         )
+
+    def _handle_broadcast(self) -> None:
+        """把目前狀況交給廣播系統，由它決定要播什麼。
+
+        運轉端刻意不碰「該播哪一則」：捷運的規則（往○○、宣導、終點變體）
+        與臺鐵完全不同，全部收在廣播系統裡，這裡只描述事實。
+        """
+        here = self.stopped_at()
+        if here is not None:
+            self._previous_stop_id = here.station_id
+        self.broadcast.update(self.run_state())
 
     def _handle_pass_station(self, progress: StationProgress, position: float) -> None:
         if position >= progress.position_m:
@@ -820,7 +976,7 @@ class DriverSession:
         covered = sum(
             1
             for p in self.stations
-            if p.must_stop and self.data.broadcasts.has(p.station_id, "next")
+            if p.must_stop and self.data.broadcasts.has_any(p.station_id)
         )
         total = sum(1 for p in self.stations if p.must_stop)
         if covered == 0:
@@ -893,6 +1049,8 @@ class DriverSession:
             "horn": self.horn,
             "doors_left": self.toggle_left_doors,
             "doors_right": self.toggle_right_doors,
+            "toggle_ato": self.toggle_ato,
+            "ato_depart": self.ato_depart,
             "announce_speed": self.announce_speed,
             "announce_position": self.announce_position,
             "announce_next_station": self.announce_next_station,

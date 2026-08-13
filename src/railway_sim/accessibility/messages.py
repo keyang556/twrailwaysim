@@ -19,10 +19,18 @@ __all__ = [
     "STOP_KIND_NAMES",
     "approaching_speed_limit",
     "approaching_stop_point",
+    "ato_awaiting_departure",
+    "ato_departed",
+    "ato_disengaged",
+    "ato_engaged",
+    "ato_not_engaged",
+    "ato_unavailable",
     "brake_notch",
     "broadcast_arriving",
+    "broadcast_destination",
     "broadcast_doors",
     "broadcast_next_stop",
+    "broadcast_notice",
     "broadcast_terminus",
     "distance_phrase",
     "door_blocked_by_movement",
@@ -43,6 +51,7 @@ __all__ = [
     "speed_report",
     "station_arrival",
     "station_passed",
+    "station_phrase",
     "train_status",
 ]
 
@@ -113,6 +122,15 @@ def num_to_zh(value: float, *, decimals: int = 0) -> str:
         return ("負" if negative else "") + head
     tail = "".join(_DIGITS[int(c)] for c in frac_text)
     return ("負" if negative else "") + head + "點" + tail
+
+
+def station_phrase(name: str) -> str:
+    """把站名接上「站」字，站名本身已含「站」時不重複。
+
+    捷運有台北車站、鶯歌車站這種**站名本身就含「站」**的車站，直接接上去會
+    唸成「台北車站站」。臺鐵沒有這種站名，因此以前不需要處理。
+    """
+    return name if name.endswith("站") else f"{name}站"
 
 
 def distance_phrase(metres: float) -> str:
@@ -240,7 +258,7 @@ def broadcast_next_stop(name: str) -> str:
 
 
 def broadcast_arriving(name: str) -> str:
-    return f"車內廣播：{name}站快到了。"
+    return f"車內廣播：{station_phrase(name)}快到了。"
 
 
 def broadcast_terminus(name: str) -> str:
@@ -250,6 +268,49 @@ def broadcast_terminus(name: str) -> str:
 def broadcast_doors(side: str, *, opening: bool) -> str:
     action = "開啟" if opening else "關閉"
     return f"車內廣播：{_side_name(side)}車門即將{action}。"
+
+
+def broadcast_destination(name: str) -> str:
+    """往○○的廣播（捷運）。內容是這班車開往哪裡，不是下一站。"""
+    return f"車內廣播：本列車開往{name}。"
+
+
+def broadcast_notice() -> str:
+    """宣導廣播（捷運）。
+
+    內容是搭乘須知一類的宣導，不是任何一站的資訊，因此文字只說「宣導廣播」
+    而不編造內容——音檔逐字稿無法由檔名得知（§2.3）。
+    """
+    return "車內廣播：宣導廣播。"
+
+
+# ----------------------------------------------------------------------
+# 自動駕駛（ATO，僅捷運）
+# ----------------------------------------------------------------------
+def ato_engaged(*, driverless: bool) -> str:
+    if driverless:
+        return "自動駕駛已啟動。本線為無人駕駛，車門與發車全部由電腦控制。"
+    return "自動駕駛已啟動。請負責開關車門，關門後按發車鍵啟動列車。"
+
+
+def ato_disengaged() -> str:
+    return "自動駕駛已解除，改為手動駕駛。"
+
+
+def ato_unavailable() -> str:
+    return "本系統沒有自動駕駛功能。"
+
+
+def ato_not_engaged() -> str:
+    return "自動駕駛未啟動，發車鍵無作用。"
+
+
+def ato_awaiting_departure(name: str) -> str:
+    return f"{station_phrase(name)}停妥，車門作業完成後請按發車鍵。"
+
+
+def ato_departed() -> str:
+    return "已發車，自動駕駛接管。"
 
 
 # ----------------------------------------------------------------------
@@ -279,7 +340,7 @@ def position_report(
 def next_station(name: str, distance_m: float, stop_kind: str) -> str:
     """前方車站播報（§21.2）。"""
     kind = STOP_KIND_NAMES.get(stop_kind, stop_kind)
-    return f"前方車站{name}，距離{distance_phrase(distance_m)}。{name}站為{kind}。"
+    return f"前方車站{name}，距離{distance_phrase(distance_m)}。{station_phrase(name)}為{kind}。"
 
 
 def signal_report(aspect: str, distance_m: float, permitted_kmh: float) -> str:
@@ -350,20 +411,20 @@ def station_arrival(name: str, offset_m: float) -> str:
     的整十公尺化簡；否則四公尺的誤差會被唸成「零公尺」，對司機沒有意義。
     """
     if abs(offset_m) < 1.0:
-        return f"{name}站停妥，停車位置準確。"
+        return f"{station_phrase(name)}停妥，停車位置準確。"
     metres = f"{num_to_zh(abs(offset_m))}公尺"
     if offset_m > 0:
-        return f"{name}站停妥，超出停車位置{metres}。"
-    return f"{name}站停妥，未達停車位置{metres}。"
+        return f"{station_phrase(name)}停妥，超出停車位置{metres}。"
+    return f"{station_phrase(name)}停妥，未達停車位置{metres}。"
 
 
 def station_passed(name: str) -> str:
-    return f"通過{name}站。"
+    return f"通過{station_phrase(name)}。"
 
 
 def missed_stop(name: str) -> str:
     """應停未停（§9.2）。"""
-    return f"應停未停：{name}站。已記錄行車違規，不可倒車。"
+    return f"應停未停：{station_phrase(name)}。已記錄行車違規，不可倒車。"
 
 
 def overspeed(speed_kmh: float, permitted_kmh: float) -> str:

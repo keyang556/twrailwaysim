@@ -6,7 +6,8 @@
     "source_policy": "依使用者指示：功能相同者，快捷鍵一律與 OpenBVE 相同。對照來源為 OpenBVE 的 assets/Controls/Default.controls，欄位格式為「指令, keyboard, 鍵, 修飾鍵位元」，其中修飾鍵 Shift=1、Ctrl=2、Alt=4（見 OpenBveApi/Interface/Input/KeyboardModifier.cs）。",
     "openbve_reference": "assets/Controls/Default.controls（Last updated 2026.01.16）",
     "legacy_note": "profile driver_legacy 保留先前依 chat.md 訂下的 D 電門／A 制軔配置，可用 --keymap-profile driver_legacy 選用。",
-    "console_note": "終端機無法區分 Ctrl 與 Ctrl+Shift，主控台介面把控制字元一律視為 Ctrl+Shift+字母。因此每個播報動作都另外保留一個單鍵別名，任何介面都能操作。"
+    "console_note": "終端機無法區分 Ctrl 與 Ctrl+Shift，主控台介面把控制字元一律視為 Ctrl+Shift+字母。因此每個播報動作都另外保留一個單鍵別名，任何介面都能操作。",
+    "ato_note": "自動駕駛（toggle_ato、ato_depart）只有捷運有；在臺鐵按下會回覆「本系統沒有自動駕駛功能」，不會靜靜地沒反應（規格 §7.2）。"
   },
   "profiles": {
     "global": {
@@ -65,6 +66,18 @@
         "label": "開關右側車門",
         "category": "driving",
         "source": "OpenBVE DOORS_RIGHT, keyboard, F6, 0"
+      },
+      "toggle_ato": {
+        "keys": ["Alt+Shift+U"],
+        "label": "啟動或解除自動駕駛（僅捷運）",
+        "category": "driving",
+        "source": "使用者指定：Alt+Shift+U 切換自動駕駛（ATO）。OpenBVE 沒有對應功能，因此不沿用其鍵位。"
+      },
+      "ato_depart": {
+        "keys": ["F4"],
+        "label": "自動駕駛發車（關門後啟動列車）",
+        "category": "driving",
+        "source": "本專案自訂。自動駕駛下也可直接按電門鍵發車，兩者作用相同。"
       },
       "emergency_brake": {
         "keys": ["SLASH"],
@@ -163,6 +176,18 @@
         "label": "開關右側車門",
         "category": "driving",
         "source": "OpenBVE DOORS_RIGHT, keyboard, F6, 0"
+      },
+      "toggle_ato": {
+        "keys": ["Alt+Shift+U"],
+        "label": "啟動或解除自動駕駛（僅捷運）",
+        "category": "driving",
+        "source": "使用者指定：Alt+Shift+U 切換自動駕駛（ATO）。OpenBVE 沒有對應功能，因此不沿用其鍵位。"
+      },
+      "ato_depart": {
+        "keys": ["F4"],
+        "label": "自動駕駛發車（關門後啟動列車）",
+        "category": "driving",
+        "source": "本專案自訂。自動駕駛下也可直接按電門鍵發車，兩者作用相同。"
       },
       "emergency_brake": {
         "keys": ["SPACE"],

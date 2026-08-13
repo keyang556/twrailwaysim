@@ -332,6 +332,16 @@ class BroadcastLibrary:
             for clip in self.clips.values()
         )
 
+    def has_any(self, station_id: str) -> bool:
+        """該車站有沒有**任何**一則廣播。
+
+        用來回答「這一站到底錄了沒」。不能只看某一種：臺鐵每站都有「下一站」
+        與「到站」，捷運台北的五條高運量線根本沒有「下一站」廣播，照那一種
+        去數會把整條線判成「沒有廣播」。
+        """
+        station_id = station_id.strip().upper()
+        return any(clip.station_id == station_id for clip in self.clips.values())
+
     def station_ids(self) -> set[str]:
         """索引中出現過的車站代碼。"""
         return {clip.station_id for clip in self.clips.values()}

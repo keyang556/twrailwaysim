@@ -59,13 +59,25 @@ def _normalise_station_name(name: str) -> str:
 
 @dataclass(frozen=True)
 class SourceMap:
-    """``source_map.json`` 的內容。"""
+    """``source_map.json`` 的內容。
+
+    Attributes:
+        clip_map: ``<資料夾>/<檔名>`` → ``<車站代碼>.<種類>[.<版本>]`` 的**逐檔**
+            對照，可加上 ``<線別>/`` 前綴把某一則放到別條線的資料夾。
+
+            為什麼需要逐檔對照：臺鐵的來源檔名寫得出站名與種類（「14福州到站」），
+            靠站名比對就夠；捷運的來源檔名只有各線自己的播放序號加站名
+            （「19-1奇岩」），序號與種類的關係是每一條線各自約定的，而且同一個
+            站名在不同線是不同車站。這種資料沒有規則可循，只能逐檔寫明——寫在
+            資料檔裡，看得見也改得動，程式仍然不寫死任何站名。
+    """
 
     line_ids: dict[str, str] = field(default_factory=dict)
     kind_suffixes: dict[str, str] = field(default_factory=dict)
     variant_names: dict[str, str] = field(default_factory=dict)
     station_aliases: dict[str, str] = field(default_factory=dict)
     filename_aliases: dict[str, str] = field(default_factory=dict)
+    clip_map: dict[str, str] = field(default_factory=dict)
 
     @classmethod
     def from_dict(cls, raw: dict[str, Any]) -> SourceMap:
@@ -81,6 +93,7 @@ class SourceMap:
             variant_names=table("variant_names"),
             station_aliases=table("station_aliases"),
             filename_aliases=table("filename_aliases"),
+            clip_map=table("clip_map"),
         )
 
     @classmethod
@@ -91,6 +104,21 @@ class SourceMap:
     def line_id_for(self, source_dir: Path) -> str | None:
         """來源資料夾對應的路線代碼。"""
         return self.line_ids.get(source_dir.name)
+
+    def clip_for(self, source_dir: Path, stem: str) -> tuple[str, str, str, str] | None:
+        """逐檔對照的結果 ``(路線, 車站代碼, 種類, 版本)``；沒登記時回傳 ``None``。"""
+        target = self.clip_map.get(f"{source_dir.name}/{stem}")
+        if not target:
+            return None
+        line_id = ""
+        if "/" in target:
+            line_id, target = target.split("/", 1)
+        parts = [p for p in target.split(".") if p]
+        if len(parts) < 2:
+            return None
+        station_id, kind = parts[0], parts[1]
+        variant = parts[2] if len(parts) > 2 else ""
+        return line_id, station_id, kind, variant
 
     def parse_stem(self, stem: str) -> tuple[str, str, str] | None:
         """把來源檔名（不含副檔名）拆成 ``(站名, 種類, 版本)``。
@@ -215,28 +243,36 @@ def plan_import(
             if not path.is_file() or path.suffix.lower() not in AUDIO_EXTENSIONS:
                 continue
 
-            parsed = source_map.parse_stem(path.stem)
-            if parsed is None:
-                plan.unresolved.append(f"{source_dir.name}/{path.name}：看不懂的檔名")
-                continue
+            # 逐檔對照優先：登記過的檔案不再猜站名，也不必符合任何檔名規則。
+            mapped = source_map.clip_for(source_dir, path.stem)
+            if mapped is not None:
+                target_line, station_id, kind, variant = mapped
+            else:
+                parsed = source_map.parse_stem(path.stem)
+                if parsed is None:
+                    plan.unresolved.append(f"{source_dir.name}/{path.name}：看不懂的檔名")
+                    continue
 
-            station_name, kind, variant = parsed
-            station_id = by_name.get(_normalise_station_name(station_name))
-            if station_id is None:
-                plan.unresolved.append(
-                    f"{source_dir.name}/{path.name}：查無此站「{station_name}」"
-                )
-                continue
+                station_name, kind, variant = parsed
+                resolved = by_name.get(_normalise_station_name(station_name))
+                if resolved is None:
+                    plan.unresolved.append(
+                        f"{source_dir.name}/{path.name}：查無此站「{station_name}」"
+                    )
+                    continue
+                station_id, target_line = resolved, ""
 
+            target_line = target_line or line_id
             stem = f"{station_id}.{kind}.{variant}" if variant else f"{station_id}.{kind}"
             plan.copies.append(
                 PlannedCopy(
                     source=path,
-                    target=announcement_dir / line_id / f"{stem}{path.suffix.lower()}",
+                    target=announcement_dir / target_line / f"{stem}{path.suffix.lower()}",
                     station_id=station_id,
-                    station_name=station_names[station_id],
+                    # 宣導這類不屬於任何車站的廣播查不到站名，用代碼本身即可。
+                    station_name=station_names.get(station_id, station_id),
                     kind=kind,
-                    line_id=line_id,
+                    line_id=target_line,
                     variant=variant,
                 )
             )
@@ -272,6 +308,15 @@ def apply_plan(plan: ImportPlan, *, write_manifest: bool = True) -> dict[str, in
     return counts
 
 
+def _read_manifest(announcement_dir: Path) -> dict[str, Any]:
+    """讀取既有的匯入紀錄。讀不到就當作空的——紀錄本來就不是必要檔案。"""
+    try:
+        raw = json.loads((announcement_dir / MANIFEST_FILENAME).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return raw if isinstance(raw, dict) else {}
+
+
 def _manifest_entry(copy: PlannedCopy, digest: str) -> dict[str, str]:
     return {
         "file": f"{copy.line_id}/{copy.target.name}",
@@ -290,7 +335,27 @@ def _write_manifest(plan: ImportPlan, entries: list[dict[str, str]]) -> Path:
 
     執行時**不需要**這個檔案（索引一律由實際檔案掃描而來），它的用途是讓人
     對照「這個音檔是從哪個來源檔改名來的」，以及記錄哪些來源檔沒對上。
+
+    紀錄會與既有內容**合併**，不是整份覆寫：廣播資料夾是共用的，一次匯入
+    通常只處理其中幾條線（臺鐵一次一區、捷運一次一線）。直接覆寫會讓上一次
+    匯入的紀錄憑空消失，資料夾裡明明有的音檔卻查不到出處。合併的鍵是目標
+    檔名，因此重跑同一批來源只會更新自己那幾筆。
     """
+    existing = _read_manifest(plan.announcement_dir)
+    merged = {entry["file"]: entry for entry in existing.get("entries", ())}
+    merged.update({entry["file"]: entry for entry in entries})
+
+    # 未對應的來源檔以「來源資料夾」為單位取代：本次處理過的資料夾用新結果，
+    # 沒碰到的資料夾保留上一次的紀錄。
+    handled = {item.split("/", 1)[0] for item in plan.unresolved}
+    handled.update(copy.source.parent.name for copy in plan.copies)
+    unresolved = [
+        item
+        for item in existing.get("unresolved", ())
+        if item.split("/", 1)[0] not in handled
+    ]
+    unresolved.extend(plan.unresolved)
+
     manifest = {
         "meta": {
             "description": (
@@ -298,10 +363,10 @@ def _write_manifest(plan: ImportPlan, entries: list[dict[str, str]]) -> Path:
                 "遊戲執行時是掃描資料夾建立索引，不讀本檔，"
                 "因此手動增刪音檔不需要同步修改這裡。"
             ),
-            "count": len(entries),
+            "count": len(merged),
         },
-        "entries": sorted(entries, key=lambda e: e["file"]),
-        "unresolved": plan.unresolved,
+        "entries": sorted(merged.values(), key=lambda e: e["file"]),
+        "unresolved": unresolved,
     }
     plan.announcement_dir.mkdir(parents=True, exist_ok=True)
     path = plan.announcement_dir / MANIFEST_FILENAME
