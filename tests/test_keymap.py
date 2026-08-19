@@ -304,6 +304,7 @@ class TestDispatcher:
                 "show_help": lambda: None,
                 "repeat_last": lambda: None,
                 "pause_menu": lambda: None,
+                "toggle_braille_monitor": lambda: None,
             }
         )
         assert dispatcher.unbound_actions() == []

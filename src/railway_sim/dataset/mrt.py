@@ -120,6 +120,11 @@ class LineSpec:
     patterns: tuple[PatternSpec, ...]
     speed_source: str = ""
     driverless_note: str = ""
+    platform_pass_limit_kmh: float | None = None
+    """不停靠車站的月台通過速限；``None`` 表示本線沒有這項規定。"""
+
+    platform_pass_status: str = ""
+    platform_pass_source: str = ""
 
     @property
     def station_codes(self) -> tuple[str, ...]:
@@ -148,6 +153,13 @@ class LineSpec:
             announcement_style=raw.get("announcement_style", ""),
             chains=tuple(tuple(chain) for chain in raw.get("chains", ())),
             patterns=tuple(PatternSpec.from_dict(p) for p in raw.get("patterns", ())),
+            platform_pass_limit_kmh=(
+                None
+                if raw.get("platform_pass_limit_kmh") is None
+                else float(raw["platform_pass_limit_kmh"])
+            ),
+            platform_pass_status=raw.get("platform_pass_status", ""),
+            platform_pass_source=raw.get("platform_pass_source", ""),
         )
 
 
@@ -221,6 +233,8 @@ def build_mrt_dataset(source_dir: str | Path, data_dir: str | Path) -> MrtBuildR
     known_stock = {t["id"] for t in trains.get("train_types", ())}
     known_classes = {c["id"] for c in trains.get("service_classes", ())}
 
+    existing_times = _existing_departure_times(target)
+
     stations: dict[str, dict[str, Any]] = {}
     nodes: list[dict[str, Any]] = []
     links: list[dict[str, Any]] = []
@@ -260,6 +274,10 @@ def build_mrt_dataset(source_dir: str | Path, data_dir: str | Path) -> MrtBuildR
         }
         if spec.driverless_note:
             lines[spec.id]["driverless_note"] = spec.driverless_note
+        if spec.platform_pass_limit_kmh is not None:
+            lines[spec.id]["platform_pass_limit_kmh"] = spec.platform_pass_limit_kmh
+            lines[spec.id]["platform_pass_status"] = spec.platform_pass_status
+            lines[spec.id]["platform_pass_source"] = spec.platform_pass_source
 
         # --- 車站與節點 ---------------------------------------------
         for code in spec.station_codes:
@@ -349,23 +367,23 @@ def build_mrt_dataset(source_dir: str | Path, data_dir: str | Path) -> MrtBuildR
                 passes = [code for code in path if code not in stops]
                 for code in stops:
                     stations[code]["stop_rules"][pattern.service_class] = True
-                services.append(
-                    {
-                        "train_number": number,
-                        "name_zh_tw": (
-                            f"{spec.name_zh_tw}　{pattern.name_zh_tw}（往{destination_name}）"
-                        ),
-                        "train_type": pattern.service_class,
-                        "rolling_stock_id": pattern.rolling_stock_id,
-                        "route_id": route_id,
-                        "stop_station_ids": stops,
-                        "pass_station_ids": passes,
-                        "departure_times": {},
-                        "arrival_times": {},
-                        "verification_status": "official",
-                        "source": pattern.source,
-                    }
-                )
+                service = {
+                    "train_number": number,
+                    "name_zh_tw": (
+                        f"{spec.name_zh_tw}　{pattern.name_zh_tw}（往{destination_name}）"
+                    ),
+                    "train_type": pattern.service_class,
+                    "rolling_stock_id": pattern.rolling_stock_id,
+                    "route_id": route_id,
+                    "stop_station_ids": stops,
+                    "pass_station_ids": passes,
+                    "departure_times": {},
+                    "arrival_times": {},
+                    "verification_status": "official",
+                    "source": pattern.source,
+                }
+                service.update(existing_times.get((number, tuple(stops)), {}))
+                services.append(service)
 
         report.append(
             f"{spec.name_zh_tw}：車站 {len(spec.station_codes)} 站、"
@@ -407,6 +425,41 @@ def build_mrt_dataset(source_dir: str | Path, data_dir: str | Path) -> MrtBuildR
         report=report,
         warnings=warnings,
     )
+
+
+def _existing_departure_times(
+    data_dir: Path,
+) -> dict[tuple[str, tuple[str, ...]], dict[str, Any]]:
+    """讀出現有 ``timetables.json`` 裡由時刻表匯入補上的欄位。
+
+    條目匯入會把整份 ``timetables.json`` 重新產生。時刻不在條目裡（見
+    :mod:`railway_sim.dataset.mrt_timetable`），因此不留一手的話，每次更新
+    車站資料都會把辛苦匯入的時刻清成空的。
+
+    比對鍵包含**停靠站**：停靠站變了就表示這個營運模式已經不是同一回事，
+    舊的時刻對不上新的路線，那時寧可留白也不能沿用。
+    """
+    path = data_dir / "timetables.json"
+    if not path.is_file():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+    carried: dict[tuple[str, tuple[str, ...]], dict[str, Any]] = {}
+    for service in payload.get("services", ()):
+        if not service.get("departure_times"):
+            continue
+        key = (service["train_number"], tuple(service.get("stop_station_ids", ())))
+        kept = {
+            "departure_times": service["departure_times"],
+            "arrival_times": service.get("arrival_times", {}),
+        }
+        if service.get("schedule"):
+            kept["schedule"] = service["schedule"]
+        carried[key] = kept
+    return carried
 
 
 def _adjacency(spec: LineSpec) -> dict[str, list[str]]:
@@ -495,6 +548,10 @@ def _routes_payload(
                 "（機場捷運 A14、三鶯線 LB07a）不會被算進營運中的區間。"
             ),
             "speed_policy": "區間速限採該線條目的營運速度；條目沒有列的（三鶯線）標記 test_data。",
+            "platform_pass_policy": (
+                "platform_pass_limit_kmh：本班車不停靠的車站，通過月台時的速限。"
+                "來源見各線的 platform_pass_source。"
+            ),
             "provenance": {"source": "維基百科各線條目", "generator": "railway_sim.dataset.mrt"},
         },
         "lines": lines,
@@ -511,6 +568,10 @@ def _timetables_payload(services: list[dict[str, Any]]) -> dict[str, Any]:
             "number_policy": (
                 "車次為本專案自訂：路線代號加四位數，奇數為去程、偶數為回程。"
                 "捷運沒有對外公布的車次編號，因此不假裝有。"
+            ),
+            "timetable_policy": (
+                "發車時刻不在條目裡，由 railway_sim.dataset.mrt_timetable 另外"
+                "匯入；重建資料集時會保留已匯入的時刻（停靠站沒變的話）。"
             ),
             "provenance": {"source": "維基百科各線條目的列車營運模式章節", "generator": "railway_sim.dataset.mrt"},
         },

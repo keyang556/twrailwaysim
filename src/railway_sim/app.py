@@ -12,7 +12,7 @@ from dataclasses import dataclass
 
 from railway_sim import __version__
 from railway_sim.accessibility.announcer import Announcer
-from railway_sim.accessibility.speech import create_speech_sink
+from railway_sim.accessibility.speech import create_screen_reader
 from railway_sim.audio.player import AudioPlayer, create_player
 from railway_sim.data_loader import GameData, load_game_data
 from railway_sim.input.keymap import Keymap
@@ -212,14 +212,23 @@ def start_choices(data: GameData) -> list:
             if data.system.id != DEFAULT_SYSTEM
             else f"{class_name}{number}次　{origin}－{destination}　{stock_name}"
         )
+        detail = (
+            f"路線：{route.name_zh_tw if route else ''}　"
+            f"停靠 {len(service.stop_station_ids)} 站"
+        )
+        # 有公布時刻的營運模式把首末班一起列出來：選車次時最想知道的就是
+        # 「這一班什麼時候跑」，翻到行前提要才看得到等於晚了一步。
+        if service.schedule is not None:
+            schedule = service.schedule
+            detail += (
+                f"　{schedule.service_days}首班 {schedule.first_departure}、"
+                f"末班 {schedule.last_departure}"
+            )
         choices.append(
             StartChoice(
                 key=f"{SERVICE_KEY_PREFIX}{number}",
                 label=label,
-                detail=(
-                    f"路線：{route.name_zh_tw if route else ''}　"
-                    f"停靠 {len(service.stop_station_ids)} 站"
-                ),
+                detail=detail,
                 search_text=along,
             )
         )
@@ -543,7 +552,9 @@ def main(argv: list[str] | None = None) -> int:
     except KeyError as exc:
         print(f"{exc.args[0]}。用 --list-services 查詢可用車次。", file=sys.stderr)
         return 2
-    speak = create_speech_sink()
+    # 螢幕閱讀器輸出（語音＋點字）。可以直接當成 speak(text, interrupt) 用，
+    # 因此只送語音的主控台介面不必知道點字的存在。
+    speak = create_screen_reader()
     # 播放後端是選用的：放不出聲音時廣播仍以文字送出（§20.1）。
     player = None if args.no_audio else create_player()
 

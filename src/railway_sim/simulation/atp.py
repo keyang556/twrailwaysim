@@ -48,18 +48,36 @@ RESTRICTION_LOOKAHEAD_M = 5000.0
 
 @dataclass(frozen=True)
 class SpeedRestriction:
-    """一項速度限制。"""
+    """一項速度限制。
+
+    ``end_m`` 是 ``None`` 時表示**點狀**限制：從 ``position_m`` 起一直有效，
+    直到下一項限制取代它（區間速限、號誌限制都是這一種）。給了 ``end_m``
+    就是**區段**限制：只在 ``position_m`` 到 ``end_m`` 之間有效，出了範圍就
+    回到原本的速限。月台通過速限屬於後者——過了月台就沒有理由繼續壓速。
+    """
 
     kind: str
-    """``line`` 區間速限、``signal`` 號誌限制、``station_stop`` 停車點。"""
+    """``line`` 區間速限、``signal`` 號誌限制、``station_stop`` 停車點、
+    ``platform_pass`` 通過月台速限。"""
 
     limit_kmh: float
     position_m: float
     label: str
+    end_m: float | None = None
 
     @property
     def distance_from(self) -> float:  # pragma: no cover - 便利用途
         return self.position_m
+
+    def covers(self, position_m: float) -> bool:
+        """列車在 ``position_m`` 時是否受本限制拘束。
+
+        只有區段限制（有 ``end_m``）用得到；點狀限制不走這條路徑，因為它們
+        的「結束」是由下一項限制決定的，不是自己說了算。
+        """
+        if self.end_m is None:
+            return False
+        return self.position_m <= position_m <= self.end_m
 
 
 @dataclass(frozen=True)
@@ -122,6 +140,13 @@ class AtpMonitor:
     #: 目前必須停車的停車點（由角色模式依班次停靠表設定）。
     stop_target: SpeedRestriction | None = None
 
+    #: 區段速限（目前只有通過月台速限，由角色模式依班次停靠表設定）。
+    #:
+    #: 與 ``route.segments`` 的區間速限分開放：區間速限是**路線本身**的性質，
+    #: 每一班車都一樣；這裡的限制取決於**這一班車停不停這一站**，同一段軌道
+    #: 對停靠的車與通過的車給的答案不同，因此不能寫進路網資料。
+    zone_restrictions: tuple[SpeedRestriction, ...] = ()
+
     _overspeed_elapsed_s: float = field(default=0.0, init=False, repr=False)
     _was_overspeed: bool = field(default=False, init=False, repr=False)
     _passed_stop_signals: set[str] = field(default_factory=set, init=False, repr=False)
@@ -132,23 +157,51 @@ class AtpMonitor:
     # 速限查詢
     # ------------------------------------------------------------------
     def line_limit_kmh(self, position_m: float) -> float:
-        return min(self.route.line_speed_limit_kmh(position_m), self.spec.max_speed_kmh)
+        """該位置的允許速度上限：區間速限、車輛性能與區段速限取最小。"""
+        limit = min(self.route.line_speed_limit_kmh(position_m), self.spec.max_speed_kmh)
+        for zone in self.zone_restrictions:
+            if zone.covers(position_m):
+                limit = min(limit, zone.limit_kmh)
+        return limit
+
+    def active_zone(self, position_m: float) -> SpeedRestriction | None:
+        """目前所在的區段速限中最嚴格的一項；不在任何區段內時為 ``None``。"""
+        covering = [z for z in self.zone_restrictions if z.covers(position_m)]
+        if not covering:
+            return None
+        return min(covering, key=lambda z: z.limit_kmh)
 
     def next_line_restriction(self, position_m: float) -> SpeedRestriction | None:
-        """前方第一個比目前速限更低的區間速限。"""
-        current = self.route.line_speed_limit_kmh(position_m)
+        """前方第一個比目前速限更低的速限（區間速限或區段速限）。
+
+        兩種都要看：只看區間速限的話，通過月台的速限要等到車頭已經進了月台
+        才會生效，司機沒有任何提前減速的機會。
+        """
+        current = self.line_limit_kmh(position_m)
         horizon = position_m + RESTRICTION_LOOKAHEAD_M
+        candidates: list[SpeedRestriction] = []
+
         for segment in self.route.segments:
             if segment.start_m <= position_m or segment.start_m > horizon:
                 continue
             if segment.max_speed_kmh < current:
-                return SpeedRestriction(
-                    kind="line",
-                    limit_kmh=segment.max_speed_kmh,
-                    position_m=segment.start_m,
-                    label="區間速限",
+                candidates.append(
+                    SpeedRestriction(
+                        kind="line",
+                        limit_kmh=segment.max_speed_kmh,
+                        position_m=segment.start_m,
+                        label="區間速限",
+                    )
                 )
-        return None
+                break
+
+        for zone in self.zone_restrictions:
+            if position_m < zone.position_m <= horizon and zone.limit_kmh < current:
+                candidates.append(zone)
+
+        if not candidates:
+            return None
+        return min(candidates, key=lambda r: r.position_m)
 
     # ------------------------------------------------------------------
     # 評估

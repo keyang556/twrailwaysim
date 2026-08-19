@@ -105,8 +105,54 @@ class TestOperationalMessages:
 
     def test_station_arrival_offset_is_metre_precise(self) -> None:
         """小誤差不可被整十化簡成「零公尺」。"""
-        assert msg.station_arrival("成功", -4.0) == "成功站停妥，未達停車位置四公尺。"
-        assert msg.station_arrival("成功", 7.0) == "成功站停妥，超出停車位置七公尺。"
+        assert msg.station_arrival("成功", -4.0).startswith("成功站停妥，未達停車位置四公尺")
+        assert msg.station_arrival("成功", 7.0).startswith("成功站停妥，超出停車位置七公尺")
+
+    def test_station_arrival_grades_the_stop(self) -> None:
+        """看不見月台標記的司機不必自己換算誤差算好還是不好。"""
+        assert "準確" in msg.station_arrival("成功", 0.3)
+        assert "良好" in msg.station_arrival("成功", -1.5)
+        assert "偏差過大" in msg.station_arrival("成功", 20.0)
+
+    def test_station_arrival_only_offers_to_creep_forward(self) -> None:
+        """未達停車位置還能往前推；超出了不可倒車（§9.2），就不該提。"""
+        assert "可再前進三公尺" in msg.station_arrival("成功", -3.0)
+        assert "可再前進" not in msg.station_arrival("成功", 3.0)
+
+
+class TestStopAlignment:
+    """對準停車位置用的訊息（看不見月台標記時唯一的依據）。"""
+
+    def test_distance_resolution_increases_when_closing_in(self) -> None:
+        """一般距離取整十公尺就夠，對位時十公尺是天差地遠。"""
+        assert msg.stop_distance_phrase(350.0) == "三百五十公尺"
+        assert msg.stop_distance_phrase(47.0) == "四十七公尺"
+        assert msg.stop_distance_phrase(3.4) == "三點五公尺"
+
+    def test_countdown_starts_by_saying_what_it_is_counting(self) -> None:
+        """後面每一句只有數字，開頭這一句得把前後文建立起來。"""
+        text = msg.stop_countdown_start("永寧", 200.0)
+        assert "永寧站停車位置" in text
+        assert "二百公尺" in text
+
+    def test_countdown_afterwards_is_distance_only(self) -> None:
+        """最後幾公尺每一句只隔一兩秒，多一個字就唸不完。"""
+        assert msg.stop_countdown(3.0) == "三公尺。"
+
+    def test_reaching_the_mark_is_stated_outright(self) -> None:
+        """對位最關鍵的一句：不必自己從遞減的數字推算「就是現在」。"""
+        assert msg.stop_point_reached() == "停車位置。"
+
+    def test_query_distinguishes_short_of_and_past_the_mark(self) -> None:
+        assert "距離" in msg.stop_point_report("永寧", 17.0)
+        assert "已超出" in msg.stop_point_report("永寧", -2.0)
+
+    def test_query_says_so_when_there_is_no_stop_ahead(self) -> None:
+        assert msg.no_stop_point_ahead() == "前方沒有停靠站。"
+
+    def test_realignment_reports_the_new_offset(self) -> None:
+        assert "修正後" in msg.station_realigned("永寧", -1.0)
+        assert "一公尺" in msg.station_realigned("永寧", -1.0)
 
     def test_stop_point_warning_does_not_say_zero_speed_limit(self) -> None:
         """停車點的提醒不可播成「前方速限零公里」。"""

@@ -36,8 +36,61 @@ _SPECIAL_KEYS = {
     "F2": wx.WXK_F2,
     "F5": wx.WXK_F5,
     "F6": wx.WXK_F6,
+    "F10": wx.WXK_F10,
     "ESC": wx.WXK_ESCAPE,
+    "TAB": wx.WXK_TAB,
 }
+
+
+def log_lines(frame: DriverFrame) -> list[str]:
+    """播報清單目前的每一則。"""
+    return list(frame.log_ctrl.GetStrings())
+
+
+def log_text(frame: DriverFrame) -> str:
+    """播報清單的全部內容，方便用 ``in`` 檢查。"""
+    return chr(10).join(log_lines(frame))
+
+
+def status_text(frame: DriverFrame) -> str:
+    """狀態欄目前顯示的那一句。"""
+    return frame.status_ctrl.GetString(0) if frame.status_ctrl.GetCount() else ""
+
+
+class FakeScreenReader:
+    """假的螢幕閱讀器：記錄送出去的語音與點字。
+
+    刻意做成與真的
+    :class:`~railway_sim.accessibility.speech.ScreenReader` 一樣的形狀
+    （可呼叫、有 ``speak``、有 ``braille``），介面層才是用能力探測而不是
+    型別判斷在挑路徑。
+    """
+
+    def __init__(self) -> None:
+        self.spoken: list[tuple[str, object]] = []
+        self.brailled: list[str] = []
+
+    def __call__(self, text: str, interrupt: bool = False) -> bool:
+        return self.speak(text, interrupt=interrupt)
+
+    def speak(self, text: str, *, interrupt: bool = False, priority=None) -> bool:
+        self.spoken.append((text, priority))
+        return True
+
+    def braille(self, text: str) -> bool:
+        self.brailled.append(text)
+        return True
+
+
+class FakeSpeakSink:
+    """只有語音、沒有點字的後端（舊的 speak sink 形狀）。"""
+
+    def __init__(self) -> None:
+        self.spoken: list[tuple[str, bool]] = []
+
+    def __call__(self, text: str, interrupt: bool = False) -> bool:
+        self.spoken.append((text, interrupt))
+        return True
 
 
 @pytest.fixture(scope="module")
@@ -70,13 +123,19 @@ def frame(wx_app, game_data: GameData, keymap: Keymap):
     built.frame.Destroy()
 
 
-def press(frame: DriverFrame, key: str) -> None:
-    """送出一次按鍵，並像計時器一樣把播報沖出來。"""
+def press(frame: DriverFrame, key: str) -> bool:
+    """送出一次按鍵，並像計時器一樣把播報沖出來。
+
+    回傳事件有沒有被交還給控制項（``event.Skip()``）——巡覽鍵必須交還，
+    未綁定的字母鍵則不能，否則清單會把它當成快速尋找而跳走。
+    """
     event = wx.KeyEvent(wx.wxEVT_CHAR_HOOK)
     event.SetEventObject(frame.frame)
     event.SetKeyCode(_SPECIAL_KEYS.get(key, ord(key) if len(key) == 1 else 0))
+    event.Skip(False)
     frame._on_key(event)
     frame.announcer.flush()
+    return event.GetSkipped()
 
 
 class TestParityWithConsole:
@@ -95,14 +154,14 @@ class TestParityWithConsole:
 
     def test_briefing_matches_the_session(self, frame: DriverFrame) -> None:
         """行前提要來自 DriverSession，不是介面自己組的字串。"""
-        shown = frame.log_ctrl.GetValue().splitlines()
+        shown = log_lines(frame)
         assert shown[: len(frame.session.briefing_lines())] == frame.session.briefing_lines()
 
     def test_status_starts_empty_and_explains_how_to_query(
         self, frame: DriverFrame
     ) -> None:
         """狀態欄不再常駐顯示整份狀態，改為查詢後才出現（與 OpenBVE 相同）。"""
-        assert frame.status_ctrl.GetValue() == _STATUS_HINT_TEXT
+        assert status_text(frame) == _STATUS_HINT_TEXT
 
     def test_full_status_is_still_reachable(self, frame: DriverFrame) -> None:
         """完整狀態沒有被拿掉，只是移到選單裡，兩個介面都拿得到（§25.5）。"""
@@ -116,13 +175,13 @@ class TestDriving:
     def test_power_key_adds_a_notch(self, frame: DriverFrame) -> None:
         press(frame, "Z")
         assert frame.session.train.power_notch == 1
-        assert "電門一段。" in frame.log_ctrl.GetValue()
+        assert "電門一段。" in log_text(frame)
 
     def test_brake_key_adds_a_notch(self, frame: DriverFrame) -> None:
         """OpenBVE 的制軔鍵是句號，wx 必須把它正規化成 PERIOD。"""
         press(frame, ".")
         assert frame.session.train.brake_notch == 1
-        assert "制軔一段。" in frame.log_ctrl.GetValue()
+        assert "制軔一段。" in log_text(frame)
 
     def test_emergency_key_applies_emergency_brake(self, frame: DriverFrame) -> None:
         press(frame, "/")
@@ -130,12 +189,12 @@ class TestDriving:
 
     def test_query_keys_announce(self, frame: DriverFrame) -> None:
         press(frame, "V")
-        assert "目前速度" in frame.log_ctrl.GetValue()
+        assert "目前速度" in log_text(frame)
 
     def test_query_key_shows_only_that_item(self, frame: DriverFrame) -> None:
         """按 V 之後狀態欄只顯示速度，顯示的與播報的是同一句。"""
         press(frame, "V")
-        shown = frame.status_ctrl.GetValue()
+        shown = status_text(frame)
         assert shown.startswith("速度：")
         assert frame.session.last_status is not None
         assert frame.session.last_status.text in shown
@@ -144,7 +203,7 @@ class TestDriving:
     def test_query_key_replaces_the_previous_item(self, frame: DriverFrame) -> None:
         press(frame, "V")
         press(frame, "P")
-        shown = frame.status_ctrl.GetValue()
+        shown = status_text(frame)
         assert shown.startswith("位置：")
         assert "目前速度" not in shown
 
@@ -171,7 +230,7 @@ class TestDriving:
 
     def test_unbound_key_still_gives_feedback(self, frame: DriverFrame) -> None:
         press(frame, "X")
-        assert frame.log_ctrl.GetValue().splitlines()[-1] == _UNBOUND_KEY_TEXT
+        assert log_lines(frame)[-1] == _UNBOUND_KEY_TEXT
 
     def test_train_actually_moves(self, frame: DriverFrame) -> None:
         for _ in range(5):
@@ -236,12 +295,12 @@ class TestStatusMenu:
         self, frame: DriverFrame
     ) -> None:
         frame.query_status("speed")
-        from_menu = frame.status_ctrl.GetValue()
+        from_menu = status_text(frame)
 
         frame.session.last_status = None
         frame._status_text = ""
         press(frame, "V")
-        assert frame.status_ctrl.GetValue().split("：", 1)[0] == from_menu.split("：", 1)[0]
+        assert status_text(frame).split("：", 1)[0] == from_menu.split("：", 1)[0]
 
     def test_menu_bar_is_attached(self, frame: DriverFrame) -> None:
         bar = frame.frame.GetMenuBar()
@@ -252,30 +311,198 @@ class TestStatusMenu:
         ]
 
 
-class TestTextFields:
-    """唯讀欄位的更新方式（螢幕閱讀器要能用方向鍵逐行閱讀）。"""
+class TestDashboardControls:
+    """儀表板是清單，不是編輯區。
 
-    def test_log_appends_instead_of_rewriting(self, frame: DriverFrame) -> None:
-        before = frame.log_ctrl.GetValue()
+    唯讀文字框會被螢幕閱讀器報成「編輯 唯讀 多行」，方向鍵讀的是游標所在
+    的行或字元——而駕駛台上根本沒有東西可以編輯。清單報的是「清單」與目前
+    這一項，上下鍵一次讀完整一則播報。
+    """
+
+    def test_dashboard_fields_are_lists_not_edit_areas(
+        self, frame: DriverFrame
+    ) -> None:
+        assert isinstance(frame.log_ctrl, wx.ListBox)
+        assert isinstance(frame.status_ctrl, wx.ListBox)
+        assert not isinstance(frame.log_ctrl, wx.TextCtrl)
+        assert not isinstance(frame.status_ctrl, wx.TextCtrl)
+
+    def test_each_announcement_is_one_list_item(self, frame: DriverFrame) -> None:
+        before = log_lines(frame)
         press(frame, "Z")
-        after = frame.log_ctrl.GetValue()
-        assert after.startswith(before)
-        assert after.endswith("電門一段。")
+        assert log_lines(frame) == [*before, "電門一段。"]
+
+    def test_new_announcements_do_not_move_the_selection(
+        self, frame: DriverFrame
+    ) -> None:
+        """播報已經直接送給螢幕閱讀器了。再移動選取會讓同一句被唸兩次，
+        也會把正在往回查看的人拉走。
+        """
+        frame.log_ctrl.SetSelection(1)
+        press(frame, "Z")
+        assert frame.log_ctrl.GetSelection() == 1
 
     def test_log_is_trimmed_to_the_limit(self, frame: DriverFrame) -> None:
         from railway_sim.ui.wx_app import _LOG_LIMIT
 
         for index in range(_LOG_LIMIT + 20):
             frame._append_log(f"第{index}行")
-        lines = frame.log_ctrl.GetValue().splitlines()
+        lines = log_lines(frame)
         assert len(lines) == _LOG_LIMIT
         assert lines[-1] == f"第{_LOG_LIMIT + 19}行"
+        assert frame.log_ctrl.GetCount() == _LOG_LIMIT
 
     def test_status_is_not_rewritten_when_unchanged(self, frame: DriverFrame) -> None:
+        """內容沒變還重寫的話，螢幕閱讀器會一直重讀同一句。"""
+        frame.query_status("speed")
+        first = status_text(frame)
         frame._refresh_status()
-        frame.status_ctrl.SetInsertionPoint(5)
-        frame._refresh_status()
-        assert frame.status_ctrl.GetInsertionPoint() == 5
+        assert status_text(frame) == first
+        assert frame.status_ctrl.GetCount() == 1
+
+    def test_status_shows_only_the_latest_query(self, frame: DriverFrame) -> None:
+        frame.query_status("speed")
+        frame.query_status("position")
+        assert frame.status_ctrl.GetCount() == 1
+        assert status_text(frame).startswith("位置：")
+
+
+class TestKeyboardNavigation:
+    """巡覽鍵要能巡覽，未綁定的字母鍵不能把閱讀位置弄丟。"""
+
+    def test_tab_is_left_to_the_window(self, frame: DriverFrame) -> None:
+        """先前 Tab 會被當成「未設定功能的按鍵」，換一次焦點被唸一句廢話。"""
+        before = len(log_lines(frame))
+        assert press(frame, "TAB") is True
+        assert len(log_lines(frame)) == before
+
+    def test_menu_key_is_left_to_the_window(self, frame: DriverFrame) -> None:
+        assert press(frame, "F10") is True
+
+    def test_unbound_letters_are_not_passed_to_the_list(
+        self, frame: DriverFrame
+    ) -> None:
+        """清單會把字母鍵當成快速尋找而跳到別的項目；按錯鍵不該失去閱讀位置。"""
+        assert press(frame, "X") is False
+        assert log_lines(frame)[-1] == _UNBOUND_KEY_TEXT
+
+
+def build_frame(game_data: GameData, keymap: Keymap, reader=None):
+    """建立一個接上假螢幕閱讀器的主視窗。"""
+    announcer = Announcer(dedupe_seconds=0.0)
+    session = make_session(game_data, LOCAL_SERVICE, announcer)
+    reader = FakeScreenReader() if reader is None else reader
+    return DriverFrame(session, keymap, announcer, reader), reader
+
+
+class TestScreenReaderOutput:
+    """播報直接送給 NVDA，不必等螢幕閱讀器自己發現畫面變了。"""
+
+    def test_announcements_go_to_speech_and_braille(
+        self, wx_app, game_data: GameData, keymap: Keymap
+    ) -> None:
+        built, reader = build_frame(game_data, keymap)
+        try:
+            press(built, "Z")
+            assert "電門一段。" in [text for text, _ in reader.spoken]
+            assert "電門一段。" in reader.brailled
+        finally:
+            built.frame.Destroy()
+
+    def test_priority_is_handed_to_the_screen_reader(
+        self, wx_app, game_data: GameData, keymap: Keymap
+    ) -> None:
+        """緊急訊息要插播，而不是排在一串電門段位確認後面。"""
+        from railway_sim.accessibility.speech import SpeechPriority
+
+        built, reader = build_frame(game_data, keymap)
+        try:
+            press(built, "/")  # 緊急制軔
+            assert dict(reader.spoken)["緊急制軔。"] == SpeechPriority.NOW
+        finally:
+            built.frame.Destroy()
+
+    def test_plain_speak_sink_still_works(
+        self, wx_app, game_data: GameData, keymap: Keymap
+    ) -> None:
+        """只有語音、沒有點字的後端不該讓介面壞掉。"""
+        built, reader = build_frame(game_data, keymap, FakeSpeakSink())
+        try:
+            press(built, "Z")
+            assert built._braille is None
+            assert ("電門一段。", False) in reader.spoken
+        finally:
+            built.frame.Destroy()
+
+
+class TestBrailleMonitor:
+    """Alt＋Shift＋T：點字顯示器上持續顯示距離下一站還有多遠。"""
+
+    def test_toggle_turns_it_on_and_off(
+        self, wx_app, game_data: GameData, keymap: Keymap
+    ) -> None:
+        built, _ = build_frame(game_data, keymap)
+        try:
+            assert built.braille_monitor is False
+            built.toggle_braille_monitor()
+            assert built.braille_monitor is True
+            built.toggle_braille_monitor()
+            assert built.braille_monitor is False
+        finally:
+            built.braille_timer.Stop()
+            built.frame.Destroy()
+
+    def test_monitor_shows_the_distance_to_the_next_station(
+        self, wx_app, game_data: GameData, keymap: Keymap
+    ) -> None:
+        built, reader = build_frame(game_data, keymap)
+        try:
+            built.toggle_braille_monitor()
+            built._braille_hold_until = 0.0
+            built._update_braille_monitor()
+            assert built._braille_text == built.session.braille_line()
+            assert reader.brailled[-1] == built._braille_text
+        finally:
+            built.braille_timer.Stop()
+            built.frame.Destroy()
+
+    def test_an_announcement_holds_the_display_for_a_moment(
+        self, wx_app, game_data: GameData, keymap: Keymap
+    ) -> None:
+        """不留一段時間的話，緊急制軔會在不到一秒內被距離蓋掉。"""
+        built, reader = build_frame(game_data, keymap)
+        try:
+            built.toggle_braille_monitor()
+            press(built, "/")
+            built._update_braille_monitor()
+            assert reader.brailled[-1] == "緊急制軔。"
+        finally:
+            built.braille_timer.Stop()
+            built.frame.Destroy()
+
+    def test_without_nvda_it_says_why_instead_of_doing_nothing(
+        self, frame: DriverFrame
+    ) -> None:
+        """每次按鍵都要有回饋（§7.2）；「沒有點字顯示器」不是故障。"""
+        frame.toggle_braille_monitor()
+        frame.announcer.flush()
+        assert frame.braille_monitor is False
+        assert "沒有連接 NVDA" in log_lines(frame)[-1]
+
+    def test_pausing_stops_overwriting_the_display(
+        self, wx_app, game_data: GameData, keymap: Keymap
+    ) -> None:
+        """說明視窗是拿來讀的，每 0.7 秒蓋成距離就讀不到了。"""
+        built, _ = build_frame(game_data, keymap)
+        try:
+            built.toggle_braille_monitor()
+            built._pause()
+            assert not built.braille_timer.IsRunning()
+            built._resume()
+            assert built.braille_timer.IsRunning()
+        finally:
+            built.braille_timer.Stop()
+            built.frame.Destroy()
 
 
 class TestServicePicker:
@@ -417,3 +644,53 @@ class TestStartSession:
     def test_unknown_service_raises(self, game_data: GameData) -> None:
         with pytest.raises(KeyError):
             start_session(game_data, "service:沒有這班車")
+
+
+class TestServicePickerAnnouncements:
+    """選擇視窗：補充說明看得到，也要聽得到。
+
+    螢幕閱讀器在清單裡上下移動時只會唸出項目本身。下方那段說明（路線、
+    停靠幾站）不 Tab 過去就聽不到，選十幾個車次要 Tab 十幾次。
+    """
+
+    def test_selection_speaks_the_detail(self, wx_app, game_data: GameData) -> None:
+        reader = FakeScreenReader()
+        picker = ServicePicker(start_choices(game_data), speak=reader)
+        try:
+            picker.listbox.SetSelection(0)
+            picker._on_select(None)
+            assert reader.spoken
+            assert reader.spoken[-1][0] == picker.visible[0].detail
+        finally:
+            picker.dialog.Destroy()
+
+    def test_search_says_how_many_matched(self, wx_app, game_data: GameData) -> None:
+        """邊打字邊知道還剩幾個，不必切到清單自己數。"""
+        reader = FakeScreenReader()
+        picker = ServicePicker(start_choices(game_data), speak=reader)
+        try:
+            picker.search.SetValue("太魯閣")
+            picker._on_search(None)
+            assert f"符合 {len(picker.visible)} 個" in reader.spoken[-1][0]
+        finally:
+            picker.dialog.Destroy()
+
+    def test_no_match_is_said_out_loud(self, wx_app, game_data: GameData) -> None:
+        reader = FakeScreenReader()
+        picker = ServicePicker(start_choices(game_data), speak=reader)
+        try:
+            picker.search.SetValue("這個字串不會出現")
+            picker._on_search(None)
+            assert "沒有符合" in reader.spoken[-1][0]
+        finally:
+            picker.dialog.Destroy()
+
+    def test_works_without_a_speech_backend(self, wx_app, game_data: GameData) -> None:
+        """沒有 NVDA 時一切照舊，說明仍然顯示得出來（§20.1）。"""
+        picker = ServicePicker(start_choices(game_data))
+        try:
+            picker.listbox.SetSelection(0)
+            picker._on_select(None)
+            assert picker.detail.GetLabel() == picker.visible[0].detail
+        finally:
+            picker.dialog.Destroy()

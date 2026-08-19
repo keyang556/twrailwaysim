@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import pytest
 from conftest import LOCAL_SERVICE, TZE_CHIANG_SERVICE, drive_to, make_session
 
 from railway_sim.data_loader import GameData
@@ -290,3 +291,222 @@ class TestMissedStop:
         progress = next(p for p in session.stations if p.station_id == "LILIN")
         assert progress.stop_offset_m == 20.0
         assert any("超出停車位置" in t for t in session.announcer.texts())
+
+
+class TestStopAlignment:
+    """對準停車位置的輔助（看不見月台標記時唯一的依據）。
+
+    對位時司機手上沒有任何連續資訊，只有這幾條路：接近時自動由疏而密的
+    倒數、隨時可按的查詢鍵、停妥後可再往前推的修正。三者都要能單獨用。
+    """
+
+    def _approach(self, game_data: GameData, from_m: float = 250.0) -> DriverSession:
+        """把列車放在停車位置前 *from_m* 公尺，一路滑行到停車位置。"""
+        session = make_session(game_data, LOCAL_SERVICE)
+        target = session.next_scheduled_stop()
+        assert target is not None
+        session.train.position_m = target.position_m - from_m
+        while session.train.position_m < target.position_m:
+            remaining = target.position_m - session.train.position_m
+            session.train.current_speed_kmh = max(2.0, min(60.0, remaining * 0.5))
+            session.train.position_m += session.train.current_speed_kmh / 3.6 * 0.1
+            session._handle_stations()
+        session.announcer.flush()
+        return session
+
+    def test_countdown_says_what_it_counts_before_giving_bare_numbers(
+        self, game_data: GameData
+    ) -> None:
+        spoken = self._approach(game_data).announcer.texts()
+        countdown = [t for t in spoken if t.endswith("公尺。")]
+        assert "停車位置" in countdown[0]
+        assert countdown[1].rstrip("。").endswith("公尺")
+        assert "停車位置" not in countdown[1]
+
+    def test_countdown_gets_denser_as_the_train_closes_in(
+        self, game_data: GameData
+    ) -> None:
+        """遠處一百公尺報一次就夠，最後十公尺內才是決定停得準不準的地方。"""
+        spoken = self._approach(game_data).announcer.texts()
+        far = sum(1 for t in spoken if "百公尺" in t)
+        near = sum(
+            1
+            for t in spoken
+            if t.rstrip("。") in ("十公尺", "七公尺", "五公尺", "三公尺", "二公尺", "一公尺")
+        )
+        assert near > far
+
+    def test_reaching_the_mark_is_announced(self, game_data: GameData) -> None:
+        spoken = self._approach(game_data).announcer.texts()
+        assert "停車位置。" in spoken
+
+    def test_countdown_reports_the_real_distance_not_the_threshold(
+        self, game_data: GameData
+    ) -> None:
+        """一個步長內跨過好幾個門檻時只報一次，而且報的是當下的距離。"""
+        session = make_session(game_data, LOCAL_SERVICE)
+        target = session.next_scheduled_stop()
+        assert target is not None
+        progress = next(p for p in session.stations if p.station_id == target.station_id)
+
+        session.train.position_m = target.position_m - 120.0
+        session._handle_stations()
+        session.announcer.flush()
+        countdown = [t for t in session.announcer.texts() if "停車位置" in t]
+        assert len(countdown) == 1
+        assert "一百二十公尺" in countdown[0]
+        # 二百與一百五十兩個門檻同時跨過，但只開口一次。
+        assert progress.countdown_index == 2
+
+    def test_query_reports_distance_to_the_mark(self, game_data: GameData) -> None:
+        session = make_session(game_data, LOCAL_SERVICE)
+        target = session.next_scheduled_stop()
+        assert target is not None
+        session.train.position_m = target.position_m - 17.0
+
+        item = session.status_item("stop_point")
+        assert item.label == "停車位置"
+        assert "距離" in item.text
+        assert "十七公尺" in item.text
+
+    def test_query_says_past_the_mark_when_overshooting(
+        self, game_data: GameData
+    ) -> None:
+        session = make_session(game_data, LOCAL_SERVICE)
+        target = session.next_scheduled_stop()
+        assert target is not None
+        session.train.position_m = target.position_m + 3.0
+        assert "已超出" in session.status_item("stop_point").text
+
+    def test_query_still_points_at_this_station_while_realigning(
+        self, game_data: GameData
+    ) -> None:
+        """一停妥就跳到下一站的話，正想微調的人反而問不到自己在哪裡。"""
+        session = make_session(game_data, LOCAL_SERVICE)
+        lilin = session.route.stop_for_station("LILIN")
+        assert lilin is not None
+        session.train.position_m = lilin.position_m - 4.0
+        session.tick(0.1)
+
+        assert "栗林" in session.status_item("stop_point").text
+        assert "四公尺" in session.status_item("stop_point").text
+
+    def test_creeping_forward_after_stopping_updates_the_offset(
+        self, game_data: GameData
+    ) -> None:
+        session = make_session(game_data, LOCAL_SERVICE)
+        lilin = session.route.stop_for_station("LILIN")
+        assert lilin is not None
+        progress = next(p for p in session.stations if p.station_id == "LILIN")
+
+        session.train.position_m = lilin.position_m - 4.0
+        session.tick(0.1)
+        assert progress.stop_offset_m == -4.0
+
+        session.train.position_m = lilin.position_m - 0.2
+        session.tick(0.1)
+        session.announcer.flush()
+        assert progress.stop_offset_m == pytest.approx(-0.2)
+        assert any("修正後" in t for t in session.announcer.texts())
+
+    def test_realignment_does_not_change_the_stop_verdict(
+        self, game_data: GameData
+    ) -> None:
+        """修正的是誤差記錄，不是判定：車站仍然是已服務，也不會多記違規。"""
+        session = make_session(game_data, LOCAL_SERVICE)
+        lilin = session.route.stop_for_station("LILIN")
+        assert lilin is not None
+        progress = next(p for p in session.stations if p.station_id == "LILIN")
+
+        session.train.position_m = lilin.position_m - 6.0
+        session.tick(0.1)
+        session.train.position_m = lilin.position_m
+        session.tick(0.1)
+
+        assert progress.served
+        assert not progress.missed
+        assert session.incidents.violation_count == 0
+
+    def test_tiny_movements_do_not_re_announce(self, game_data: GameData) -> None:
+        """滑行最後幾公分一直重播，反而蓋掉真正有用的那一句。"""
+        session = make_session(game_data, LOCAL_SERVICE)
+        lilin = session.route.stop_for_station("LILIN")
+        assert lilin is not None
+
+        session.train.position_m = lilin.position_m - 4.0
+        session.tick(0.1)
+        session.announcer.flush()
+        session.announcer.clear_history()
+
+        session.train.position_m += 0.1
+        session.tick(0.1)
+        session.announcer.flush()
+        assert not any("修正後" in t for t in session.announcer.texts())
+
+    def test_leaving_the_platform_ends_realignment(self, game_data: GameData) -> None:
+        session = make_session(game_data, LOCAL_SERVICE)
+        lilin = session.route.stop_for_station("LILIN")
+        assert lilin is not None
+
+        session.train.position_m = lilin.position_m - 4.0
+        session.tick(0.1)
+        assert session._aligning_stop is not None
+
+        session.train.position_m = lilin.position_m + STOP_WINDOW_M + 10.0
+        session.tick(0.1)
+        assert session._aligning_stop is None
+
+
+class TestBrailleLine:
+    """點字即時顯示的內容（Alt＋Shift＋T）。
+
+    點字顯示器一次只有二十到八十方，而且是用摸的——不能像螢幕那樣掃一眼就
+    跳過不要的部分。因此這一行的每一個字都要有理由存在。
+    """
+
+    def test_far_away_it_shows_the_next_station(self, game_data: GameData) -> None:
+        session = make_session(game_data, LOCAL_SERVICE)
+        target = session.next_scheduled_stop()
+        assert target is not None
+        session.train.position_m = target.position_m - 1500.0
+        assert session.braille_line() == f"{target.name_zh_tw} 1.5km"
+
+    def test_closing_in_it_switches_to_the_stop_mark(
+        self, game_data: GameData
+    ) -> None:
+        """最後兩百公尺裡，車站中心的距離已經沒有意義了。"""
+        session = make_session(game_data, LOCAL_SERVICE)
+        target = session.next_scheduled_stop()
+        assert target is not None
+        session.train.position_m = target.position_m - 47.0
+        assert session.braille_line() == f"{target.name_zh_tw} 停 47m"
+
+    def test_last_metres_get_one_decimal(self, game_data: GameData) -> None:
+        session = make_session(game_data, LOCAL_SERVICE)
+        target = session.next_scheduled_stop()
+        assert target is not None
+        session.train.position_m = target.position_m - 3.4
+        assert session.braille_line() == f"{target.name_zh_tw} 停 3.4m"
+
+    def test_overshooting_reads_differently(self, game_data: GameData) -> None:
+        """不可倒車，「還差三公尺」與「過了三公尺」要一摸就分得出來。"""
+        session = make_session(game_data, LOCAL_SERVICE)
+        target = session.next_scheduled_stop()
+        assert target is not None
+        session.train.position_m = target.position_m + 3.0
+        assert session.braille_line() == f"{target.name_zh_tw} 過3.0m"
+
+    def test_end_of_route_says_so(self, game_data: GameData) -> None:
+        session = make_session(game_data, LOCAL_SERVICE)
+        session.train.position_m = session.route.length_m + 1000.0
+        assert session.braille_line() == "路線終點"
+
+    def test_numbers_stay_in_arabic_digits(self, game_data: GameData) -> None:
+        """距離一直在變，長度浮動會讓摸讀的人每次都要重新找位置。"""
+        session = make_session(game_data, LOCAL_SERVICE)
+        target = session.next_scheduled_stop()
+        assert target is not None
+        session.train.position_m = target.position_m - 1200.0
+        line = session.braille_line()
+        assert "公尺" not in line and "公里" not in line
+        assert line.endswith("km")

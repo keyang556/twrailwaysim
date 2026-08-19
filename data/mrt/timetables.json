@@ -1,11 +1,61 @@
 {
   "meta": {
-    "description": "捷運營運模式。捷運不公布逐班時刻，因此這裡是「模式」而不是時刻表。",
+    "description": "捷運營運模式。有公布逐班時刻的路線（北市府資料平台的板南線、中和新蘆線、松山新店線、淡水信義線）帶有實際發車時刻，其餘路線只有營運模式。",
     "number_policy": "車次為本專案自訂：路線代號加四位數，奇數為去程、偶數為回程。捷運沒有對外公布的車次編號，因此不假裝有。",
     "provenance": {
       "source": "維基百科各線條目的列車營運模式章節",
-      "generator": "railway_sim.dataset.mrt"
-    }
+      "generator": "railway_sim.dataset.mrt",
+      "timetable_source": "臺北市政府資料平台　捷運各線時刻表（北市平台版）",
+      "timetable_generator": "railway_sim.dataset.mrt_timetable"
+    },
+    "timetable_policy": "departure_times 取自來源時刻表的**當天第一班**，逐站以時間串接：來源的序號是「本站的第幾班」而不是車次，串不起來的班次寧可留白。來源只公布發車時刻，終點站因此不出現，arrival_times 一律留空——推估到達時刻等於把猜測當成事實（§2.3）。",
+    "timetable_sources": [
+      {
+        "file": "中和新蘆線假日時刻表(1100528啟用)北市平台版.CSV",
+        "service_days": "假日",
+        "effective_date": "20210528"
+      },
+      {
+        "file": "中和新蘆線平日時刻表(1140401啟用)北市平台版.csv",
+        "service_days": "平日",
+        "effective_date": "20250401"
+      },
+      {
+        "file": "松山新店線假日時刻表(1120819啟用)北市平台版.csv",
+        "service_days": "假日",
+        "effective_date": "20230819"
+      },
+      {
+        "file": "松山新店線平日時刻表(1120821啟用)北市平台版.csv",
+        "service_days": "平日",
+        "effective_date": "20230821"
+      },
+      {
+        "file": "板南線假日時刻表(1140823啟用)北市平台版.csv",
+        "service_days": "假日",
+        "effective_date": "20250823"
+      },
+      {
+        "file": "板南線平日時刻表(1141110啟用)北市平台版.csv",
+        "service_days": "平日",
+        "effective_date": "20251110"
+      },
+      {
+        "file": "淡水信義線東延段試運轉平日時刻表(1150723啟用)北市平台版.csv",
+        "service_days": "平日",
+        "effective_date": "20260723"
+      },
+      {
+        "file": "淡水信義線東延段試運轉週六時刻表(1150725啟用)北市平台版.csv",
+        "service_days": "週六",
+        "effective_date": "20260725"
+      },
+      {
+        "file": "淡水信義線東延段試運轉週日時刻表(1150726啟用)北市平台版.csv",
+        "service_days": "週日",
+        "effective_date": "20260726"
+      }
+    ]
   },
   "services": [
     {
@@ -120,10 +170,47 @@
         "R02"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "R28": "06:00",
+        "R27": "06:03",
+        "R26": "06:05",
+        "R25": "06:08",
+        "R24": "06:10",
+        "R23": "06:12",
+        "R22": "06:15",
+        "R21": "06:17",
+        "R20": "06:18",
+        "R19": "06:20",
+        "R18": "06:22",
+        "R17": "06:23",
+        "R16": "06:25",
+        "R15": "06:28",
+        "R14": "06:31",
+        "R13": "06:33",
+        "R12": "06:34",
+        "R11": "06:35",
+        "R10": "06:37",
+        "R09": "06:39",
+        "R08": "06:41",
+        "R07": "06:44",
+        "R06": "06:46",
+        "R05": "06:48",
+        "R04": "06:50",
+        "R03": "06:51"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目列車營運模式：「淡水－象山」全程列車"
+      "source": "條目列車營運模式：「淡水－象山」全程列車",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20260723",
+        "first_departure": "06:00",
+        "last_departure": "00:00",
+        "departures_per_day": 140,
+        "run_time_min": 51,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈淡水信義線東延段試運轉平日時刻表(1150723啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "R1002",
@@ -161,10 +248,47 @@
         "R28"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "R02": "06:00",
+        "R03": "06:02",
+        "R04": "06:04",
+        "R05": "06:06",
+        "R06": "06:08",
+        "R07": "06:09",
+        "R08": "06:12",
+        "R09": "06:14",
+        "R10": "06:16",
+        "R11": "06:18",
+        "R12": "06:19",
+        "R13": "06:20",
+        "R14": "06:22",
+        "R15": "06:26",
+        "R16": "06:28",
+        "R17": "06:30",
+        "R18": "06:31",
+        "R19": "06:33",
+        "R20": "06:35",
+        "R21": "06:37",
+        "R22": "06:39",
+        "R23": "06:42",
+        "R24": "06:45",
+        "R25": "06:47",
+        "R26": "06:50",
+        "R27": "06:50"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目列車營運模式：「淡水－象山」全程列車"
+      "source": "條目列車營運模式：「淡水－象山」全程列車",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20260723",
+        "first_departure": "06:00",
+        "last_departure": "00:00",
+        "departures_per_day": 143,
+        "run_time_min": 50,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈淡水信義線東延段試運轉平日時刻表(1150723啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "R1003",
@@ -196,10 +320,41 @@
         "R02"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "R22": "06:52",
+        "R21": "06:54",
+        "R20": "06:55",
+        "R19": "06:58",
+        "R18": "06:59",
+        "R17": "07:01",
+        "R16": "07:03",
+        "R15": "07:05",
+        "R14": "07:08",
+        "R13": "07:10",
+        "R12": "07:12",
+        "R11": "07:14",
+        "R10": "07:16",
+        "R09": "07:17",
+        "R08": "07:19",
+        "R07": "07:23",
+        "R06": "07:24",
+        "R05": "07:26",
+        "R04": "07:28",
+        "R03": "07:30"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目列車營運模式：「北投－象山」區間列車"
+      "source": "條目列車營運模式：「北投－象山」區間列車",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20260723",
+        "first_departure": "06:52",
+        "last_departure": "19:03",
+        "departures_per_day": 40,
+        "run_time_min": 38,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈淡水信義線東延段試運轉平日時刻表(1150723啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "R1004",
@@ -231,10 +386,41 @@
         "R22"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "R02": "06:44",
+        "R03": "06:46",
+        "R04": "06:48",
+        "R05": "06:50",
+        "R06": "06:52",
+        "R07": "06:53",
+        "R08": "06:57",
+        "R09": "06:59",
+        "R10": "07:01",
+        "R11": "07:03",
+        "R12": "07:04",
+        "R13": "07:06",
+        "R14": "07:08",
+        "R15": "07:11",
+        "R16": "07:13",
+        "R17": "07:15",
+        "R18": "07:16",
+        "R19": "07:18",
+        "R20": "07:20",
+        "R21": "07:22"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目列車營運模式：「北投－象山」區間列車"
+      "source": "條目列車營運模式：「北投－象山」區間列車",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20260723",
+        "first_departure": "06:44",
+        "last_departure": "19:38",
+        "departures_per_day": 58,
+        "run_time_min": 38,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈淡水信義線東延段試運轉平日時刻表(1150723啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "R1005",
@@ -263,10 +449,38 @@
         "R05"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "R22": "09:29",
+        "R21": "09:30",
+        "R20": "09:32",
+        "R19": "09:34",
+        "R18": "09:36",
+        "R17": "09:38",
+        "R16": "09:40",
+        "R15": "09:42",
+        "R14": "09:44",
+        "R13": "09:46",
+        "R12": "09:48",
+        "R11": "09:49",
+        "R10": "09:51",
+        "R09": "09:53",
+        "R08": "09:55",
+        "R07": "09:58",
+        "R06": "10:00"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目列車營運模式：「北投－大安」區間列車"
+      "source": "條目列車營運模式：「北投－大安」區間列車",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20260723",
+        "first_departure": "09:29",
+        "last_departure": "22:27",
+        "departures_per_day": 65,
+        "run_time_min": 31,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈淡水信義線東延段試運轉平日時刻表(1150723啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "R1006",
@@ -295,10 +509,38 @@
         "R22"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "R05": "06:50",
+        "R06": "06:52",
+        "R07": "06:53",
+        "R08": "06:57",
+        "R09": "06:59",
+        "R10": "07:01",
+        "R11": "07:03",
+        "R12": "07:04",
+        "R13": "07:06",
+        "R14": "07:08",
+        "R15": "07:11",
+        "R16": "07:13",
+        "R17": "07:15",
+        "R18": "07:16",
+        "R19": "07:18",
+        "R20": "07:20",
+        "R21": "07:22"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目列車營運模式：「北投－大安」區間列車"
+      "source": "條目列車營運模式：「北投－大安」區間列車",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20260723",
+        "first_departure": "06:50",
+        "last_departure": "22:57",
+        "departures_per_day": 117,
+        "run_time_min": 32,
+        "verification_status": "derived_from_timetable",
+        "source": "臺北市政府資料平台〈淡水信義線東延段試運轉平日時刻表(1150723啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "R1051",
@@ -311,10 +553,22 @@
         "R22"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "R22A": "06:05"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目：北投—新北投，三節車廂為一組"
+      "source": "條目：北投—新北投，三節車廂為一組",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20260723",
+        "first_departure": "06:05",
+        "last_departure": "00:02",
+        "departures_per_day": 121,
+        "run_time_min": null,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈淡水信義線東延段試運轉平日時刻表(1150723啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "R1052",
@@ -327,10 +581,22 @@
         "R22A"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "R22": "06:00"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目：北投—新北投，三節車廂為一組"
+      "source": "條目：北投—新北投，三節車廂為一組",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20260723",
+        "first_departure": "06:00",
+        "last_departure": "00:10",
+        "departures_per_day": 244,
+        "run_time_min": null,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈淡水信義線東延段試運轉平日時刻表(1150723啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "G1001",
@@ -360,10 +626,39 @@
         "G01"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "G19": "06:00",
+        "G18": "06:03",
+        "G17": "06:05",
+        "G16": "06:07",
+        "G15": "06:09",
+        "G14": "06:11",
+        "G13": "06:13",
+        "G12": "06:16",
+        "G11": "06:18",
+        "G10": "06:20",
+        "G09": "06:22",
+        "G08": "06:23",
+        "G07": "06:25",
+        "G06": "06:28",
+        "G05": "06:29",
+        "G04": "06:31",
+        "G03": "06:33",
+        "G02": "06:35"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目列車營運模式：「松山－新店」全程列車"
+      "source": "條目列車營運模式：「松山－新店」全程列車",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20230821",
+        "first_departure": "06:00",
+        "last_departure": "00:00",
+        "departures_per_day": 187,
+        "run_time_min": 35,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈松山新店線平日時刻表(1120821啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "G1002",
@@ -393,10 +688,39 @@
         "G19"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "G01": "06:00",
+        "G02": "06:02",
+        "G03": "06:03",
+        "G04": "06:05",
+        "G05": "06:07",
+        "G06": "06:08",
+        "G07": "06:11",
+        "G08": "06:12",
+        "G09": "06:14",
+        "G10": "06:16",
+        "G11": "06:18",
+        "G12": "06:20",
+        "G13": "06:21",
+        "G14": "06:24",
+        "G15": "06:26",
+        "G16": "06:28",
+        "G17": "06:30",
+        "G18": "06:32"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目列車營運模式：「松山－新店」全程列車"
+      "source": "條目列車營運模式：「松山－新店」全程列車",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20230821",
+        "first_departure": "06:00",
+        "last_departure": "00:00",
+        "departures_per_day": 184,
+        "run_time_min": 32,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈松山新店線平日時刻表(1120821啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "G1003",
@@ -419,10 +743,32 @@
         "G08"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "G19": "06:49",
+        "G18": "06:51",
+        "G17": "06:53",
+        "G16": "06:55",
+        "G15": "06:57",
+        "G14": "06:59",
+        "G13": "07:02",
+        "G12": "07:04",
+        "G11": "07:05",
+        "G10": "07:07",
+        "G09": "07:09"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目列車營運模式：「松山－台電大樓」區間列車"
+      "source": "條目列車營運模式：「松山－台電大樓」區間列車",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20230821",
+        "first_departure": "06:49",
+        "last_departure": "21:16",
+        "departures_per_day": 38,
+        "run_time_min": 20,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈松山新店線平日時刻表(1120821啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "G1004",
@@ -445,10 +791,32 @@
         "G19"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "G08": "07:16",
+        "G09": "07:18",
+        "G10": "07:21",
+        "G11": "07:22",
+        "G12": "07:24",
+        "G13": "07:26",
+        "G14": "07:28",
+        "G15": "07:31",
+        "G16": "07:33",
+        "G17": "07:35",
+        "G18": "07:37"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目列車營運模式：「松山－台電大樓」區間列車"
+      "source": "條目列車營運模式：「松山－台電大樓」區間列車",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20230821",
+        "first_departure": "07:16",
+        "last_departure": "19:11",
+        "departures_per_day": 21,
+        "run_time_min": 21,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈松山新店線平日時刻表(1120821啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "G1005",
@@ -507,10 +875,37 @@
         "G19"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "G03": "06:03",
+        "G04": "06:05",
+        "G05": "06:07",
+        "G06": "06:08",
+        "G07": "06:11",
+        "G08": "06:12",
+        "G09": "06:14",
+        "G10": "06:16",
+        "G11": "06:18",
+        "G12": "06:20",
+        "G13": "06:21",
+        "G14": "06:24",
+        "G15": "06:26",
+        "G16": "06:28",
+        "G17": "06:30",
+        "G18": "06:32"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目列車營運模式：「七張－松山」加班車"
+      "source": "條目列車營運模式：「七張－松山」加班車",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20230821",
+        "first_departure": "06:03",
+        "last_departure": "00:03",
+        "departures_per_day": 202,
+        "run_time_min": 29,
+        "verification_status": "derived_from_timetable",
+        "source": "臺北市政府資料平台〈松山新店線平日時刻表(1120821啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "G1051",
@@ -523,10 +918,22 @@
         "G03"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "G03A": "06:03"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目：七張—小碧潭，三節車廂為一組"
+      "source": "條目：七張—小碧潭，三節車廂為一組",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20230821",
+        "first_departure": "06:03",
+        "last_departure": "23:57",
+        "departures_per_day": 69,
+        "run_time_min": null,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈松山新店線平日時刻表(1120821啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "G1052",
@@ -539,10 +946,22 @@
         "G03A"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "G03": "06:11"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目：七張—小碧潭，三節車廂為一組"
+      "source": "條目：七張—小碧潭，三節車廂為一組",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20230821",
+        "first_departure": "06:11",
+        "last_departure": "00:09",
+        "departures_per_day": 69,
+        "run_time_min": null,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈松山新店線平日時刻表(1120821啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "O1001",
@@ -574,10 +993,41 @@
         "O01"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "O21": "06:00",
+        "O20": "06:03",
+        "O19": "06:06",
+        "O18": "06:08",
+        "O17": "06:10",
+        "O16": "06:13",
+        "O15": "06:16",
+        "O14": "06:18",
+        "O13": "06:20",
+        "O12": "06:22",
+        "O11": "06:24",
+        "O10": "06:26",
+        "O09": "06:28",
+        "O08": "06:30",
+        "O07": "06:32",
+        "O06": "06:35",
+        "O05": "06:38",
+        "O04": "06:42",
+        "O03": "06:44",
+        "O02": "06:46"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目列車營運模式：「迴龍－南勢角」全程列車"
+      "source": "條目列車營運模式：「迴龍－南勢角」全程列車",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20250401",
+        "first_departure": "06:00",
+        "last_departure": "00:00",
+        "departures_per_day": 135,
+        "run_time_min": 46,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈中和新蘆線平日時刻表(1140401啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "O1002",
@@ -609,10 +1059,41 @@
         "O21"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "O01": "06:00",
+        "O02": "06:01",
+        "O03": "06:03",
+        "O04": "06:05",
+        "O05": "06:09",
+        "O06": "06:12",
+        "O07": "06:15",
+        "O08": "06:17",
+        "O09": "06:19",
+        "O10": "06:21",
+        "O11": "06:22",
+        "O12": "06:24",
+        "O13": "06:26",
+        "O14": "06:29",
+        "O15": "06:30",
+        "O16": "06:33",
+        "O17": "06:35",
+        "O18": "06:37",
+        "O19": "06:40",
+        "O20": "06:43"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目列車營運模式：「迴龍－南勢角」全程列車"
+      "source": "條目列車營運模式：「迴龍－南勢角」全程列車",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20250401",
+        "first_departure": "06:00",
+        "last_departure": "00:00",
+        "departures_per_day": 135,
+        "run_time_min": 43,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈中和新蘆線平日時刻表(1140401啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "O1003",
@@ -640,10 +1121,37 @@
         "O01"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "O54": "06:00",
+        "O53": "06:02",
+        "O52": "06:04",
+        "O51": "06:06",
+        "O50": "06:08",
+        "O12": "06:11",
+        "O11": "06:12",
+        "O10": "06:14",
+        "O09": "06:17",
+        "O08": "06:19",
+        "O07": "06:21",
+        "O06": "06:24",
+        "O05": "06:27",
+        "O04": "06:31",
+        "O03": "06:33",
+        "O02": "06:35"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目列車營運模式：「蘆洲－南勢角」全程列車"
+      "source": "條目列車營運模式：「蘆洲－南勢角」全程列車",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20250401",
+        "first_departure": "06:00",
+        "last_departure": "00:00",
+        "departures_per_day": 135,
+        "run_time_min": 35,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈中和新蘆線平日時刻表(1140401啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "O1004",
@@ -671,10 +1179,37 @@
         "O54"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "O01": "06:04",
+        "O02": "06:05",
+        "O03": "06:07",
+        "O04": "06:09",
+        "O05": "06:13",
+        "O06": "06:16",
+        "O07": "06:19",
+        "O08": "06:21",
+        "O09": "06:22",
+        "O10": "06:24",
+        "O11": "06:26",
+        "O12": "06:28",
+        "O50": "06:31",
+        "O51": "06:33",
+        "O52": "06:35",
+        "O53": "06:37"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目列車營運模式：「蘆洲－南勢角」全程列車"
+      "source": "條目列車營運模式：「蘆洲－南勢角」全程列車",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20250401",
+        "first_departure": "06:04",
+        "last_departure": "00:03",
+        "departures_per_day": 135,
+        "run_time_min": 33,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈中和新蘆線平日時刻表(1140401啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "BL1001",
@@ -708,10 +1243,43 @@
         "BL23"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "BL01": "06:00",
+        "BL02": "06:03",
+        "BL03": "06:05",
+        "BL04": "06:07",
+        "BL05": "06:10",
+        "BL06": "06:12",
+        "BL07": "06:13",
+        "BL08": "06:16",
+        "BL09": "06:17",
+        "BL10": "06:21",
+        "BL11": "06:23",
+        "BL12": "06:26",
+        "BL13": "06:27",
+        "BL14": "06:29",
+        "BL15": "06:31",
+        "BL16": "06:32",
+        "BL17": "06:34",
+        "BL18": "06:36",
+        "BL19": "06:37",
+        "BL20": "06:39",
+        "BL21": "06:42",
+        "BL22": "06:44"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目：營運路線＝全程車：頂埔—南港展覽館"
+      "source": "條目：營運路線＝全程車：頂埔—南港展覽館",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20251110",
+        "first_departure": "06:00",
+        "last_departure": "00:00",
+        "departures_per_day": 161,
+        "run_time_min": 44,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈板南線平日時刻表(1141110啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "BL1002",
@@ -745,10 +1313,43 @@
         "BL01"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "BL23": "06:00",
+        "BL22": "06:02",
+        "BL21": "06:04",
+        "BL20": "06:06",
+        "BL19": "06:08",
+        "BL18": "06:10",
+        "BL17": "06:11",
+        "BL16": "06:13",
+        "BL15": "06:15",
+        "BL14": "06:17",
+        "BL13": "06:18",
+        "BL12": "06:20",
+        "BL11": "06:22",
+        "BL10": "06:25",
+        "BL09": "06:28",
+        "BL08": "06:30",
+        "BL07": "06:32",
+        "BL06": "06:33",
+        "BL05": "06:36",
+        "BL04": "06:38",
+        "BL03": "06:40",
+        "BL02": "06:42"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目：營運路線＝全程車：頂埔—南港展覽館"
+      "source": "條目：營運路線＝全程車：頂埔—南港展覽館",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20251110",
+        "first_departure": "06:00",
+        "last_departure": "00:00",
+        "departures_per_day": 158,
+        "run_time_min": 42,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈板南線平日時刻表(1141110啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "BL1003",
@@ -778,10 +1379,39 @@
         "BL23"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "BL05": "06:00",
+        "BL06": "06:02",
+        "BL07": "06:03",
+        "BL08": "06:06",
+        "BL09": "06:07",
+        "BL10": "06:11",
+        "BL11": "06:13",
+        "BL12": "06:16",
+        "BL13": "06:17",
+        "BL14": "06:19",
+        "BL15": "06:21",
+        "BL16": "06:23",
+        "BL17": "06:24",
+        "BL18": "06:26",
+        "BL19": "06:28",
+        "BL20": "06:29",
+        "BL21": "06:31",
+        "BL22": "06:34"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目：營運路線＝區間車：亞東醫院—南港展覽館"
+      "source": "條目：營運路線＝區間車：亞東醫院—南港展覽館",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20251110",
+        "first_departure": "06:00",
+        "last_departure": "22:28",
+        "departures_per_day": 119,
+        "run_time_min": 34,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈板南線平日時刻表(1141110啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "BL1004",
@@ -811,10 +1441,39 @@
         "BL05"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "BL23": "07:04",
+        "BL22": "07:06",
+        "BL21": "07:08",
+        "BL20": "07:11",
+        "BL19": "07:13",
+        "BL18": "07:15",
+        "BL17": "07:16",
+        "BL16": "07:18",
+        "BL15": "07:20",
+        "BL14": "07:22",
+        "BL13": "07:24",
+        "BL12": "07:26",
+        "BL11": "07:28",
+        "BL10": "07:30",
+        "BL09": "07:34",
+        "BL08": "07:35",
+        "BL07": "07:38",
+        "BL06": "07:39"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目：營運路線＝區間車：亞東醫院—南港展覽館"
+      "source": "條目：營運路線＝區間車：亞東醫院—南港展覽館",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20251110",
+        "first_departure": "07:04",
+        "last_departure": "23:02",
+        "departures_per_day": 120,
+        "run_time_min": 35,
+        "verification_status": "official",
+        "source": "臺北市政府資料平台〈板南線平日時刻表(1141110啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "BL1005",
@@ -881,10 +1540,41 @@
         "BL01"
       ],
       "pass_station_ids": [],
-      "departure_times": {},
+      "departure_times": {
+        "BL21": "06:04",
+        "BL20": "06:06",
+        "BL19": "06:08",
+        "BL18": "06:10",
+        "BL17": "06:11",
+        "BL16": "06:13",
+        "BL15": "06:15",
+        "BL14": "06:17",
+        "BL13": "06:18",
+        "BL12": "06:20",
+        "BL11": "06:22",
+        "BL10": "06:25",
+        "BL09": "06:28",
+        "BL08": "06:30",
+        "BL07": "06:32",
+        "BL06": "06:33",
+        "BL05": "06:36",
+        "BL04": "06:38",
+        "BL03": "06:40",
+        "BL02": "06:42"
+      },
       "arrival_times": {},
       "verification_status": "official",
-      "source": "條目註釋：部分班次只到昆陽站"
+      "source": "條目註釋：部分班次只到昆陽站",
+      "schedule": {
+        "service_days": "平日",
+        "effective_date": "20251110",
+        "first_departure": "06:04",
+        "last_departure": "00:15",
+        "departures_per_day": 163,
+        "run_time_min": 38,
+        "verification_status": "derived_from_timetable",
+        "source": "臺北市政府資料平台〈板南線平日時刻表(1141110啟用)北市平台版〉"
+      }
     },
     {
       "train_number": "Y1001",

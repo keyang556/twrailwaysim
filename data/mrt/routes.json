@@ -6,7 +6,8 @@
     "provenance": {
       "source": "維基百科各線條目",
       "generator": "railway_sim.dataset.mrt"
-    }
+    },
+    "platform_pass_policy": "platform_pass_limit_kmh：本班車不停靠的車站，通過月台時的速限。來源見各線的 platform_pass_source。"
   },
   "lines": {
     "wenhu": {
@@ -119,6 +120,9 @@
       "driverless": false,
       "announcement_style": "airport",
       "max_speed_kmh": 100.0,
+      "platform_pass_limit_kmh": 70,
+      "platform_pass_status": "user_specified",
+      "platform_pass_source": "使用者指定：機場捷運列車通過不停靠的車站時，月台範圍速限為每小時 70 公里。維基百科條目只列全線營運速度，沒有月台通過速限，因此標記 user_specified。",
       "verification_status": "official",
       "source": "維基百科〈桃園機場捷運〉車站表"
     }

@@ -4,7 +4,8 @@
     "why": "維基百科的車站表同時列出已通車與規劃中的車站，也不會說哪一種列車停哪幾站。前者只能靠明確的通車車站清單決定，後者來自條目的「列車營運模式」章節，兩者都不是表格能自動推出來的，因此寫成設定檔並逐條註明依據。",
     "update_note": "新站通車或營運模式調整時，改本檔的 stations／patterns 再重跑 python -m railway_sim.dataset --system mrt --source <條目資料夾> 即可。",
     "source": "維基百科各線條目（見每一條線的 source_page），使用者於 2026-08-13 提供的離線存檔。",
-    "station_code_policy": "車站代碼直接採用維基百科車站表的「編號」欄（R22、A14a、LB02…）。廣播音檔檔名也用同一組代碼，兩邊才對得起來。"
+    "station_code_policy": "車站代碼直接採用維基百科車站表的「編號」欄（R22、A14a、LB02…）。廣播音檔檔名也用同一組代碼，兩邊才對得起來。",
+    "platform_pass_policy": "platform_pass_limit_kmh 是「本班車不停靠的車站，通過月台時的速限」。只有機場捷運有（直達車會通過許多車站），台北捷運各線站站停，沒有通過的情形。"
   },
   "lines": [
     {
@@ -350,6 +351,9 @@
       "max_speed_kmh": 100,
       "speed_status": "official",
       "speed_source": "條目：路線設計最高時速110公里，實際營運最高時速100公里",
+      "platform_pass_limit_kmh": 70,
+      "platform_pass_status": "user_specified",
+      "platform_pass_source": "使用者指定：機場捷運列車通過不停靠的車站時，月台範圍速限為每小時 70 公里。維基百科條目只列全線營運速度，沒有月台通過速限，因此標記 user_specified。",
       "ato": true,
       "driverless": false,
       "announcement_style": "airport",
