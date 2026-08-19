@@ -158,6 +158,26 @@ class TestBrailleMonitor:
         assert app.braille_monitor is False
         assert "沒有連接 NVDA" in announcer.texts()[-1]
 
+    def test_braille_monitor_rechecks_a_dynamic_reader_connection(
+        self, game_data: GameData
+    ) -> None:
+        """已載入的 Controller Client 不能因 NVDA 晚啟動而被當成永久離線。"""
+        reader = FakeScreenReader()
+        reader.available = False
+        app, _, announcer = build_app(game_data, reader)
+
+        app.toggle_braille_monitor()
+        assert app.braille_monitor is False
+        assert "沒有連接 NVDA" in announcer.texts()[-1]
+
+        reader.available = True
+        app.toggle_braille_monitor()
+        assert app.braille_monitor is True
+
+        reader.available = False
+        app.toggle_braille_monitor()
+        assert app.braille_monitor is False
+
 
 class TestPauseMenu:
     """暫停選單多了點字那一項，離開遊戲跟著換號碼。"""

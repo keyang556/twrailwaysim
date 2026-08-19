@@ -7,6 +7,7 @@
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 
 import pytest
@@ -65,6 +66,7 @@ class TestControllerFallback:
     ) -> None:
         monkeypatch.setattr(speech, "trusted_dll_paths", list)
         controller = speech.NvdaController()
+        assert controller.client_loaded is False
         assert controller.available is False
         assert controller.loaded_from is None
         assert controller.speak("測試") is False
@@ -97,7 +99,36 @@ class TestControllerFallback:
         )
         controller = speech.NvdaController()
         assert controller.loaded_from is None
+        assert controller.client_loaded is False
         assert controller.available is False
+
+
+class TestBundledControllerClient:
+    """發行版相依檔必須存在、可追溯，且 PyInstaller 會收進正確位置。"""
+
+    _ROOT = Path(__file__).resolve().parents[1]
+    _DIRECTORY = _ROOT / "third_party" / "nvda-controller-client" / "2026.1.1"
+    _DLL = _DIRECTORY / "nvdaControllerClient.dll"
+
+    def test_reviewed_x64_client_and_license_are_vendored(self) -> None:
+        assert self._DLL.is_file()
+        assert (self._DIRECTORY / "license.txt").is_file()
+        assert hashlib.sha256(self._DLL.read_bytes()).hexdigest() == (
+            "2fe60cf00be929aae32e95c1e1507a20ada4902c8fec273b3cc2d3bf5472932a"
+        )
+
+    def test_spec_places_the_client_beside_the_package(self) -> None:
+        spec = (self._ROOT / "packaging" / "twrailwaysim.spec").read_text(
+            encoding="utf-8"
+        )
+        assert "nvda-controller-client" in spec
+        assert '"railway_sim/lib"' in spec
+
+    def test_build_smoke_loads_the_frozen_client(self) -> None:
+        build_script = (self._ROOT / "scripts" / "build-installer.ps1").read_text(
+            encoding="utf-8"
+        )
+        assert '"--check-nvda-controller"' in build_script
 
 
 class FakeFunction:
@@ -278,3 +309,41 @@ class TestScreenReader:
         text = speech.ScreenReader(controller).status_text()
         assert "未連接" in text
         assert "文字" in text
+
+    def test_available_is_dynamic_for_the_same_reader(self) -> None:
+        """遊戲先開、NVDA 後開或重開時，不可重建 backend 才能恢復。"""
+        controller, _ = make_controller(
+            results={"nvdaController_testIfRunning": [1, 0, 1, 0]}
+        )
+        reader = speech.ScreenReader(controller)
+
+        assert reader.available is False
+        assert reader.available is True
+        assert reader.available is False
+        assert reader.available is True
+
+    def test_create_reader_keeps_loaded_client_when_nvda_starts_later(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        controller, _ = make_controller(
+            results={"nvdaController_testIfRunning": [1, 0]}
+        )
+        monkeypatch.setattr(speech, "NvdaController", lambda: controller)
+
+        reader = speech.create_screen_reader()
+
+        assert reader is not None
+        assert reader.available is False
+        assert reader.available is True
+
+    def test_is_speaking_compatibility_does_not_change_availability(self) -> None:
+        controller, _ = make_controller(
+            results={
+                "nvdaController_testIfRunning": [0],
+                "nvdaController_isSpeaking": [speech._RPC_UNKNOWN_INTERFACE],
+            }
+        )
+
+        assert controller.is_speaking() is None
+        assert controller.supports_is_speaking is False
+        assert speech.ScreenReader(controller).available is True

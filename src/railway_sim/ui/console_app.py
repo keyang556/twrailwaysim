@@ -188,6 +188,21 @@ class ConsoleApp:
         self.announcer.announce(text, priority)
         self.announcer.flush()
 
+    def _screen_reader_available(self) -> bool:
+        """查詢目前連線狀態，而非把 backend 物件存在當成已連線。
+
+        ``ScreenReader.available`` 是動態 property；保留能力探測的相容性，讓
+        既有只有 ``speak``／``braille`` 的 sink 仍視為可用。
+        """
+        if self.speak is None:
+            return False
+        available = getattr(self.speak, "available", None)
+        return (
+            True
+            if available is None
+            else bool(available() if callable(available) else available)
+        )
+
     # ------------------------------------------------------------------
     # 系統動作
     # ------------------------------------------------------------------
@@ -209,17 +224,21 @@ class ConsoleApp:
         終端機收不到 Alt 組合鍵，因此主控台這邊實際上是由暫停選單呼叫；
         動作本身仍然註冊在同一個代碼上，兩個介面提供的能力才一致（§25.5）。
         """
-        if self._braille is None:
+        if self.braille_monitor:
+            # 關閉必須不依賴 NVDA 的連線狀態：使用者可能正是因為 NVDA 中途
+            # 關閉，才要停止日後恢復連線時重新送出的即時點字。
+            self.braille_monitor = False
+            self._say("點字即時顯示已關閉。", Priority.NOTICE)
+            return
+
+        if self._braille is None or not self._screen_reader_available():
             self._say("沒有連接 NVDA，無法使用點字顯示。所有資訊仍以文字提供。")
             return
-        self.braille_monitor = not self.braille_monitor
-        if self.braille_monitor:
-            self._say(
-                "點字即時顯示已開啟：顯示距離下一站，接近停靠站時改顯示距離停車位置。",
-                Priority.NOTICE,
-            )
-        else:
-            self._say("點字即時顯示已關閉。", Priority.NOTICE)
+        self.braille_monitor = True
+        self._say(
+            "點字即時顯示已開啟：顯示距離下一站，接近停靠站時改顯示距離停車位置。",
+            Priority.NOTICE,
+        )
 
     def _update_braille_monitor(self) -> None:
         """重送即時顯示的內容。
@@ -227,7 +246,11 @@ class ConsoleApp:
         每次都重送而不是只在文字變了才送：NVDA 把點字訊息當成暫時訊息，
         過幾秒就會換回焦點的內容，不重送就消失了。
         """
-        if not self.braille_monitor or self._braille is None:
+        if (
+            not self.braille_monitor
+            or self._braille is None
+            or not self._screen_reader_available()
+        ):
             return
         now = time.perf_counter()
         if now < self._braille_hold_until or now < self._braille_next_s:

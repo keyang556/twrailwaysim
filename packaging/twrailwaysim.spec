@@ -2,6 +2,18 @@ from pathlib import Path
 
 
 PROJECT_ROOT = Path(SPECPATH).resolve().parent
+NVDA_CONTROLLER_CLIENT = (
+    PROJECT_ROOT
+    / "third_party"
+    / "nvda-controller-client"
+    / "2026.1.1"
+    / "nvdaControllerClient.dll"
+)
+NVDA_CONTROLLER_LICENSE = NVDA_CONTROLLER_CLIENT.with_name("license.txt")
+
+for required_file in (NVDA_CONTROLLER_CLIENT, NVDA_CONTROLLER_LICENSE):
+    if not required_file.is_file():
+        raise SystemExit(f"Required NVDA Controller Client file is missing: {required_file}")
 
 a = Analysis(
     [
@@ -9,8 +21,11 @@ a = Analysis(
         str(PROJECT_ROOT / "src" / "railway_sim" / "gui_launcher.py"),
     ],
     pathex=[str(PROJECT_ROOT / "src")],
-    binaries=[],
-    datas=[(str(PROJECT_ROOT / "data"), "data")],
+    binaries=[(str(NVDA_CONTROLLER_CLIENT), "railway_sim/lib")],
+    datas=[
+        (str(PROJECT_ROOT / "data"), "data"),
+        (str(NVDA_CONTROLLER_LICENSE), "third_party_licenses/nvda-controller-client"),
+    ],
     hiddenimports=["railway_sim.ui.wx_app"],
     hookspath=[],
     hooksconfig={},

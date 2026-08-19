@@ -489,6 +489,27 @@ class TestBrailleMonitor:
         assert frame.braille_monitor is False
         assert "沒有連接 NVDA" in log_lines(frame)[-1]
 
+    def test_disconnect_does_not_prevent_turning_the_monitor_off(
+        self, wx_app, game_data: GameData, keymap: Keymap
+    ) -> None:
+        """已開啟後斷線時，仍可停止計時器並取消稍後恢復的重送。"""
+        built, reader = build_frame(game_data, keymap)
+        try:
+            built.toggle_braille_monitor()
+            built._braille_text = "下一站 板橋"
+            assert built.braille_monitor is True
+            assert built.braille_timer.IsRunning()
+
+            reader.available = False
+            built.toggle_braille_monitor()
+
+            assert built.braille_monitor is False
+            assert not built.braille_timer.IsRunning()
+            assert built._braille_text == ""
+        finally:
+            built.braille_timer.Stop()
+            built.frame.Destroy()
+
     def test_pausing_stops_overwriting_the_display(
         self, wx_app, game_data: GameData, keymap: Keymap
     ) -> None:

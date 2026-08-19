@@ -7,7 +7,8 @@
 目前支援的後端：
 
 - NVDA Controller Client：需要 NVDA 官方提供的
-  ``nvdaControllerClient.dll``（本專案不散布）。
+  ``nvdaControllerClient.dll``。Windows x64 發行版會隨程式附帶官方版本；
+  開發時也可用 :data:`DLL_ENV_VAR` 指向另一份可信任的 DLL。
 
 NVDA Controller Client 的版本差異
 ---------------------------------
@@ -52,7 +53,8 @@ NVDA Controller Client 的版本差異
    不使用預設搜尋順序。
 
 找不到可信任的 DLL 時 :func:`create_screen_reader` 回傳 ``None``，呼叫端
-改用文字輸出即可。
+改用文字輸出即可。DLL 成功載入但 NVDA 尚未啟動時，仍會保留後端；NVDA 的
+連線狀態由每次查詢 :attr:`ScreenReader.available` 動態反映。
 
 安全性：鎖定畫面
 ----------------
@@ -281,6 +283,15 @@ class NvdaController:
 
     # ------------------------------------------------------------------
     @property
+    def client_loaded(self) -> bool:
+        """Controller Client DLL 是否已成功載入。
+
+        這是應用程式的固定能力，和 NVDA 此刻是否正在執行不同。把兩者分開，
+        才能讓使用者先開遊戲、稍後再開 NVDA，而不用重新啟動遊戲。
+        """
+        return self._dll is not None
+
+    @property
     def available(self) -> bool:
         """NVDA 是否可用。DLL 已載入且 NVDA 正在執行才為 ``True``。"""
         if self._dll is None:
@@ -435,6 +446,11 @@ class ScreenReader:
 
     # ------------------------------------------------------------------
     @property
+    def available(self) -> bool:
+        """NVDA 是否目前可通訊（每次查詢都重新確認）。"""
+        return self.controller.available
+
+    @property
     def supports_priority(self) -> bool:
         """能不能把優先級交給 NVDA 排（``speakSsml``，NVDA 2024.1 起）。"""
         return self.controller.supports_ssml
@@ -445,7 +461,7 @@ class ScreenReader:
         「沒有聲音」有好幾種原因（沒裝 NVDA、沒放 DLL、NVDA 沒開），說清楚
         是哪一種，玩家才不會把正常狀態當成故障。
         """
-        if not self.controller.available:
+        if not self.available:
             return "未連接（改以文字輸出，功能不受影響）"
         features = ["語音", "點字"]
         if self.supports_priority:
@@ -454,13 +470,13 @@ class ScreenReader:
 
 
 def create_screen_reader() -> ScreenReader | None:
-    """建立螢幕閱讀器輸出；沒有可用後端時回傳 ``None``。
+    """建立螢幕閱讀器輸出；沒有可載入的 Controller Client 時回傳 ``None``。
 
     Returns:
         :class:`ScreenReader`（可直接當成 ``speak(text, interrupt)`` 呼叫），
         或 ``None``。
     """
     controller = NvdaController()
-    if not controller.available:
+    if not controller.client_loaded:
         return None
     return ScreenReader(controller)
