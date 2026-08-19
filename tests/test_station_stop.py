@@ -523,6 +523,44 @@ class TestStopAlignment:
         assert "栗林" not in session.braille_line()
         assert not any("修正後" in t for t in session.announcer.texts())
 
+    def test_forward_correction_survives_the_moving_tick_it_requires(
+        self, game_data: GameData
+    ) -> None:
+        """前進修正途中一定會有不是靜止的一瞬間，不能因此被當成離站。
+
+        未達停車位置時的修正就是靠動力向前推一點，那一瞬間列車不可能是
+        靜止的——真正該看的是移動當下車頭有沒有到達或超過停車位置：還沒到
+        就仍是同一次修正，查詢、點字與「修正後」播報都不該因為這個移動中
+        的瞬間而跳到下一站或消失。
+        """
+        session = make_session(game_data, LOCAL_SERVICE)
+        lilin = session.route.stop_for_station("LILIN")
+        assert lilin is not None
+        progress = next(p for p in session.stations if p.station_id == "LILIN")
+
+        session.train.position_m = lilin.position_m - 4.0
+        session.tick(0.1)
+        assert progress.stop_offset_m == -4.0
+        session.announcer.flush()
+        session.announcer.clear_history()
+
+        # 向前微調途中：還沒到停車位置，但這一瞬間不是靜止的。
+        session.train.position_m = lilin.position_m - 3.0
+        session.train.current_speed_kmh = 5.0
+        session._handle_realignment()
+        assert session.stop_alignment_target() is progress
+
+        # 修正完成、再度停妥，仍未達停車位置。
+        session.train.position_m = lilin.position_m - 2.0
+        session.train.current_speed_kmh = 0.0
+        session._handle_realignment()
+        session.announcer.flush()
+
+        assert progress.stop_offset_m == pytest.approx(-2.0)
+        assert any("修正後" in t for t in session.announcer.texts())
+        assert session.stop_alignment_target() is progress
+        assert "栗林" in session.status_item("stop_point").text
+
 
 class TestBrailleLine:
     """點字即時顯示的內容（Alt＋Shift＋T）。

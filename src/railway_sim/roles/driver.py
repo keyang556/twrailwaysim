@@ -203,9 +203,13 @@ class DriverSession:
     _departed_aligning_stop: bool = field(default=False, init=False, repr=False)
     """``_aligning_stop`` 這一站是否已經開始離站。
 
-    離站後在停車範圍內若因號誌或緊急制軔等原因再次停下，``is_stopped``
-    會重新變成真，但那不是回到同一次對位——一旦觀測到列車動過，這個旗標
-    就不會再歸假，直到下一站重新停妥為止（見 :meth:`stop_alignment_target`）。
+    判斷準則不是「動了沒有」：前進修正本身就要靠動力向前推一點，那一瞬間
+    列車一定不是靜止的。真正的準則是移動當下車頭有沒有到達或超過停車
+    位置——未達停車位置時的移動是修正，到達後還繼續移動才是離站（見
+    :meth:`_handle_realignment`）。離站後在停車範圍內若因號誌或緊急制軔
+    等原因再次停下，``is_stopped`` 會重新變成真，但那不是回到同一次對位；
+    這個旗標一旦設成真就不會再歸假，直到下一站重新停妥為止（見
+    :meth:`stop_alignment_target`）。
     """
 
     # ------------------------------------------------------------------
@@ -924,9 +928,12 @@ class DriverSession:
         月台標記的司機每動一次都需要知道現在差多少，否則修正等於盲猜。
 
         修正**不會**改變已經判定的停靠結果（車站仍是已服務），只更新記錄下來
-        的誤差並重新播報。列車一開始移動就視為離站，即使之後在停車範圍內因
-        號誌或緊急制軔等原因又停下，也不會恢復成在對位（見
-        :data:`_departed_aligning_stop`）；車頭真的離開停車範圍時才把整個
+        的誤差並重新播報。判斷離站看的不是「動了沒有」——前進修正本身就要
+        靠動力向前推一點，那一瞬間列車一定不是靜止的——而是移動當下車頭有
+        沒有到達或超過停車位置：還沒到，仍然是「往前推一點」的修正；已經
+        到了還繼續往前，才是真的離站，即使之後在停車範圍內因號誌或緊急
+        制軔等原因又停下，也不會恢復成在對位（見
+        :data:`_departed_aligning_stop`）。車頭真的離開停車範圍時才把整個
         狀態歸零。
         """
         progress = self._aligning_stop
@@ -939,9 +946,11 @@ class DriverSession:
             self._departed_aligning_stop = False
             return
         if not self.train.is_stopped:
-            # 列車動了就是離站，之後即使在範圍內又停下也不算回到這次對位
-            # （見 :data:`_departed_aligning_stop` 與 :meth:`stop_alignment_target`）。
-            self._departed_aligning_stop = True
+            if offset >= 0.0:
+                # 已經到達或超過停車位置了還在動，是離站不是修正；之後即使
+                # 在範圍內又停下也不算回到這次對位（見
+                # :data:`_departed_aligning_stop` 與 :meth:`stop_alignment_target`）。
+                self._departed_aligning_stop = True
             return
         if self._departed_aligning_stop:
             # 已經離站後又在範圍內停下（號誌、緊急制軔……），不是回來對位，
