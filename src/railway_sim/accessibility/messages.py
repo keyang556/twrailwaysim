@@ -17,6 +17,7 @@ __all__ = [
     "DOOR_SIDE_NAMES",
     "SIGNAL_ASPECT_NAMES",
     "STOP_KIND_NAMES",
+    "approaching_platform_pass",
     "approaching_speed_limit",
     "approaching_stop_point",
     "ato_awaiting_departure",
@@ -42,16 +43,25 @@ __all__ = [
     "horn",
     "missed_stop",
     "next_station",
+    "no_stop_point_ahead",
     "num_to_zh",
     "overspeed",
     "position_report",
     "power_blocked_by_doors",
     "power_notch",
+    "quantise_stop_distance",
     "signal_report",
     "speed_report",
     "station_arrival",
     "station_passed",
     "station_phrase",
+    "station_realigned",
+    "stop_accuracy_grade",
+    "stop_countdown",
+    "stop_countdown_start",
+    "stop_distance_phrase",
+    "stop_point_reached",
+    "stop_point_report",
     "train_status",
 ]
 
@@ -143,6 +153,38 @@ def distance_phrase(metres: float) -> str:
         return f"{num_to_zh(metres / 1000.0, decimals=1)}公里"
     rounded = int(round(metres / 10.0) * 10)
     return f"{num_to_zh(rounded)}公尺"
+
+
+def stop_distance_phrase(metres: float) -> str:
+    """對準停車位置專用的距離唸法。
+
+    與 :func:`distance_phrase` 分開的理由是**解析度**：一般距離取整十公尺
+    就夠了（「距離八百公尺」），但對準停車位置時十公尺的誤差是天差地遠，
+    而在最後幾公尺內，一公尺的解析度同樣不夠——「一公尺」與「停在位置上」
+    對司機是兩件事。因此距離愈近，報得愈細：
+
+    - 一百公尺以上：沿用一般唸法（整十公尺或公里）。
+    - 十到一百公尺：逐公尺。
+    - 十公尺以內：半公尺。
+    """
+    metres = max(0.0, float(metres))
+    if metres >= 100.0:
+        return distance_phrase(metres)
+    if metres >= 10.0:
+        return f"{num_to_zh(metres)}公尺"
+    return f"{num_to_zh(quantise_stop_distance(metres), decimals=1)}公尺"
+
+
+def quantise_stop_distance(metres: float) -> float:
+    """把距離量化到 :func:`stop_distance_phrase` 實際唸出來的值。
+
+    評價與播報必須用同一個數字，否則會出現「超出停車位置零點五公尺，良好」
+    這種數字與評語對不上的情形——實際誤差是 0.51 公尺，唸出來卻是 0.5。
+    """
+    metres = float(metres)
+    if abs(metres) >= 10.0:
+        return round(metres)
+    return round(metres * 2.0) / 2.0
 
 
 DIRECTION_NAMES: dict[str, str] = {
@@ -404,18 +446,105 @@ def station_approaching(name: str, distance_m: float) -> str:
     return f"接近{name}，距離{distance_phrase(distance_m)}，準備停車。"
 
 
-def station_arrival(name: str, offset_m: float) -> str:
-    """到站停妥播報，含停車位置誤差。
+def _offset_phrase(name: str, offset_m: float) -> str:
+    """停車位置誤差的共用說法（到站與前進修正都用它）。
 
-    停車位置誤差以**公尺為單位精確播報**，不套用 :func:`distance_phrase`
+    誤差以 :func:`stop_distance_phrase` 播報，不套用 :func:`distance_phrase`
     的整十公尺化簡；否則四公尺的誤差會被唸成「零公尺」，對司機沒有意義。
     """
-    if abs(offset_m) < 1.0:
-        return f"{station_phrase(name)}停妥，停車位置準確。"
-    metres = f"{num_to_zh(abs(offset_m))}公尺"
+    # 先量化到播報用的解析度再評價，數字與評語才會一致。
+    offset_m = quantise_stop_distance(offset_m)
+    grade = stop_accuracy_grade(offset_m)
+    if abs(offset_m) <= STOP_ACCURACY_GRADES[0][0]:
+        return f"停車位置{grade}。"
+    metres = stop_distance_phrase(abs(offset_m))
     if offset_m > 0:
-        return f"{station_phrase(name)}停妥，超出停車位置{metres}。"
-    return f"{station_phrase(name)}停妥，未達停車位置{metres}。"
+        return f"超出停車位置{metres}，{grade}。"
+    return f"未達停車位置{metres}，{grade}。可再前進{metres}。"
+
+
+def station_arrival(name: str, offset_m: float) -> str:
+    """到站停妥播報，含停車位置誤差與評價。
+
+    未達停車位置時一併說出「可再前進多少」：這是司機唯一還能補救的方向，
+    而看不見月台標記的人沒辦法自己估。超出時不說，因為不可倒車（§9.2）。
+    """
+    return f"{station_phrase(name)}停妥，{_offset_phrase(name, offset_m)}"
+
+
+def stop_countdown_start(name: str, distance_m: float) -> str:
+    """進入停車位置倒數的第一句：說清楚接下來報的是什麼。
+
+    後續每一句只報距離（見 :func:`stop_countdown`），因此開頭這一句必須把
+    「這是在報距離停車位置多遠」講明白，否則之後的「三十公尺」會與號誌、
+    速限的距離播報混在一起分不出來。
+    """
+    return f"距離{station_phrase(name)}停車位置{stop_distance_phrase(distance_m)}。"
+
+
+def stop_countdown(distance_m: float) -> str:
+    """停車位置倒數的後續每一句。
+
+    刻意只有距離，沒有任何前綴：最後幾公尺內每一句之間只隔一兩秒，多一個
+    字就可能來不及唸完下一句就被蓋掉。前後文由 :func:`stop_countdown_start`
+    建立。
+    """
+    return f"{stop_distance_phrase(distance_m)}。"
+
+
+def stop_point_reached() -> str:
+    """車頭到達停車位置的瞬間。
+
+    這是對準停車位置最關鍵的一句：看不見月台標記的司機需要一個明確的
+    「就是現在」，而不是自己從遞減的數字推算。
+    """
+    return "停車位置。"
+
+
+def stop_point_report(name: str, distance_m: float) -> str:
+    """查詢距離停車位置多遠（狀態查詢項目）。
+
+    距離為負代表車頭已經越過停車位置。兩種情形要用不同的說法：司機聽到
+    「距離三公尺」會繼續前進，聽到「已超出三公尺」才知道停過頭了。
+    """
+    if distance_m > 0:
+        return f"距離{station_phrase(name)}停車位置{stop_distance_phrase(distance_m)}。"
+    if distance_m < 0:
+        return f"已超出{station_phrase(name)}停車位置{stop_distance_phrase(-distance_m)}。"
+    return f"{station_phrase(name)}停車位置。"
+
+
+def no_stop_point_ahead() -> str:
+    return "前方沒有停靠站。"
+
+
+#: 停車位置誤差的評價門檻（公尺）與說法。
+#:
+#: 分級的用途是讓司機**不必自己換算**：聽到「準確」就知道不用再動，聽到
+#: 「偏差過大」才需要考慮前進修正。門檻為第一版的值，與 STOP_WINDOW_M
+#: 同樣沒有可靠的公開來源（§27）。
+STOP_ACCURACY_GRADES: tuple[tuple[float, str], ...] = (
+    (0.5, "準確"),
+    (2.0, "良好"),
+    (5.0, "可接受"),
+)
+
+
+def stop_accuracy_grade(offset_m: float) -> str:
+    """停車位置誤差的評價。"""
+    for limit, grade in STOP_ACCURACY_GRADES:
+        if abs(offset_m) <= limit:
+            return grade
+    return "偏差過大"
+
+
+def station_realigned(name: str, offset_m: float) -> str:
+    """停妥之後前進修正停車位置的回饋。
+
+    未達停車位置時列車還可以往前推一點，這在真實運轉上也是允許的；但看不見
+    月台標記的司機需要每動一次就知道現在差多少，否則修正等於盲猜。
+    """
+    return f"修正後：{_offset_phrase(name, offset_m)}"
 
 
 def station_passed(name: str) -> str:
@@ -448,6 +577,19 @@ def approaching_stop_point(label: str, distance_m: float) -> str:
     若沿用速限的說法會播成「前方速限零公里」，聽起來像速限資料有誤。
     """
     return f"前方{label}，距離{distance_phrase(distance_m)}，請減速準備停車。"
+
+
+def approaching_platform_pass(label: str, limit_kmh: float, distance_m: float) -> str:
+    """接近不停靠車站的月台（通過速限）。
+
+    與 :func:`approaching_speed_limit` 分開：一般速限沿線都有標，司機聽到
+    「前方速限」會去對照號誌牌；通過月台的速限是**這一班車不停這一站**才
+    有的規定，說出站名司機才知道理由，也才能同時確認自己沒有記錯停靠站。
+    """
+    return (
+        f"前方{label}，本站通過，"
+        f"距離{distance_phrase(distance_m)}，通過速限{num_to_zh(limit_kmh)}公里。"
+    )
 
 
 def signal_passed_at_danger(signal_name: str) -> str:

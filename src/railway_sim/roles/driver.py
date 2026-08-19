@@ -47,6 +47,37 @@ STOP_WINDOW_M = 50.0
 #: 開始播報「接近某站」的距離（公尺）。
 APPROACH_ANNOUNCE_M = 800.0
 
+#: 停車位置倒數的距離門檻（公尺，由遠而近）。
+#:
+#: 愈近愈密，是因為看不見月台標記的司機**只能靠這串數字**判斷還有多遠。
+#: 遠處每次減速的效果很明顯，一百公尺報一次就夠；最後十公尺內列車已經在
+#: 徐行，每一句之間仍有一兩秒，卻是決定停得準不準的關鍵。
+#:
+#: 門檻只是「什麼時候開口」，播報的是**當下的實際距離**而不是門檻值：
+#: 一個步長內跨過好幾個門檻時（速度還很快）只會報一次，不會連珠炮。
+STOP_COUNTDOWN_M: tuple[float, ...] = (
+    200.0, 150.0, 100.0, 70.0, 50.0, 35.0, 25.0, 20.0, 15.0, 10.0, 7.0, 5.0, 3.0, 2.0, 1.0,
+)
+
+#: 點字即時顯示改用停車位置距離的門檻（公尺）。
+#:
+#: 再遠一點的時候，「離車站還有多遠」與「離停車位置還有多遠」是同一個數字；
+#: 進到這個範圍才有分別，也才是需要細一點解析度的時候。
+BRAILLE_FINE_RANGE_M = 200.0
+
+#: 停妥後前進修正時，位置變動超過這個距離才重新播報（公尺）。
+#:
+#: 太小會在列車還在滑行的最後幾公分一直重播，太大則修正了也聽不出差別。
+REALIGN_STEP_M = 0.5
+
+#: 月台範圍的半長（公尺）：以停車位置為中心，前後各算這麼長。
+#:
+#: 真實月台長度無可靠公開來源（§27），與 :data:`STOP_WINDOW_M` 同樣是第一版
+#: 的測試值。取「以停車位置為中心」而不是「停車位置往後算一個月台長」，是
+#: 因為車頭停妥時車身還壓在月台上，通過的列車也一樣——整列車完全離開月台
+#: 之前都還在月台範圍內。
+PLATFORM_ZONE_M = 100.0
+
 #: 狀態查詢項目的顯示名稱。
 #:
 #: 介面只負責呈現，項目與內容一律由本模組提供，兩個介面才會完全一致
@@ -55,6 +86,7 @@ STATUS_ITEM_LABELS: tuple[tuple[str, str], ...] = (
     ("speed", "速度"),
     ("position", "位置"),
     ("next_station", "下一站"),
+    ("stop_point", "停車位置"),
     ("signal", "前方號誌"),
     ("train", "列車狀態"),
     ("doors", "車門狀態"),
@@ -70,10 +102,25 @@ STATUS_ITEM_ACTIONS: dict[str, str] = {
     "speed": "announce_speed",
     "position": "announce_position",
     "next_station": "announce_next_station",
+    "stop_point": "announce_stop_point",
     "signal": "announce_signal",
     "train": "announce_train_status",
     "doors": "announce_doors",
 }
+
+
+def _braille_metres(metres: float) -> str:
+    """點字用的距離寫法：短、固定、一摸就懂。
+
+    刻意用阿拉伯數字與 ``m``／``km``，不用中文數字：點字的中文數字要好幾方，
+    而距離是**一直在變**的欄位，長度浮動會讓摸讀的人每次都要重新找位置。
+    """
+    metres = max(0.0, float(metres))
+    if metres >= 1000.0:
+        return f"{metres / 1000.0:.1f}km"
+    if metres >= 10.0:
+        return f"{metres:.0f}m"
+    return f"{metres:.1f}m"
 
 
 @dataclass(frozen=True)
@@ -102,6 +149,12 @@ class StationProgress:
     passed: bool = False
     missed: bool = False
     stop_offset_m: float | None = None
+
+    countdown_index: int = 0
+    """已播報過幾個停車位置倒數門檻（見 :data:`STOP_COUNTDOWN_M`）。"""
+
+    stop_point_announced: bool = False
+    """車頭到達停車位置的那一句是否已播報過。"""
 
     @property
     def must_stop(self) -> bool:
@@ -143,6 +196,21 @@ class DriverSession:
 
     _previous_stop_id: str | None = field(default=None, init=False, repr=False)
     """最近停妥過的停靠站。廣播用它判斷「從哪裡來」與目前在哪一個區間。"""
+
+    _aligning_stop: StationProgress | None = field(default=None, init=False, repr=False)
+    """剛停妥、還可以前進修正停車位置的那一站。離開停車範圍後歸零。"""
+
+    _departed_aligning_stop: bool = field(default=False, init=False, repr=False)
+    """``_aligning_stop`` 這一站是否已經開始離站。
+
+    判斷準則不是「動了沒有」：前進修正本身就要靠動力向前推一點，那一瞬間
+    列車一定不是靜止的。真正的準則是移動當下車頭有沒有到達或超過停車
+    位置——未達停車位置時的移動是修正，到達後還繼續移動才是離站（見
+    :meth:`_handle_realignment`）。離站後在停車範圍內若因號誌或緊急制軔
+    等原因再次停下，``is_stopped`` 會重新變成真，但那不是回到同一次對位；
+    這個旗標一旦設成真就不會再歸假，直到下一站重新停妥為止（見
+    :meth:`stop_alignment_target`）。
+    """
 
     # ------------------------------------------------------------------
     # 建立
@@ -189,6 +257,7 @@ class DriverSession:
         self.broadcast = self._build_broadcast()
 
         self._build_station_progress()
+        self._build_platform_zones()
         self._update_occupancy()
         self._refresh_stop_target()
 
@@ -236,6 +305,32 @@ class DriverSession:
                 progress.served = True
                 progress.approach_announced = True
             self.stations.append(progress)
+
+    def _build_platform_zones(self) -> None:
+        """建立「通過不停靠車站」的月台速限（§14.1 區間速限的一種）。
+
+        只在本線登記了 ``platform_pass_limit_kmh`` 時才有東西可建：台北捷運
+        各線站站停車，不會有通過的情形，因此沒有值是正確的，不是資料缺漏。
+
+        停靠站不列入——停靠站本來就要停下來，再壓一個通過速限沒有意義，而且
+        會讓停車前的允許速度多一個看不出理由的天花板。班次的停靠表在整趟
+        運轉中不會變，因此只建一次。
+        """
+        limit = self.data.line(self.route.line_id).platform_pass_limit_kmh
+        if limit is None:
+            self.atp.zone_restrictions = ()
+            return
+        self.atp.zone_restrictions = tuple(
+            SpeedRestriction(
+                kind="platform_pass",
+                limit_kmh=limit,
+                position_m=progress.position_m - PLATFORM_ZONE_M,
+                end_m=progress.position_m + PLATFORM_ZONE_M,
+                label=f"{progress.name_zh_tw}站月台",
+            )
+            for progress in self.stations
+            if not progress.must_stop
+        )
 
     # ------------------------------------------------------------------
     # 特殊事件（§12.3）
@@ -592,6 +687,14 @@ class DriverSession:
                 upcoming.stop_kind,
             )
 
+        if code == "stop_point":
+            target = self.stop_alignment_target()
+            if target is None:
+                return msg.no_stop_point_ahead()
+            return msg.stop_point_report(
+                target.name_zh_tw, target.position_m - self.train.position_m
+            )
+
         if code == "signal":
             if state.next_signal_aspect is None or state.next_signal_distance_m is None:
                 return msg.no_signal_ahead()
@@ -641,6 +744,15 @@ class DriverSession:
         """播報下一站與停靠別（N／Ctrl+Shift+T）。"""
         self.announce_status("next_station")
 
+    def announce_stop_point(self) -> None:
+        """播報距離停車位置多遠（D／Ctrl+D）。
+
+        與「下一站」分開的理由是**用途不同**：下一站報的是還有多久到、要不要
+        停；停車位置報的是車頭離月台標記還差幾公尺，是最後一百公尺裡唯一有
+        用的數字。看不見月台標記的司機在對位時會反覆按這個鍵。
+        """
+        self.announce_status("stop_point")
+
     def announce_signal(self) -> None:
         """播報前方號誌（G／Ctrl+Shift+A，規格 §11.3）。"""
         self.announce_status("signal")
@@ -667,6 +779,7 @@ class DriverSession:
 
         self._update_occupancy()
         self._handle_stations()
+        self._handle_realignment()
         self._handle_broadcast()
         self._refresh_stop_target()
 
@@ -713,6 +826,23 @@ class DriverSession:
                 return progress
         return None
 
+    def stop_alignment_target(self) -> StationProgress | None:
+        """對準停車位置時要看的那一站。
+
+        正在修正停車位置時就是**已經停妥的那一站**，其餘時候是前方第一個
+        停靠站。少了前者，司機一停妥、車站被標記為已服務，查詢就會跳到下
+        一站——正想微調位置的人反而問不到自己站在哪裡。
+
+        但一旦離站就不會再回頭看它，即使列車在停車範圍內因號誌或緊急制軔
+        等原因再次停下也一樣——``_departed_aligning_stop`` 是單向的旗標，
+        不是看當下是否靜止（見該欄位的說明）。`_aligning_stop` 本身繼續
+        保留給 :meth:`_handle_realignment`，讓還沒離站的前進修正仍能算出
+        正確的誤差。
+        """
+        if self._aligning_stop is not None and not self._departed_aligning_stop:
+            return self._aligning_stop
+        return self.next_scheduled_stop()
+
     def _refresh_stop_target(self) -> None:
         """把下一個停車站設為 ATP 的停車點（§14.1 前方停車點距離）。"""
         target = self.next_scheduled_stop()
@@ -752,9 +882,88 @@ class DriverSession:
                     )
 
             if progress.must_stop:
+                self._handle_stop_countdown(progress, distance)
                 self._handle_stop_station(progress, position)
             else:
                 self._handle_pass_station(progress, position)
+
+    def _handle_stop_countdown(self, progress: StationProgress, distance: float) -> None:
+        """接近停車位置時逐段報出剩餘距離（§14.3 提前警告）。
+
+        這是給看不見月台標記的司機用的：對位時他手上沒有任何連續的資訊，
+        只能靠這串由疏而密的數字判斷還有多遠、該不該再加一段制軔。
+
+        播報的是**當下的實際距離**而不是門檻值，而且一個步長內跨過幾個門檻
+        也只報一次——列車還很快時連珠炮式地報距離，只會把後面真正需要的
+        那幾句擠掉。
+        """
+        if distance <= 0.0:
+            # 車頭到達停車位置：對位時最關鍵的一句，因為它不必自己從遞減的
+            # 數字推算「就是現在」。
+            if not progress.stop_point_announced:
+                progress.stop_point_announced = True
+                progress.countdown_index = len(STOP_COUNTDOWN_M)
+                self.announcer.announce(msg.stop_point_reached(), Priority.NOTICE)
+            return
+
+        crossed = progress.countdown_index
+        while crossed < len(STOP_COUNTDOWN_M) and distance <= STOP_COUNTDOWN_M[crossed]:
+            crossed += 1
+        if crossed == progress.countdown_index:
+            return
+
+        first = progress.countdown_index == 0
+        progress.countdown_index = crossed
+        text = (
+            msg.stop_countdown_start(progress.name_zh_tw, distance)
+            if first
+            else msg.stop_countdown(distance)
+        )
+        self.announcer.announce(text, Priority.NOTICE)
+
+    def _handle_realignment(self) -> None:
+        """停妥之後前進修正停車位置。
+
+        未達停車位置時列車還可以往前推一點，真實運轉上也是這樣處理；但看不見
+        月台標記的司機每動一次都需要知道現在差多少，否則修正等於盲猜。
+
+        修正**不會**改變已經判定的停靠結果（車站仍是已服務），只更新記錄下來
+        的誤差並重新播報。判斷離站看的不是「動了沒有」——前進修正本身就要
+        靠動力向前推一點，那一瞬間列車一定不是靜止的——而是移動當下車頭有
+        沒有到達或超過停車位置：還沒到，仍然是「往前推一點」的修正；已經
+        到了還繼續往前，才是真的離站，即使之後在停車範圍內因號誌或緊急
+        制軔等原因又停下，也不會恢復成在對位（見
+        :data:`_departed_aligning_stop`）。車頭真的離開停車範圍時才把整個
+        狀態歸零。
+        """
+        progress = self._aligning_stop
+        if progress is None:
+            return
+
+        offset = self.train.position_m - progress.position_m
+        if abs(offset) > STOP_WINDOW_M:
+            self._aligning_stop = None
+            self._departed_aligning_stop = False
+            return
+        if not self.train.is_stopped:
+            if offset >= 0.0:
+                # 已經到達或超過停車位置了還在動，是離站不是修正；之後即使
+                # 在範圍內又停下也不算回到這次對位（見
+                # :data:`_departed_aligning_stop` 與 :meth:`stop_alignment_target`）。
+                self._departed_aligning_stop = True
+            return
+        if self._departed_aligning_stop:
+            # 已經離站後又在範圍內停下（號誌、緊急制軔……），不是回來對位，
+            # 不該再報一次「這一站修正後」。
+            return
+
+        previous = progress.stop_offset_m
+        if previous is not None and abs(offset - previous) < REALIGN_STEP_M:
+            return
+        progress.stop_offset_m = offset
+        self.announcer.announce(
+            msg.station_realigned(progress.name_zh_tw, offset), Priority.NOTICE
+        )
 
     def _handle_stop_station(self, progress: StationProgress, position: float) -> None:
         offset = position - progress.position_m
@@ -763,6 +972,10 @@ class DriverSession:
         if self.train.is_stopped and abs(offset) <= STOP_WINDOW_M:
             progress.served = True
             progress.stop_offset_m = offset
+            # 停妥不是對位的結束：還在停車範圍內就仍可前進修正（見
+            # :meth:`_handle_realignment`）。
+            self._aligning_stop = progress
+            self._departed_aligning_stop = False
             self.announcer.announce(
                 msg.station_arrival(progress.name_zh_tw, offset), Priority.NOTICE
             )
@@ -910,6 +1123,12 @@ class DriverSession:
                     # 停車點（車站停車位置或停止號誌）：允許速度為零，
                     # 不可用「前方速限零公里」的說法。
                     text = msg.approaching_stop_point(str(detail["label"]), distance)
+                elif detail.get("kind") == "platform_pass":
+                    # 通過月台的速限要說得出是哪一站：司機聽到「前方速限七十」
+                    # 會去找號誌牌，聽到「○○站月台」才知道是通過站的規定。
+                    text = msg.approaching_platform_pass(
+                        str(detail["label"]), float(detail["limit_kmh"]), distance
+                    )
                 else:
                     text = msg.approaching_speed_limit(
                         float(detail["limit_kmh"]), distance
@@ -962,8 +1181,41 @@ class DriverSession:
             f"路線長度：{self.route.length_m:.0f} 公尺",
             f"停靠站：{stops or '無'}",
             f"通過站：{passes or '無'}",
+            f"時刻表：{self.schedule_text()}",
             f"車上廣播：{self.broadcast_status_text()}",
         ]
+
+    def schedule_text(self) -> str:
+        """本班次的時刻摘要，讓玩家知道自己開的是哪一班。
+
+        分三種情形，因為「沒有時刻」的理由不只一種，講清楚才不會被當成資料
+        壞掉：
+
+        - 有時刻摘要（捷運，來自營運單位公布的逐班時刻表）：報營運日、首末
+          班與班數。捷運的班次是營運模式而不是某一列特定的車，只報一個發車
+          時刻沒有意義。
+        - 只有發車時刻（臺鐵）：報本班次自起站發車的時刻。
+        - 兩者都沒有：說明這條路線沒有公布逐班時刻，不是漏掉。
+        """
+        schedule = self.service.schedule
+        if schedule is not None:
+            parts = [
+                schedule.service_days or "全日",
+                f"首班 {schedule.first_departure}",
+                f"末班 {schedule.last_departure}",
+                f"每日 {schedule.departures_per_day} 班",
+            ]
+            if schedule.run_time_min is not None:
+                parts.append(f"行車時間約 {schedule.run_time_min} 分")
+            return "，".join(parts)
+
+        origin = self.first_stop()
+        departure = (
+            self.service.departure_times.get(origin.station_id) if origin else None
+        )
+        if departure and origin is not None:
+            return f"{departure} 自{msg.station_phrase(origin.name_zh_tw)}發車"
+        return "本路線沒有公布逐班時刻"
 
     def broadcast_status_text(self) -> str:
         """車上廣播目前的狀態，讓玩家知道「沒有聲音」是哪一種原因。
@@ -1034,6 +1286,39 @@ class DriverSession:
 
     def status_text(self) -> str:
         return "\n".join(self.status_lines())
+    # ------------------------------------------------------------------
+    # 點字即時顯示（Alt＋Shift＋T）
+    # ------------------------------------------------------------------
+    def braille_line(self) -> str:
+        """點字顯示器用的一行即時狀態。
+
+        點字顯示器一次只有二十到八十方，而且是用摸的——不能像螢幕那樣掃一眼
+        就跳過不要的部分。因此這裡只放**開著車時會一直想知道**的那件事：
+        下一站是哪一站、還有多遠。
+
+        進到 :data:`BRAILLE_FINE_RANGE_M` 之內改報**停車位置**的距離並加上
+        「停」字：最後兩百公尺裡，車站中心的距離已經沒有意義，需要的是車頭
+        離月台標記還差幾公尺。停過頭時改說「過」，因為不可倒車，兩者要能一
+        摸就分得出來。
+
+        由本模組提供而非各介面自己組字串，視窗版與主控台顯示的內容才會一致
+        （§25.5）。
+        """
+        target = self.stop_alignment_target()
+        if target is not None:
+            remaining = target.position_m - self.train.position_m
+            if remaining <= BRAILLE_FINE_RANGE_M:
+                if remaining < 0:
+                    return f"{target.name_zh_tw} 過{_braille_metres(-remaining)}"
+                return f"{target.name_zh_tw} 停 {_braille_metres(remaining)}"
+
+        upcoming = self.next_station()
+        if upcoming is None:
+            return "路線終點"
+        distance = upcoming.position_m - self.train.position_m
+        return f"{upcoming.name_zh_tw} {_braille_metres(distance)}"
+
+
 
     # ------------------------------------------------------------------
     def action_handlers(self) -> dict[str, object]:
@@ -1054,6 +1339,7 @@ class DriverSession:
             "announce_speed": self.announce_speed,
             "announce_position": self.announce_position,
             "announce_next_station": self.announce_next_station,
+            "announce_stop_point": self.announce_stop_point,
             "announce_signal": self.announce_signal,
             "announce_train_status": self.announce_train_status,
             "announce_doors": self.announce_doors,

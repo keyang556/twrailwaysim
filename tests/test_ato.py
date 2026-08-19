@@ -306,3 +306,52 @@ def test_假列車不會被誤判為捷運(train_spec):
     assert ato.decide(
         train, permitted_kmh=50.0, distance_to_stop_m=None, holding=False
     ).reason in {"accelerate", "coast", "trim"}
+
+
+class TestFallingSpeedLimit:
+    """允許速度往下走時，ATO 必須跟得上 ATP 的監控曲線。
+
+    這在機場捷運的直達車上才會遇到：通過不停靠的車站時月台限速 70，全線
+    速限卻是 100。巡航微調的力道（常用制軔的三成五）只有監控曲線（七成）的
+    一半，跟不上就會一路壓在允許速度之上累積超速警告。
+    """
+
+    def test_輕微超出目標時只做微調(self, train_spec, train):
+        """巡航時的一點點誤差不該換來一腳重煞。"""
+        ato = AtoController(spec=train_spec, available=True, engaged=True)
+        train.current_speed_kmh = 77.5  # 目標 77，超出 0.5
+        light = ato.decide(
+            train, permitted_kmh=80.0, distance_to_stop_m=None, holding=False
+        )
+
+        train.current_speed_kmh = 85.0  # 允許速度正在往下走
+        heavy = ato.decide(
+            train, permitted_kmh=80.0, distance_to_stop_m=None, holding=False
+        )
+
+        assert light.reason == heavy.reason == "trim"
+        assert light.brake_notch < heavy.brake_notch
+
+    def test_直達車通過月台不會累積超速(self, mrt_data):
+        """整趟自動駕駛跑完，一件違規都不該有。"""
+        session = make_mrt_session(mrt_data, "A1003")
+        session.toggle_ato()
+        run(session, depart=True)
+
+        assert session.finished
+        assert session.incidents.violation_count == 0
+
+    def test_直達車在月台範圍內確實降到七十(self, mrt_data):
+        session = make_mrt_session(mrt_data, "A1003")
+        session.toggle_ato()
+        session.ato_depart()
+        zone = session.atp.zone_restrictions[0]
+
+        inside: list[float] = []
+        while session.train.position_m < zone.end_m and session.clock.elapsed_s < 600:
+            session.tick(0.1)
+            if zone.covers(session.train.position_m):
+                inside.append(session.train.current_speed_kmh)
+
+        assert inside, "列車沒有進入月台範圍"
+        assert max(inside) <= 71.0

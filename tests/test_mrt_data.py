@@ -8,8 +8,10 @@ from __future__ import annotations
 
 import pytest
 
+from railway_sim.accessibility.announcer import Announcer
 from railway_sim.data_loader import load_game_data
 from railway_sim.dataset.mrt_wiki import parse_station_table
+from railway_sim.roles.driver import DriverSession
 from railway_sim.systems import SYSTEMS, system_data_dir
 
 
@@ -288,3 +290,78 @@ class TestSystemIsolation:
         """成追線那一組規則只認臺鐵的車站代碼，因此不會誤傷捷運。"""
         data = load_game_data(system="mrt")
         assert data.issues == []
+
+
+class TestAirportPlatformPass:
+    """機場捷運通過不停靠車站時的月台速限。
+
+    這是**班次**的性質而不是軌道的性質：同一段軌道，直達車通過時限速
+    70，普通車停靠時不受這條限制。因此驗的重點是「限制跟著停靠表走」，
+    不只是「有沒有這個數字」。
+    """
+
+    def _session(self, mrt_data, train_number: str) -> DriverSession:
+        return DriverSession(
+            data=mrt_data,
+            service=mrt_data.service(train_number),
+            announcer=Announcer(dedupe_seconds=0.0),
+        )
+
+    def test_只有機場捷運有這項規定(self, mrt_data):
+        """台北捷運各線站站停車，沒有值才是正確的，不是資料缺漏。"""
+        assert mrt_data.line("taoyuan_airport").platform_pass_limit_kmh == 70.0
+        for line_id in ("bannan", "tamsui_xinyi", "wenhu", "circular"):
+            assert mrt_data.line(line_id).platform_pass_limit_kmh is None
+
+    def test_直達車的每一個通過站都有月台速限(self, mrt_data):
+        session = self._session(mrt_data, "A1003")
+        passed = [p for p in session.stations if not p.must_stop]
+        assert passed
+        assert len(session.atp.zone_restrictions) == len(passed)
+        assert {z.limit_kmh for z in session.atp.zone_restrictions} == {70.0}
+
+    def test_停靠站不受通過速限拘束(self, mrt_data):
+        """停靠站本來就要停，再壓一個通過速限只會多一個看不出理由的天花板。"""
+        session = self._session(mrt_data, "A1003")
+        for progress in session.stations:
+            if not progress.must_stop:
+                continue
+            assert session.atp.active_zone(progress.position_m) is None
+
+    def test_普通車站站停靠因此沒有任何通過速限(self, mrt_data):
+        assert self._session(mrt_data, "A1001").atp.zone_restrictions == ()
+
+    def test_通過月台時允許速度為七十(self, mrt_data):
+        session = self._session(mrt_data, "A1003")
+        zone = session.atp.zone_restrictions[0]
+        session.train.position_m = (zone.position_m + zone.end_m) / 2.0
+        state, _ = session.atp.evaluate(session.train, 0.0)
+        assert state.permitted_kmh == pytest.approx(70.0)
+
+    def test_離開月台後回到全線速限(self, mrt_data):
+        """區段限制過了範圍就結束，不會一路壓著速度到下一站。"""
+        session = self._session(mrt_data, "A1003")
+        zone = session.atp.zone_restrictions[0]
+        session.train.position_m = zone.end_m + 50.0
+        state, _ = session.atp.evaluate(session.train, 0.0)
+        assert state.permitted_kmh == pytest.approx(100.0)
+
+    def test_進月台前就開始要求減速(self, mrt_data):
+        """車頭進了月台才生效的話，司機沒有任何提前減速的機會。"""
+        session = self._session(mrt_data, "A1003")
+        zone = session.atp.zone_restrictions[0]
+        session.train.position_m = zone.position_m - 60.0
+        state, _ = session.atp.evaluate(session.train, 0.0)
+        assert 70.0 < state.permitted_kmh < 100.0
+
+    def test_接近通過站時播報站名而不是只報速限(self, mrt_data):
+        """聽到「前方速限七十」會去找號誌牌；聽到站名才知道是通過站的規定。"""
+        session = self._session(mrt_data, "A1003")
+        zone = session.atp.zone_restrictions[0]
+        session.train.position_m = zone.position_m - 300.0
+        session.train.current_speed_kmh = 100.0
+        session.tick(0.1)
+        session.announcer.flush()
+        spoken = "".join(session.announcer.texts())
+        assert "三重站月台" in spoken
+        assert "本站通過" in spoken

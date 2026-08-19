@@ -29,6 +29,8 @@
 3. 前方有停車點：算出停在該點所需的減速度，換成最小的常用制軔段位。
    減速度用**常用制軔的七成**當作舒適上限，剩下的三成留給誤差與坡度。
 4. 其餘情況：巡航在允許速度以下一點點，低於目標就加速、超過就減速。
+   超出得愈多煞得愈重——允許速度往下走的時候（前方速限、通過月台的速限），
+   微調的力道跟不上 ATP 的監控曲線，速度會壓在允許速度之上累積超速警告。
 
 停車精度
 --------
@@ -64,8 +66,15 @@ _RESUME_MARGIN_KMH = 4.0
 #: 進站停車使用的常用制軔比例。剩下的餘裕留給誤差與坡度。
 _COMFORT_BRAKE_RATIO = 0.7
 
-#: 低速貼近停車點時改用的固定段位比例。
+#: 低速貼近停車點與巡航微調時使用的固定段位比例。
 _CREEP_BRAKE_RATIO = 0.35
+
+#: 超出目標速度多少（公里／小時）以內算是巡航微調。
+#:
+#: 超過這個值就表示允許速度**正在往下走**（前方有速限、通過月台的速限或
+#: 停止號誌），此時微調的力道不夠：ATP 的監控曲線是以常用制軔的七成畫的，
+#: 只用三成五去追，速度會一路壓在允許速度之上累積超速警告。
+_TRIM_EXCESS_KMH = 1.0
 
 #: 進入低速貼近的速度（公里／小時）。
 _CREEP_SPEED_KMH = 8.0
@@ -193,7 +202,15 @@ class AtoController:
         if train.current_speed_kmh < target - _RESUME_MARGIN_KMH:
             return AtoDecision(self.spec.power_notches, 0, "accelerate")
         if train.current_speed_kmh > target:
-            return AtoDecision(0, self._notch(_CREEP_BRAKE_RATIO), "trim")
+            # 差得愈多煞得愈重：巡航時的一點點誤差用輕微制軔就好，允許速度
+            # 正在下降時則必須跟得上監控曲線（常用制軔的七成）。
+            excess = train.current_speed_kmh - target
+            ratio = (
+                _CREEP_BRAKE_RATIO
+                if excess <= _TRIM_EXCESS_KMH
+                else _COMFORT_BRAKE_RATIO
+            )
+            return AtoDecision(0, self._notch(ratio), "trim")
         return AtoDecision(0, 0, "coast")
 
     def _approach(self, train: Train, distance_m: float) -> AtoDecision | None:

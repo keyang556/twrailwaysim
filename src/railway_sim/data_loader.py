@@ -159,8 +159,20 @@ class LineInfo:
 
     operator: str = ""
 
+    platform_pass_limit_kmh: float | None = None
+    """本班車**不停靠**的車站，通過月台時的速限（公里／小時）。
+
+    ``None`` 表示這條線沒有這項規定——台北捷運各線站站停車，根本不會通過
+    月台，因此沒有值才是正確的，不是資料缺漏。機場捷運的直達車會通過許多
+    車站，所以只有它有值。
+
+    這是**線**的性質而不是某一段軌道的性質：同一段軌道對停靠的車與通過的
+    車給的答案不同，因此不能寫成路網的區間速限。
+    """
+
     @classmethod
     def from_dict(cls, line_id: str, raw: dict[str, Any]) -> LineInfo:
+        limit = raw.get("platform_pass_limit_kmh")
         return cls(
             id=line_id,
             name_zh_tw=raw.get("name_zh_tw", line_id),
@@ -168,6 +180,7 @@ class LineInfo:
             driverless=bool(raw.get("driverless", False)),
             announcement_style=raw.get("announcement_style", ""),
             operator=raw.get("operator", ""),
+            platform_pass_limit_kmh=None if limit is None else float(limit),
         )
 
 

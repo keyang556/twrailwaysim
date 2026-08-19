@@ -7,7 +7,8 @@
     "openbve_reference": "assets/Controls/Default.controls（Last updated 2026.01.16）",
     "legacy_note": "profile driver_legacy 保留先前依 chat.md 訂下的 D 電門／A 制軔配置，可用 --keymap-profile driver_legacy 選用。",
     "console_note": "終端機無法區分 Ctrl 與 Ctrl+Shift，主控台介面把控制字元一律視為 Ctrl+Shift+字母。因此每個播報動作都另外保留一個單鍵別名，任何介面都能操作。",
-    "ato_note": "自動駕駛（toggle_ato、ato_depart）只有捷運有；在臺鐵按下會回覆「本系統沒有自動駕駛功能」，不會靜靜地沒反應（規格 §7.2）。"
+    "ato_note": "自動駕駛（toggle_ato、ato_depart）只有捷運有；在臺鐵按下會回覆「本系統沒有自動駕駛功能」，不會靜靜地沒反應（規格 §7.2）。",
+    "braille_note": "toggle_braille_monitor 需要 NVDA 才會真的送出點字；沒有 NVDA 時按下去會說明原因，不會靜靜地沒反應（規格 §7.2）。終端機收不到 Alt 組合鍵，因此主控台改由暫停選單提供同一個功能。"
   },
   "profiles": {
     "global": {
@@ -28,6 +29,12 @@
         "label": "開啟暫停選單（含離開遊戲）",
         "category": "system",
         "source": "OpenBVE MENU_ACTIVATE, keyboard, Escape, 0；與規格 §7.1 一致"
+      },
+      "toggle_braille_monitor": {
+        "keys": ["Alt+Shift+T"],
+        "label": "開啟或關閉點字即時顯示（距離下一站）",
+        "category": "system",
+        "source": "使用者指定：Alt+Shift+T 開啟點字顯示器，即時顯示距離下一站的距離。OpenBVE 沒有對應功能（它沒有點字輸出），因此不沿用其鍵位。"
       }
     },
     "driver": {
@@ -120,6 +127,12 @@
         "label": "播報下一站與停靠別",
         "category": "query",
         "source": "OpenBVE ACCESSIBILITY_NEXT_STATION, keyboard, T, 3（Shift+Ctrl）；N 為單鍵別名"
+      },
+      "announce_stop_point": {
+        "keys": ["CTRL+D", "CTRL+SHIFT+D", "D"],
+        "label": "播報距離停車位置多遠",
+        "category": "query",
+        "source": "OpenBVE MISC_DIST_NEXT_STATION, keyboard, D, 2（Ctrl）。另加 Ctrl+Shift+D 與單鍵 D：終端機無法區分 Ctrl 與 Ctrl+Shift，主控台把控制字元一律視為 Ctrl+Shift+字母，因此兩種寫法都要收。"
       },
       "announce_position": {
         "keys": ["P"],
@@ -230,6 +243,12 @@
         "label": "播報下一站與停靠別",
         "category": "query",
         "source": "規格 §7.1"
+      },
+      "announce_stop_point": {
+        "keys": ["CTRL+SHIFT+D", "C"],
+        "label": "播報距離停車位置多遠",
+        "category": "query",
+        "source": "與 driver 配置同一個功能。本配置的 D 是電門，單鍵別名因此改用 C（停車）。"
       },
       "announce_signal": {
         "keys": ["G"],

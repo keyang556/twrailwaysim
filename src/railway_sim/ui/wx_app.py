@@ -1,8 +1,37 @@
 """wxPython 介面（規格 §5.1）。
 
-版面刻意極簡：兩個唯讀多行文字欄位，一個放運轉播報，一個放最近一次的
-狀態查詢結果。理由是螢幕閱讀器可以直接用方向鍵逐行閱讀文字欄位內容，
+版面刻意極簡：兩個清單，一個放運轉播報，一個放最近一次的狀態查詢結果。
 不需要任何自訂繪圖或視覺元素；所有資訊也同時存在於文字中（§25.5）。
+
+儀表板不是編輯區
+----------------
+
+先前這兩個欄位是唯讀的多行文字框。文字框對螢幕閱讀器而言是**編輯區**：
+焦點一進去就被報成「編輯 唯讀 多行」，方向鍵讀的是游標所在的行或字元，
+而駕駛台上根本沒有東西可以編輯。現在改用清單：
+
+- 焦點落在清單上時報的是「清單」與目前這一項，不是「編輯」。
+- 上下鍵一次讀完整一則播報，不會停在半句話中間。
+- 字母鍵不會被當成輸入吞掉（未綁定的字母鍵也不再往下傳，否則清單會把它
+  當成快速尋找而跳走）。
+
+新播報進來時**不會**移動選取項目。播報同時已經直接送到螢幕閱讀器（見
+下一節），再移動選取只會讓同一句被唸兩次，而且會把正在往回查看的人拉走。
+清單只把捲軸移到最新一則，讓看得見的人也跟得上。
+
+說明與完整狀態那類「一整段文字」仍然用唯讀文字框顯示：那時要的正是逐字
+逐行的檢閱，編輯區的游標導覽是對的工具。
+
+直接送到螢幕閱讀器
+------------------
+
+播報除了寫進清單，也**直接送給 NVDA 的語音與點字**，不必等螢幕閱讀器自己
+發現畫面變了。好處是時機準確（列車是即時的，慢半拍的警告沒有用），而且
+可以帶優先級：超速警告會插播，插播完 NVDA 會把被打斷的內容接回去。
+
+Alt＋Shift＋T 另外開啟**點字即時顯示**：在點字顯示器上持續顯示距離下一站
+還有多遠，接近停靠站時改顯示距離停車位置多遠。看不見月台標記的人終於有
+一個連續的、不必一直按鍵去問的資訊來源。
 
 狀態改為「查詢才出現」
 ----------------------
@@ -45,6 +74,7 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 
 from railway_sim.accessibility.announcer import Announcement, Announcer, Priority
+from railway_sim.accessibility.speech import speech_priority_for
 from railway_sim.input.keyboard import KeyDispatcher
 from railway_sim.input.keymap import Keymap
 from railway_sim.roles.driver import STATUS_ITEM_ACTIONS, DriverSession
@@ -67,8 +97,27 @@ _TIMER_MS = 50
 #: 在一個畫面更新內衝過好幾個車站，等於玩家什麼都沒做就被判應停未停。
 _MAX_CATCH_UP_S = 1.0
 
-#: 播報欄位保留的行數。
+#: 播報清單保留的行數。
 _LOG_LIMIT = 300
+
+#: 點字即時顯示的更新間隔（毫秒）。
+#:
+#: NVDA 把點字訊息當成**暫時**訊息，預設四秒後就換回焦點的內容，因此必須
+#: 定期重送。間隔要明顯短於那個逾時，又不必短到每一格都重畫。
+_BRAILLE_MS = 700
+
+#: 一則播報在點字上停留多久（秒），期間不被即時顯示蓋掉。
+#:
+#: 沒有這段保留時間的話，緊急制軔之類的訊息會在下一次更新（不到一秒）就
+#: 被距離蓋掉，摸讀的人根本來不及讀到。
+_BRAILLE_HOLD_S = 2.5
+
+#: 未綁定時要交還給控制項的按鍵。
+#:
+#: Tab 與 F10 是視窗本身的巡覽鍵。先前它們會被當成「未設定功能的按鍵」而
+#: 播報一句說明，等於每次換焦點都被唸一次無關的話。方向鍵、Home、End 這些
+#: 不在這裡，因為 :func:`_keycode_to_token` 本來就不會把它們轉成代碼。
+_NAVIGATION_KEYS = frozenset({"TAB", "SHIFT+TAB", "CTRL+TAB", "F10", "SHIFT+F10"})
 
 #: 未綁定按鍵的回饋（與主控台相同，§7.2）。
 _UNBOUND_KEY_TEXT = "此按鍵未設定功能，按 F1 查看快捷鍵說明。"
@@ -151,6 +200,14 @@ class ServicePicker:  # pragma: no cover - 需要圖形環境
 
     系統選擇沿用同一個視窗而不是另做一個：兩者要做的事完全一樣（從一份清單
     挑一項），共用之後鍵盤操作、搜尋與螢幕閱讀器行為也一定一致。
+
+    補充說明直接送給螢幕閱讀器
+    --------------------------
+
+    每一項的補充說明（路線、停靠幾站）顯示在清單下方的靜態文字裡。螢幕閱讀器
+    在清單裡上下移動時只會唸出項目本身，那段說明**看得到卻聽不到**，除非使用者
+    自己 Tab 過去確認——選十幾個車次就要 Tab 十幾次。因此選取變動時直接把說明
+    送出去唸，搜尋時也直接說出還剩幾個符合，不必自己數。
     """
 
     def __init__(
@@ -162,12 +219,14 @@ class ServicePicker:  # pragma: no cover - 需要圖形環境
         list_label: str = "可駕駛車次（上下鍵選擇，Enter 開始）",
         search_label: str = "搜尋（車次、車種、車輛型式、起訖站、沿途車站）",
         accept_label: str = "開始運轉",
+        speak: Callable[[str, bool], bool] | None = None,
     ) -> None:
         import wx
 
         self.wx = wx
         self.choices = list(choices)
         self.visible: list[StartChoice] = list(choices)
+        self.speak = speak
 
         self.dialog = wx.Dialog(
             parent,
@@ -210,23 +269,48 @@ class ServicePicker:  # pragma: no cover - 需要圖形環境
         self.search.SetFocus()
 
     # ------------------------------------------------------------------
+    def _say(self, text: str) -> None:
+        """把一段文字直接送去唸。沒有語音後端時什麼都不做。
+
+        不經過 :class:`~railway_sim.accessibility.announcer.Announcer`：這裡
+        是選擇視窗，還沒有工作階段，也沒有播報歷史可言。
+        """
+        if self.speak is not None and text:
+            self.speak(text, False)
+
     def _refresh(self) -> None:
         keyword = self.search.GetValue().strip()
         self.visible = [c for c in self.choices if c.matches(keyword)]
         self.listbox.Set([c.label for c in self.visible])
         if self.visible:
             self.listbox.SetSelection(0)
-        self._on_select(None)
+        self._update_detail()
 
     def _on_search(self, _event) -> None:
         self._refresh()
+        # 邊打字邊知道還剩幾個，不必切到清單自己數。
+        self._say(self._match_summary())
 
-    def _on_select(self, _event) -> None:
+    def _match_summary(self) -> str:
+        if not self.visible:
+            return f"沒有符合的項目，共 {len(self.choices)} 個。"
+        if len(self.visible) == len(self.choices):
+            return f"共 {len(self.choices)} 個。"
+        return f"符合 {len(self.visible)} 個。"
+
+    def _update_detail(self) -> str:
+        """更新補充說明並回傳目前顯示的文字。"""
         index = self.listbox.GetSelection()
         if 0 <= index < len(self.visible):
-            self.detail.SetLabel(self.visible[index].detail)
+            text = self.visible[index].detail
         else:
-            self.detail.SetLabel(f"沒有符合的車次（共 {len(self.choices)} 個）")
+            text = f"沒有符合的車次（共 {len(self.choices)} 個）"
+        self.detail.SetLabel(text)
+        return text
+
+    def _on_select(self, _event) -> None:
+        # 螢幕閱讀器只會唸出項目本身，說明看得到卻聽不到，因此直接送出去。
+        self._say(self._update_detail())
 
     # ------------------------------------------------------------------
     def ask(self) -> str | None:
@@ -272,6 +356,17 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         self._last_tick_s = time.perf_counter()
         self._running = False
 
+        # 螢幕閱讀器輸出可能只有語音（單純的 speak sink），也可能連點字與
+        # 優先級一起（:class:`~railway_sim.accessibility.speech.ScreenReader`）。
+        # 用能力探測而不是型別判斷，測試才能塞一個只有其中一半的替身進來。
+        self._braille: Callable[[str], bool] | None = getattr(speak, "braille", None)
+        self._speak_with_priority = getattr(speak, "speak", None)
+
+        #: 點字即時顯示是否開啟（Alt＋Shift＋T）。
+        self.braille_monitor = False
+        self._braille_hold_until = 0.0
+        self._braille_text = ""
+
         #: 關窗之後由 :func:`run_wx` 讀取：是否要回到車次選擇視窗。
         self.change_service_requested = False
 
@@ -289,21 +384,25 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         panel = wx.Panel(self.frame)
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        log_label = wx.StaticText(panel, label="運轉播報（唯讀，可用方向鍵閱讀）")
-        self.log_ctrl = wx.TextCtrl(
-            panel, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2
-        )
+        # 清單而不是唯讀文字框：文字框會被螢幕閱讀器報成「編輯區」，而駕駛台
+        # 上沒有東西可以編輯；清單的上下鍵還會一次讀完整一則播報。
+        log_label = wx.StaticText(panel, label="運轉播報（清單，可用上下鍵逐則閱讀）")
+        self.log_ctrl = wx.ListBox(panel, style=wx.LB_SINGLE | wx.LB_NEEDED_SB)
         self.log_ctrl.SetName("運轉播報")
 
         status_label = wx.StaticText(
-            panel, label="狀態查詢結果（唯讀，顯示最近一次查詢的項目）"
+            panel, label="狀態查詢結果（顯示最近一次查詢的項目）"
         )
-        self.status_ctrl = wx.TextCtrl(
-            panel, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2
-        )
+        self.status_ctrl = wx.ListBox(panel, style=wx.LB_SINGLE | wx.LB_NEEDED_SB)
         self.status_ctrl.SetName("狀態查詢結果")
 
-        hint = wx.StaticText(panel, label="F1：快捷鍵說明　F2：重複播報　Esc：暫停選單")
+        hint = wx.StaticText(
+            panel,
+            label=(
+                "F1：快捷鍵說明　F2：重複播報　Esc：暫停選單　"
+                "Alt＋Shift＋T：點字即時顯示"
+            ),
+        )
 
         sizer.Add(log_label, 0, wx.ALL, 6)
         sizer.Add(self.log_ctrl, 4, wx.EXPAND | wx.ALL, 6)
@@ -322,6 +421,7 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
                 "show_help": self.show_help,
                 "repeat_last": self.repeat_last,
                 "pause_menu": self.pause_menu,
+                "toggle_braille_monitor": self.toggle_braille_monitor,
             }
         )
 
@@ -331,8 +431,14 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         self.timer = wx.Timer(self.frame)
         self.frame.Bind(wx.EVT_TIMER, self._on_timer, self.timer)
 
+        # 點字用自己的計時器：更新頻率與模擬步進無關，而且暫停時仍應繼續
+        # 顯示（停在那裡看距離也是有意義的），兩者不該綁在一起。
+        self.braille_timer = wx.Timer(self.frame)
+        self.frame.Bind(wx.EVT_TIMER, self._on_braille_timer, self.braille_timer)
+
         self._announce_intro()
         self._refresh_status()
+        # 焦點落在播報清單上：這是儀表板的主體，而且不是編輯區。
         self.log_ctrl.SetFocus()
 
     # ------------------------------------------------------------------
@@ -376,12 +482,20 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
             wx.ID_ANY, f"重複播報最近一則（{self._keys_text_for('repeat_last')}）"
         )
         full_status_item = system_menu.Append(wx.ID_ANY, "完整列車狀態")
+        braille_item = system_menu.Append(
+            wx.ID_ANY,
+            "點字即時顯示（距離下一站，"
+            f"{self._keys_text_for('toggle_braille_monitor')}）",
+        )
         pause_item = system_menu.Append(
             wx.ID_ANY, f"暫停選單（{self._keys_text_for('pause_menu')}）"
         )
         self.frame.Bind(wx.EVT_MENU, lambda _e: self.show_help(), help_item)
         self.frame.Bind(wx.EVT_MENU, lambda _e: self.repeat_last(), repeat_item)
         self.frame.Bind(wx.EVT_MENU, lambda _e: self.show_status(), full_status_item)
+        self.frame.Bind(
+            wx.EVT_MENU, lambda _e: self.toggle_braille_monitor(), braille_item
+        )
         self.frame.Bind(wx.EVT_MENU, lambda _e: self.pause_menu(), pause_item)
 
         bar = wx.MenuBar()
@@ -409,8 +523,13 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
     # 模擬推進
     # ------------------------------------------------------------------
     def _pause(self) -> None:
-        """停止推進模擬。開啟強制回應視窗前必須呼叫。"""
+        """停止推進模擬。開啟強制回應視窗前必須呼叫。
+
+        點字即時顯示一併停下來：說明與狀態視窗是拿來讀的，每 0.7 秒把顯示器
+        蓋成距離會讓摸讀的人完全讀不到那些文字。
+        """
         self.timer.Stop()
+        self.braille_timer.Stop()
         self._running = False
 
     def _resume(self) -> None:
@@ -422,27 +541,42 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         self._last_tick_s = time.perf_counter()
         self._running = True
         self.timer.Start(_TIMER_MS)
+        if self.braille_monitor:
+            self.braille_timer.Start(_BRAILLE_MS)
 
-    # ------------------------------------------------------------------
     def _emit(self, announcement: Announcement) -> None:
+        """一則播報同時進到清單、語音與點字。
+
+        直接送給螢幕閱讀器而不是等它自己發現畫面變了：列車是即時的，慢半拍
+        的警告沒有用。優先級一併交給 NVDA，超速警告因此會插播，而且插播完
+        被打斷的內容會由 NVDA 自己接回去。
+        """
         self._append_log(announcement.text)
-        if self.speak is not None:
-            self.speak(announcement.text, announcement.priority >= Priority.SAFETY)
+        self._speak(announcement.text, announcement.priority)
+        self._braille_announcement(announcement.text)
+
+    def _speak(self, text: str, priority: Priority) -> None:
+        """把一段文字送去朗讀，能帶優先級就帶。"""
+        if self._speak_with_priority is not None:
+            self._speak_with_priority(text, priority=speech_priority_for(priority))
+        elif self.speak is not None:
+            self.speak(text, priority >= Priority.SAFETY)
 
     def _append_log(self, text: str) -> None:
-        """把一行播報加到播報欄。
+        """把一則播報加到播報清單。
 
-        用 ``AppendText`` 而不是每次重寫整個欄位：重寫會把插入點與選取範圍
-        重設，正在用方向鍵逐行閱讀的螢幕閱讀器使用者會被拉回開頭。
+        **不移動選取項目**：播報已經直接送到螢幕閱讀器了，再移動選取會讓同
+        一句被唸第二次，也會把正在往回查看的人拉走。只把捲軸帶到最新一則，
+        讓看得見的人跟得上。
         """
         self._log_lines.append(text)
+        self.log_ctrl.Append(text)
         if len(self._log_lines) > _LOG_LIMIT:
-            del self._log_lines[: len(self._log_lines) - _LOG_LIMIT]
-            self.log_ctrl.SetValue("\n".join(self._log_lines))
-        elif len(self._log_lines) == 1:
-            self.log_ctrl.SetValue(text)
-        else:
-            self.log_ctrl.AppendText("\n" + text)
+            excess = len(self._log_lines) - _LOG_LIMIT
+            del self._log_lines[:excess]
+            for _ in range(excess):
+                self.log_ctrl.Delete(0)
+        self.log_ctrl.SetFirstItem(self.log_ctrl.GetCount() - 1)
 
     def _announce_intro(self) -> None:
         for line in self.session.briefing_lines():
@@ -452,13 +586,21 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
             "狀態不再常駐顯示：按快捷鍵或用「狀態查詢」選單問一項，"
             f"例如{self._keys_text_for('announce_speed')}報速度。"
         )
+        self._append_log(
+            f"對準停車位置：{self._keys_text_for('announce_stop_point')}"
+            "隨時可問距離停車位置多遠；接近停靠站時會自動由疏而密報出剩餘距離。"
+        )
+        if self._braille is not None:
+            self._append_log(
+                f"{self._keys_text_for('toggle_braille_monitor')}："
+                "在點字顯示器上即時顯示距離下一站還有多遠。"
+            )
 
     def _refresh_status(self) -> None:
         """狀態欄只在內容真的變了才重寫。
 
-        每 50 毫秒無條件 ``SetValue`` 會讓螢幕閱讀器一直重讀同一段文字，也
-        會把插入點打回開頭，方向鍵逐行閱讀完全沒辦法用。現在欄位內容只在
-        玩家查詢時變動，因此實際上幾乎不會重寫。
+        每 50 毫秒無條件重設清單內容會讓螢幕閱讀器一直重讀同一句，也會把
+        選取打回開頭。現在內容只在玩家查詢時變動，因此實際上幾乎不會重寫。
         """
         status = self.session.last_status
         text = (
@@ -469,9 +611,7 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         if text == self._status_text:
             return
         self._status_text = text
-        insertion = self.status_ctrl.GetInsertionPoint()
-        self.status_ctrl.ChangeValue(text)
-        self.status_ctrl.SetInsertionPoint(min(insertion, len(text)))
+        self.status_ctrl.Set([text])
 
     # ------------------------------------------------------------------
     def _on_timer(self, _event) -> None:
@@ -485,6 +625,12 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
     def _on_key(self, event) -> None:
         token = _keycode_to_token(event)
         if token is None:
+            # 方向鍵、Home、End…：清單自己處理，玩家正在閱讀播報。
+            event.Skip()
+            return
+        if token in _NAVIGATION_KEYS and self.keymap.action_for(token) is None:
+            # Tab 與 F10 是視窗的巡覽鍵。把它們當成「未設定功能的按鍵」等於
+            # 每次換焦點都被唸一句無關的話。
             event.Skip()
             return
         result = self.dispatcher.dispatch(token)
@@ -492,7 +638,8 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
             # 每次按鍵都要有回饋（§7.2），與主控台一致。
             self.announcer.announce(_UNBOUND_KEY_TEXT, Priority.ACTION)
             self.announcer.flush()
-            event.Skip()
+            # 刻意不往下傳：清單會把字母鍵當成快速尋找而跳到別的項目，
+            # 玩家只是按錯鍵，不該因此失去閱讀位置。
             return
         # 狀態查詢鍵（V、G、N…）按下之後，狀態欄要換成剛剛播出去的那一項。
         self._refresh_status()
@@ -500,7 +647,68 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
 
     def _on_close(self, _event) -> None:
         self._pause()
+        self.braille_timer.Stop()
         self.frame.Destroy()
+
+    # ------------------------------------------------------------------
+    # 點字即時顯示（Alt＋Shift＋T）
+    # ------------------------------------------------------------------
+    def toggle_braille_monitor(self) -> None:
+        """開啟或關閉點字即時顯示。
+
+        沒有連接 NVDA 時明確說出原因，而不是靜靜地沒反應——每次按鍵都要有
+        回饋（§7.2），而且「沒有點字顯示器」與「功能壞了」是兩回事。
+        """
+        if self._braille is None:
+            self.announcer.announce(
+                "沒有連接 NVDA，無法使用點字顯示。所有資訊仍以文字提供。",
+                Priority.ACTION,
+            )
+            self.announcer.flush()
+            return
+
+        self.braille_monitor = not self.braille_monitor
+        if self.braille_monitor:
+            self.braille_timer.Start(_BRAILLE_MS)
+            self.announcer.announce(
+                "點字即時顯示已開啟：顯示距離下一站，接近停靠站時改顯示距離停車位置。",
+                Priority.NOTICE,
+            )
+            self.announcer.flush()
+            # 開啟的那一句才剛送去點字，等保留時間過了再換成即時內容。
+            self._update_braille_monitor()
+        else:
+            self.braille_timer.Stop()
+            self._braille_text = ""
+            self.announcer.announce("點字即時顯示已關閉。", Priority.NOTICE)
+            self.announcer.flush()
+
+    def _braille_announcement(self, text: str) -> None:
+        """把一則播報送到點字顯示器，並讓它停留一段時間。
+
+        沒有這段保留時間的話，即時顯示會在不到一秒內把訊息蓋掉，摸讀的人
+        根本來不及讀完。
+        """
+        if self._braille is None:
+            return
+        self._braille(text)
+        self._braille_hold_until = time.perf_counter() + _BRAILLE_HOLD_S
+
+    def _on_braille_timer(self, _event) -> None:
+        self._update_braille_monitor()
+
+    def _update_braille_monitor(self) -> None:
+        """重送即時顯示的內容。
+
+        每次都重送而不是只在文字變了才送：NVDA 把點字訊息當成暫時訊息，
+        過幾秒就會換回焦點的內容，不重送就消失了。
+        """
+        if not self.braille_monitor or self._braille is None:
+            return
+        if time.perf_counter() < self._braille_hold_until:
+            return
+        self._braille_text = self.session.braille_line()
+        self._braille(self._braille_text)
 
     # ------------------------------------------------------------------
     # 系統動作
@@ -686,6 +894,7 @@ def run_wx(
                 list_label="可駕駛的鐵路系統（上下鍵選擇，Enter 確認）",
                 search_label="搜尋",
                 accept_label="選擇",
+                speak=speak,
             ).ask()
             if system is None:
                 return 0
@@ -693,7 +902,7 @@ def run_wx(
 
         choices, make_session = open_system(system)
         if key is None:
-            key = ServicePicker(choices).ask()
+            key = ServicePicker(choices, speak=speak).ask()
             if key is None:
                 if not ask_system:
                     return 0

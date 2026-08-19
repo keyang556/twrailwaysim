@@ -17,6 +17,7 @@ import time
 from collections.abc import Callable
 
 from railway_sim.accessibility.announcer import Announcement, Announcer, Priority
+from railway_sim.accessibility.speech import speech_priority_for
 from railway_sim.input.keyboard import KeyDispatcher
 from railway_sim.input.keymap import Keymap
 from railway_sim.roles.driver import STATUS_ITEM_ACTIONS, DriverSession
@@ -25,6 +26,14 @@ __all__ = ["ConsoleApp", "read_key_nonblocking"]
 
 #: 主迴圈的實際更新間隔（秒）。
 _LOOP_INTERVAL_S = 0.05
+
+#: 點字即時顯示的更新間隔（秒）。
+#:
+#: NVDA 把點字訊息當成暫時訊息，過幾秒就換回焦點的內容，因此必須定期重送。
+_BRAILLE_INTERVAL_S = 0.7
+
+#: 一則播報在點字上停留多久（秒），期間不被即時顯示蓋掉。
+_BRAILLE_HOLD_S = 2.5
 
 #: 直接對應到具名按鍵的控制字元，不視為 Ctrl 組合。
 _CONTROL_CHAR_NAMES = {
@@ -133,6 +142,16 @@ class ConsoleApp:
         self.speak = speak
         self.running = True
 
+        # 螢幕閱讀器輸出可能只有語音，也可能連點字與優先級一起。用能力探測
+        # 而不是型別判斷，與視窗版一致。
+        self._braille: Callable[[str], bool] | None = getattr(speak, "braille", None)
+        self._speak_with_priority = getattr(speak, "speak", None)
+
+        #: 點字即時顯示是否開啟。
+        self.braille_monitor = False
+        self._braille_hold_until = 0.0
+        self._braille_next_s = 0.0
+
         self.announcer.sink = self._emit
         self.dispatcher = KeyDispatcher(keymap)
         self.dispatcher.register_all(session.action_handlers())  # type: ignore[arg-type]
@@ -141,14 +160,29 @@ class ConsoleApp:
                 "show_help": self.show_help,
                 "repeat_last": self.repeat_last,
                 "pause_menu": self.pause_menu,
+                "toggle_braille_monitor": self.toggle_braille_monitor,
             }
         )
 
     # ------------------------------------------------------------------
     def _emit(self, announcement: Announcement) -> None:
+        """一則播報同時進到畫面、語音與點字。
+
+        直接送給螢幕閱讀器而不是只印出來等它自己讀到：列車是即時的，而且
+        這樣才帶得了優先級——超速警告會插播，插播完 NVDA 會把被打斷的內容
+        接回去，不像 cancelSpeech 那樣整段丟掉。
+        """
         print(announcement.text, flush=True)
-        if self.speak is not None:
+        if self._speak_with_priority is not None:
+            self._speak_with_priority(
+                announcement.text,
+                priority=speech_priority_for(announcement.priority),
+            )
+        elif self.speak is not None:
             self.speak(announcement.text, announcement.priority >= Priority.SAFETY)
+        if self._braille is not None:
+            self._braille(announcement.text)
+            self._braille_hold_until = time.perf_counter() + _BRAILLE_HOLD_S
 
     def _say(self, text: str, priority: Priority = Priority.ACTION) -> None:
         self.announcer.announce(text, priority)
@@ -169,6 +203,39 @@ class ConsoleApp:
         if not self.announcer.repeat_last():
             self._say("目前沒有可重複的訊息。")
 
+    def toggle_braille_monitor(self) -> None:
+        """開啟或關閉點字即時顯示。
+
+        終端機收不到 Alt 組合鍵，因此主控台這邊實際上是由暫停選單呼叫；
+        動作本身仍然註冊在同一個代碼上，兩個介面提供的能力才一致（§25.5）。
+        """
+        if self._braille is None:
+            self._say("沒有連接 NVDA，無法使用點字顯示。所有資訊仍以文字提供。")
+            return
+        self.braille_monitor = not self.braille_monitor
+        if self.braille_monitor:
+            self._say(
+                "點字即時顯示已開啟：顯示距離下一站，接近停靠站時改顯示距離停車位置。",
+                Priority.NOTICE,
+            )
+        else:
+            self._say("點字即時顯示已關閉。", Priority.NOTICE)
+
+    def _update_braille_monitor(self) -> None:
+        """重送即時顯示的內容。
+
+        每次都重送而不是只在文字變了才送：NVDA 把點字訊息當成暫時訊息，
+        過幾秒就會換回焦點的內容，不重送就消失了。
+        """
+        if not self.braille_monitor or self._braille is None:
+            return
+        now = time.perf_counter()
+        if now < self._braille_hold_until or now < self._braille_next_s:
+            return
+        self._braille_next_s = now + _BRAILLE_INTERVAL_S
+        self._braille(self.session.braille_line())
+
+
     def pause_menu(self) -> None:
         """Esc：暫停選單。項目與視窗版一致（§25.5）。"""
         print("\n===== 暫停選單 =====", flush=True)
@@ -176,8 +243,9 @@ class ConsoleApp:
         print("2：快捷鍵說明", flush=True)
         print("3：列車狀態", flush=True)
         print("4：狀態查詢（單一項目）", flush=True)
-        print("5：離開遊戲", flush=True)
-        print("請按 1 到 5。", flush=True)
+        print(f"5：點字即時顯示（目前{'開啟' if self.braille_monitor else '關閉'}）", flush=True)
+        print("6：離開遊戲", flush=True)
+        print("請按 1 到 6。", flush=True)
 
         while True:
             key = read_key_nonblocking()
@@ -194,11 +262,13 @@ class ConsoleApp:
             elif key == "4":
                 self.status_menu()
             elif key == "5":
+                self.toggle_braille_monitor()
+            elif key == "6":
                 self.running = False
                 print("離開遊戲。", flush=True)
                 return
             else:
-                print("請按 1 到 5。", flush=True)
+                print("請按 1 到 6。", flush=True)
 
     def status_menu(self) -> None:
         """狀態查詢選單。
@@ -250,6 +320,7 @@ class ConsoleApp:
             self.session.advance(now - last)
             last = now
             self.announcer.flush()
+            self._update_braille_monitor()
 
             key = read_key_nonblocking()
             if key is not None:
