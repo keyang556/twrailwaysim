@@ -174,6 +174,10 @@ class TestBrailleMonitor:
         app.toggle_braille_monitor()
         assert app.braille_monitor is True
 
+        reader.available = False
+        app.toggle_braille_monitor()
+        assert app.braille_monitor is False
+
 
 class TestPauseMenu:
     """暫停選單多了點字那一項，離開遊戲跟著換號碼。"""

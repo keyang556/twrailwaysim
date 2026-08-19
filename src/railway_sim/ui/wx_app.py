@@ -670,6 +670,16 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         沒有連接 NVDA 時明確說出原因，而不是靜靜地沒反應——每次按鍵都要有
         回饋（§7.2），而且「沒有點字顯示器」與「功能壞了」是兩回事。
         """
+        if self.braille_monitor:
+            # 關閉必須不依賴 NVDA 的連線狀態：使用者可能正是因為 NVDA 中途
+            # 關閉，才要停止日後恢復連線時重新送出的即時點字。
+            self.braille_monitor = False
+            self.braille_timer.Stop()
+            self._braille_text = ""
+            self.announcer.announce("點字即時顯示已關閉。", Priority.NOTICE)
+            self.announcer.flush()
+            return
+
         if self._braille is None or not self._screen_reader_available():
             self.announcer.announce(
                 "沒有連接 NVDA，無法使用點字顯示。所有資訊仍以文字提供。",
@@ -678,21 +688,15 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
             self.announcer.flush()
             return
 
-        self.braille_monitor = not self.braille_monitor
-        if self.braille_monitor:
-            self.braille_timer.Start(_BRAILLE_MS)
-            self.announcer.announce(
-                "點字即時顯示已開啟：顯示距離下一站，接近停靠站時改顯示距離停車位置。",
-                Priority.NOTICE,
-            )
-            self.announcer.flush()
-            # 開啟的那一句才剛送去點字，等保留時間過了再換成即時內容。
-            self._update_braille_monitor()
-        else:
-            self.braille_timer.Stop()
-            self._braille_text = ""
-            self.announcer.announce("點字即時顯示已關閉。", Priority.NOTICE)
-            self.announcer.flush()
+        self.braille_monitor = True
+        self.braille_timer.Start(_BRAILLE_MS)
+        self.announcer.announce(
+            "點字即時顯示已開啟：顯示距離下一站，接近停靠站時改顯示距離停車位置。",
+            Priority.NOTICE,
+        )
+        self.announcer.flush()
+        # 開啟的那一句才剛送去點字，等保留時間過了再換成即時內容。
+        self._update_braille_monitor()
 
     def _braille_announcement(self, text: str) -> None:
         """把一則播報送到點字顯示器，並讓它停留一段時間。
