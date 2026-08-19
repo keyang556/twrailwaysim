@@ -562,6 +562,17 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         elif self.speak is not None:
             self.speak(text, priority >= Priority.SAFETY)
 
+    def _screen_reader_available(self) -> bool:
+        """查詢目前連線狀態，而非把 backend 物件存在當成已連線。"""
+        if self.speak is None:
+            return False
+        available = getattr(self.speak, "available", None)
+        return (
+            True
+            if available is None
+            else bool(available() if callable(available) else available)
+        )
+
     def _append_log(self, text: str) -> None:
         """把一則播報加到播報清單。
 
@@ -659,7 +670,7 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         沒有連接 NVDA 時明確說出原因，而不是靜靜地沒反應——每次按鍵都要有
         回饋（§7.2），而且「沒有點字顯示器」與「功能壞了」是兩回事。
         """
-        if self._braille is None:
+        if self._braille is None or not self._screen_reader_available():
             self.announcer.announce(
                 "沒有連接 NVDA，無法使用點字顯示。所有資訊仍以文字提供。",
                 Priority.ACTION,
@@ -689,7 +700,7 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         沒有這段保留時間的話，即時顯示會在不到一秒內把訊息蓋掉，摸讀的人
         根本來不及讀完。
         """
-        if self._braille is None:
+        if self._braille is None or not self._screen_reader_available():
             return
         self._braille(text)
         self._braille_hold_until = time.perf_counter() + _BRAILLE_HOLD_S
@@ -703,7 +714,11 @@ class DriverFrame:  # pragma: no cover - 需要圖形環境
         每次都重送而不是只在文字變了才送：NVDA 把點字訊息當成暫時訊息，
         過幾秒就會換回焦點的內容，不重送就消失了。
         """
-        if not self.braille_monitor or self._braille is None:
+        if (
+            not self.braille_monitor
+            or self._braille is None
+            or not self._screen_reader_available()
+        ):
             return
         if time.perf_counter() < self._braille_hold_until:
             return

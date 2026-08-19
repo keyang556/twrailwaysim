@@ -78,6 +78,11 @@ $distDirectory = Join-Path $projectRoot "dist"
 $workDirectory = Join-Path $projectRoot "build\pyinstaller"
 $applicationDirectory = Join-Path $distDirectory "twrailwaysim"
 $installerOutputDirectory = Join-Path $distDirectory "installer"
+# PyInstaller 6's onedir layout stores application data beneath _internal.
+$applicationContentDirectory = Join-Path $applicationDirectory "_internal"
+$bundledNvdaControllerClient = Join-Path $applicationContentDirectory "railway_sim\lib\nvdaControllerClient.dll"
+$sourceNvdaControllerClient = Join-Path $projectRoot "third_party\nvda-controller-client\2026.1.1\nvdaControllerClient.dll"
+$bundledNvdaControllerLicense = Join-Path $applicationContentDirectory "third_party_licenses\nvda-controller-client\license.txt"
 
 foreach ($requiredPath in @($projectFile, $specFile, $installerScript)) {
     if (-not (Test-Path -LiteralPath $requiredPath)) {
@@ -127,6 +132,25 @@ foreach ($executable in @($consoleExecutable, $guiExecutable)) {
     }
 }
 
+# The Controller Client is an application dependency, not something we search
+# for in an NVDA installation. Verify both its precise destination and its
+# provenance before producing a portable directory or installer.
+if (-not (Test-Path -LiteralPath $sourceNvdaControllerClient -PathType Leaf)) {
+    throw "Reviewed NVDA Controller Client source file is missing: $sourceNvdaControllerClient"
+}
+foreach ($requiredFile in @($bundledNvdaControllerClient, $bundledNvdaControllerLicense)) {
+    if (-not (Test-Path -LiteralPath $requiredFile -PathType Leaf)) {
+        throw "PyInstaller did not produce the required NVDA Controller Client file: $requiredFile"
+    }
+}
+$bundledControllerClients = @(Get-ChildItem -LiteralPath $applicationDirectory -Recurse -File -Filter "nvdaControllerClient.dll")
+if ($bundledControllerClients.Count -ne 1 -or $bundledControllerClients[0].FullName -ne (Resolve-Path -LiteralPath $bundledNvdaControllerClient).Path) {
+    throw "Portable build must contain exactly one nvdaControllerClient.dll at railway_sim\\lib."
+}
+if ((Get-FileHash -LiteralPath $sourceNvdaControllerClient -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath $bundledNvdaControllerClient -Algorithm SHA256).Hash) {
+    throw "The bundled NVDA Controller Client does not match the reviewed source artifact."
+}
+
 # Exercise all non-interactive commands after freezing so the build fails when
 # data files, the entry point, or bundled imports are missing.
 $reportedVersion = (& $consoleExecutable "--version" | Out-String).Trim()
@@ -138,6 +162,7 @@ if ($reportedVersion -ne "railway-sim $projectVersion") {
 }
 Invoke-NativeChecked $consoleExecutable @("--check")
 Invoke-NativeChecked $consoleExecutable @("--list-scenarios")
+Invoke-NativeChecked $consoleExecutable @("--check-nvda-controller")
 Invoke-NativeChecked $guiExecutable @("--check-gui")
 
 if ($SkipInstaller) {

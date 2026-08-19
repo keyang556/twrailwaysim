@@ -264,11 +264,12 @@ python -m railway_sim --ui wx
 
 ### 螢幕閱讀器輸出（NVDA）
 
-若套件的 `lib` 目錄裡有 NVDA 官方的 `nvdaControllerClient.dll`（舊版檔名
-`nvdaControllerClient64.dll` 也認）且 NVDA 正在執行，播報會**直接送給 NVDA 的
-語音與點字**，不必等螢幕閱讀器自己發現畫面變了。本專案不散布該 DLL，
-**此路徑未在開發環境中實測**；沒有它時所有資訊仍以純文字完整呈現，遊戲功能
-不受影響（§20.1）。
+Windows x64 發行版會在套件的 `railway_sim/lib` 內附上 NVDA 官方
+`nvdaControllerClient.dll`（NVDA 2026.1.1、LGPL-2.1），播報便會**直接送給
+NVDA 的語音與點字**，不必等螢幕閱讀器自己發現畫面變了。DLL 能載入時，遊戲會
+保留後端並以 `testIfRunning` 動態判斷 NVDA 是否已連線：因此可以先開遊戲再開
+NVDA，也能在 NVDA 重啟後自動恢復。沒有 DLL 或沒有 NVDA 時所有資訊仍以純文字
+完整呈現，遊戲功能不受影響（§20.1）。
 
 能力是**逐一探測**出來的，缺哪一項就少用哪一項，不比對版本號：
 

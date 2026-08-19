@@ -12,7 +12,7 @@ from dataclasses import dataclass
 
 from railway_sim import __version__
 from railway_sim.accessibility.announcer import Announcer
-from railway_sim.accessibility.speech import create_screen_reader
+from railway_sim.accessibility.speech import NvdaController, create_screen_reader
 from railway_sim.audio.player import AudioPlayer, create_player
 from railway_sim.data_loader import GameData, load_game_data
 from railway_sim.input.keymap import Keymap
@@ -442,6 +442,11 @@ def _build_parser() -> argparse.ArgumentParser:
         help="只執行資料驗證與鍵位衝突檢查後結束，不啟動遊戲。",
     )
     parser.add_argument(
+        "--check-nvda-controller",
+        action="store_true",
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument(
         "--list-scenarios", action="store_true", help="列出可用情境後結束。"
     )
     parser.add_argument(
@@ -481,6 +486,17 @@ def main(argv: list[str] | None = None) -> int:
         # disposable import while avoiding a window in automated smoke tests.
         _ = run_wx
         print(f"wxPython {wx.version()} is available.")
+        return 0
+
+    if args.check_nvda_controller:
+        controller = NvdaController()
+        if not controller.client_loaded:
+            print("NVDA Controller Client could not be loaded.", file=sys.stderr)
+            return 2
+        # A release build must be able to load its DLL even when NVDA is not
+        # running in CI. Connection state stays dynamic at game runtime.
+        connection = "connected" if controller.available else "not connected"
+        print(f"NVDA Controller Client loaded ({connection}).")
         return 0
 
     if args.list_scenarios:
