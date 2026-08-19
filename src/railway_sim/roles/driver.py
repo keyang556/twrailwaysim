@@ -200,6 +200,14 @@ class DriverSession:
     _aligning_stop: StationProgress | None = field(default=None, init=False, repr=False)
     """剛停妥、還可以前進修正停車位置的那一站。離開停車範圍後歸零。"""
 
+    _departed_aligning_stop: bool = field(default=False, init=False, repr=False)
+    """``_aligning_stop`` 這一站是否已經開始離站。
+
+    離站後在停車範圍內若因號誌或緊急制軔等原因再次停下，``is_stopped``
+    會重新變成真，但那不是回到同一次對位——一旦觀測到列車動過，這個旗標
+    就不會再歸假，直到下一站重新停妥為止（見 :meth:`stop_alignment_target`）。
+    """
+
     # ------------------------------------------------------------------
     # 建立
     # ------------------------------------------------------------------
@@ -821,12 +829,13 @@ class DriverSession:
         停靠站。少了前者，司機一停妥、車站被標記為已服務，查詢就會跳到下
         一站——正想微調位置的人反而問不到自己站在哪裡。
 
-        但只在**列車仍停著**時才這樣看：一旦開始移動就是要離站，查詢與
-        點字應立刻改報下一站，不必等走出停車範圍。`_aligning_stop` 本身
-        繼續保留給 :meth:`_handle_realignment`，讓列車若在範圍內再次停妥
-        時仍能算出正確的誤差。
+        但一旦離站就不會再回頭看它，即使列車在停車範圍內因號誌或緊急制軔
+        等原因再次停下也一樣——``_departed_aligning_stop`` 是單向的旗標，
+        不是看當下是否靜止（見該欄位的說明）。`_aligning_stop` 本身繼續
+        保留給 :meth:`_handle_realignment`，讓還沒離站的前進修正仍能算出
+        正確的誤差。
         """
-        if self._aligning_stop is not None and self.train.is_stopped:
+        if self._aligning_stop is not None and not self._departed_aligning_stop:
             return self._aligning_stop
         return self.next_scheduled_stop()
 
@@ -915,8 +924,10 @@ class DriverSession:
         月台標記的司機每動一次都需要知道現在差多少，否則修正等於盲猜。
 
         修正**不會**改變已經判定的停靠結果（車站仍是已服務），只更新記錄下來
-        的誤差並重新播報。離開停車範圍就結束修正——那已經是「開走了」，不是
-        在對位。
+        的誤差並重新播報。列車一開始移動就視為離站，即使之後在停車範圍內因
+        號誌或緊急制軔等原因又停下，也不會恢復成在對位（見
+        :data:`_departed_aligning_stop`）；車頭真的離開停車範圍時才把整個
+        狀態歸零。
         """
         progress = self._aligning_stop
         if progress is None:
@@ -925,8 +936,16 @@ class DriverSession:
         offset = self.train.position_m - progress.position_m
         if abs(offset) > STOP_WINDOW_M:
             self._aligning_stop = None
+            self._departed_aligning_stop = False
             return
         if not self.train.is_stopped:
+            # 列車動了就是離站，之後即使在範圍內又停下也不算回到這次對位
+            # （見 :data:`_departed_aligning_stop` 與 :meth:`stop_alignment_target`）。
+            self._departed_aligning_stop = True
+            return
+        if self._departed_aligning_stop:
+            # 已經離站後又在範圍內停下（號誌、緊急制軔……），不是回來對位，
+            # 不該再報一次「這一站修正後」。
             return
 
         previous = progress.stop_offset_m
@@ -947,6 +966,7 @@ class DriverSession:
             # 停妥不是對位的結束：還在停車範圍內就仍可前進修正（見
             # :meth:`_handle_realignment`）。
             self._aligning_stop = progress
+            self._departed_aligning_stop = False
             self.announcer.announce(
                 msg.station_arrival(progress.name_zh_tw, offset), Priority.NOTICE
             )

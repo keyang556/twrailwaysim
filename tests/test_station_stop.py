@@ -480,11 +480,48 @@ class TestStopAlignment:
 
         session.train.position_m = lilin.position_m + 0.5
         session.train.current_speed_kmh = 20.0
+        session._handle_realignment()
 
         assert session.stop_alignment_target() is next_target
         assert "栗林" not in session.status_item("stop_point").text
         assert "栗林" not in session.braille_line()
         assert session._aligning_stop is progress
+
+    def test_stopping_again_after_departing_does_not_revert_to_the_old_target(
+        self, game_data: GameData
+    ) -> None:
+        """離站後若在停車範圍內因號誌或緊急制軔又停下，不該又跳回上一站。
+
+        只看「目前是否靜止」在這裡會出錯：號誌或緊急制軔可能讓列車在還沒
+        走出五十公尺的停車範圍前又停下來，那不是回到同一次對位，查詢與
+        點字仍該看下一個預定停靠站，也不該再報一次「這一站修正後」。
+        """
+        session = make_session(game_data, LOCAL_SERVICE)
+        lilin = session.route.stop_for_station("LILIN")
+        assert lilin is not None
+
+        session.train.position_m = lilin.position_m - 4.0
+        session.tick(0.1)
+        session.announcer.flush()
+        session.announcer.clear_history()
+
+        next_target = session.next_scheduled_stop()
+        assert next_target is not None
+
+        # 離站：短暫移動後又在範圍內停下（例如遇到號誌）。
+        session.train.position_m = lilin.position_m + 0.5
+        session.train.current_speed_kmh = 20.0
+        session._handle_realignment()
+        assert session.stop_alignment_target() is next_target
+
+        session.train.current_speed_kmh = 0.0
+        session._handle_realignment()
+        session.announcer.flush()
+
+        assert session.stop_alignment_target() is next_target
+        assert "栗林" not in session.status_item("stop_point").text
+        assert "栗林" not in session.braille_line()
+        assert not any("修正後" in t for t in session.announcer.texts())
 
 
 class TestBrailleLine:
