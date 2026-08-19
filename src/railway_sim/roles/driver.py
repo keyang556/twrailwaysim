@@ -820,8 +820,13 @@ class DriverSession:
         正在修正停車位置時就是**已經停妥的那一站**，其餘時候是前方第一個
         停靠站。少了前者，司機一停妥、車站被標記為已服務，查詢就會跳到下
         一站——正想微調位置的人反而問不到自己站在哪裡。
+
+        但只在**列車仍停著**時才這樣看：一旦開始移動就是要離站，查詢與
+        點字應立刻改報下一站，不必等走出停車範圍。`_aligning_stop` 本身
+        繼續保留給 :meth:`_handle_realignment`，讓列車若在範圍內再次停妥
+        時仍能算出正確的誤差。
         """
-        if self._aligning_stop is not None:
+        if self._aligning_stop is not None and self.train.is_stopped:
             return self._aligning_stop
         return self.next_scheduled_stop()
 

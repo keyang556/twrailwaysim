@@ -456,6 +456,36 @@ class TestStopAlignment:
         session.tick(0.1)
         assert session._aligning_stop is None
 
+    def test_departing_switches_the_target_before_leaving_the_window(
+        self, game_data: GameData
+    ) -> None:
+        """一開始移動就該改看下一站，不必等走出五十公尺的停車範圍。
+
+        `_aligning_stop` 仍要保留給 :meth:`_handle_realignment`，但查詢與
+        點字不該繼續指向已經離開的車站——否則離站後這段距離裡問的都是
+        剛剛停過的那一站，而不是接下來要停的站。
+        """
+        session = make_session(game_data, LOCAL_SERVICE)
+        lilin = session.route.stop_for_station("LILIN")
+        assert lilin is not None
+        progress = next(p for p in session.stations if p.station_id == "LILIN")
+
+        session.train.position_m = lilin.position_m - 4.0
+        session.tick(0.1)
+        assert session._aligning_stop is progress
+
+        next_target = session.next_scheduled_stop()
+        assert next_target is not None
+        assert next_target.station_id != "LILIN"
+
+        session.train.position_m = lilin.position_m + 0.5
+        session.train.current_speed_kmh = 20.0
+
+        assert session.stop_alignment_target() is next_target
+        assert "栗林" not in session.status_item("stop_point").text
+        assert "栗林" not in session.braille_line()
+        assert session._aligning_stop is progress
+
 
 class TestBrailleLine:
     """點字即時顯示的內容（Alt＋Shift＋T）。
