@@ -39,6 +39,7 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
+from typing import Any
 
 from railway_sim.data_loader import default_data_dir, load_game_data
 from railway_sim.dataset.build import build_dataset, write_dataset
@@ -104,7 +105,9 @@ def _run_mrt(args: argparse.Namespace, data_dir: Path) -> int:
 
     兩個來源各管各的：``--source`` 是維基百科條目（車站、路網、營運模式），
     ``--timetables`` 是北市府資料平台的逐班時刻。兩個都給時先重建資料集再
-    補時刻——順序反過來的話，重建會把剛補上的時刻蓋掉。
+    補時刻——順序反過來的話，重建會把剛補上的時刻蓋掉。``--dry-run`` 時
+    重建不會寫入磁碟，因此把這次建出的候選資料直接遞給補時刻那一步比對，
+    不能讓它去讀磁碟上還沒更新的舊檔，否則預覽會跟真的執行對不起來。
 
     報告、``--dry-run`` 與寫入前的驗證流程與臺鐵那一路完全相同，因此使用者
     兩邊記同一組用法就夠。
@@ -114,15 +117,19 @@ def _run_mrt(args: argparse.Namespace, data_dir: Path) -> int:
               file=sys.stderr)
         return 2
 
+    built_timetables: dict[str, Any] | None = None
     if args.source:
-        code = _run_mrt_dataset(args, data_dir)
+        code, built_timetables = _run_mrt_dataset(args, data_dir)
         if code != 0:
             return code
 
     if args.timetables:
-        code = _run_mrt_timetables(args, data_dir)
+        code = _run_mrt_timetables(args, data_dir, built_timetables)
         if code != 0:
             return code
+
+    if args.dry_run:
+        return 0
 
     data = load_game_data(data_dir.parent, system="mrt")
     scheduled = sum(1 for s in data.services.values() if s.schedule is not None)
@@ -134,13 +141,21 @@ def _run_mrt(args: argparse.Namespace, data_dir: Path) -> int:
     return 0
 
 
-def _run_mrt_dataset(args: argparse.Namespace, data_dir: Path) -> int:
-    """由維基百科條目重建捷運資料集。"""
+def _run_mrt_dataset(
+    args: argparse.Namespace, data_dir: Path
+) -> tuple[int, dict[str, Any] | None]:
+    """由維基百科條目重建捷運資料集。
+
+    回傳值的第二項是這次建出的候選 timetables 內容；``--dry-run`` 時沒有
+    寫入磁碟，接著要補 ``--timetables`` 的話得靠它比對（見 :func:`_run_mrt`）。
+    非 dry-run 或失敗時一律是 ``None``：前者已經寫入磁碟，後續步驟直接讀
+    磁碟即可；後者不會再有後續步驟。
+    """
     try:
         result = build_mrt_dataset(args.source, data_dir)
     except (FileNotFoundError, MrtBuildError) as exc:
         print(f"匯入失敗：{exc}", file=sys.stderr)
-        return 2
+        return 2, None
 
     for line in result.report:
         print(line)
@@ -149,27 +164,37 @@ def _run_mrt_dataset(args: argparse.Namespace, data_dir: Path) -> int:
 
     if args.dry_run:
         print("\n--dry-run：未寫入任何檔案。")
-        return 0
+        return 0, result.timetables
 
     try:
         written = write_mrt_dataset(result, data_dir)
     except ValueError as exc:
         print(f"\n{exc}", file=sys.stderr)
-        return 1
+        return 1, None
     except (FileNotFoundError, OSError) as exc:
         print(f"\n寫入失敗：{exc}", file=sys.stderr)
-        return 2
+        return 2, None
 
     print("\n已寫入：")
     for path in written:
         print(f"  {path}")
-    return 0
+    return 0, None
 
 
-def _run_mrt_timetables(args: argparse.Namespace, data_dir: Path) -> int:
-    """把北市府資料平台的逐班時刻補進班次。"""
+def _run_mrt_timetables(
+    args: argparse.Namespace,
+    data_dir: Path,
+    existing_payload: dict[str, Any] | None = None,
+) -> int:
+    """把北市府資料平台的逐班時刻補進班次。
+
+    ``existing_payload`` 有值時（``--source`` 與 ``--dry-run`` 一起給），
+    比對用這次重建出的候選資料，不讀磁碟（見 :func:`build_mrt_timetables`）。
+    """
     try:
-        result = build_mrt_timetables(args.timetables, data_dir)
+        result = build_mrt_timetables(
+            args.timetables, data_dir, existing_payload=existing_payload
+        )
     except (FileNotFoundError, MrtTimetableError, UnicodeDecodeError) as exc:
         print(f"時刻表匯入失敗：{exc}", file=sys.stderr)
         return 2

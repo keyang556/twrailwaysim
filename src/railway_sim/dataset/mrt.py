@@ -234,6 +234,7 @@ def build_mrt_dataset(source_dir: str | Path, data_dir: str | Path) -> MrtBuildR
     known_classes = {c["id"] for c in trains.get("service_classes", ())}
 
     existing_times = _existing_departure_times(target)
+    existing_timetable_meta = _existing_timetable_meta(target)
 
     stations: dict[str, dict[str, Any]] = {}
     nodes: list[dict[str, Any]] = []
@@ -421,10 +422,21 @@ def build_mrt_dataset(source_dir: str | Path, data_dir: str | Path) -> MrtBuildR
     return MrtBuildResult(
         stations=_stations_payload(stations),
         routes=_routes_payload(lines, nodes, links, routes),
-        timetables=_timetables_payload(services),
+        timetables=_timetables_payload(services, existing_timetable_meta),
         report=report,
         warnings=warnings,
     )
+
+
+def _load_previous_timetables(data_dir: Path) -> dict[str, Any]:
+    """讀出現有的 ``timetables.json``；沒有或壞掉就當作空的。"""
+    path = data_dir / "timetables.json"
+    if not path.is_file():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
 
 
 def _existing_departure_times(
@@ -439,14 +451,7 @@ def _existing_departure_times(
     比對鍵包含**停靠站**：停靠站變了就表示這個營運模式已經不是同一回事，
     舊的時刻對不上新的路線，那時寧可留白也不能沿用。
     """
-    path = data_dir / "timetables.json"
-    if not path.is_file():
-        return {}
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return {}
-
+    payload = _load_previous_timetables(data_dir)
     carried: dict[tuple[str, tuple[str, ...]], dict[str, Any]] = {}
     for service in payload.get("services", ()):
         if not service.get("departure_times"):
@@ -460,6 +465,16 @@ def _existing_departure_times(
             kept["schedule"] = service["schedule"]
         carried[key] = kept
     return carried
+
+
+def _existing_timetable_meta(data_dir: Path) -> dict[str, Any]:
+    """讀出現有 ``timetables.json`` 的 meta，供保留時刻表匯入留下的來源資訊用。
+
+    見 :func:`_timetables_payload`：這次重建若還留著時刻表匯入補上的
+    ``departure_times``，說明這些時刻從哪來的 ``timetable_sources`` 等欄位
+    也該一併留著，不能被條目匯入的通用 meta 蓋掉。
+    """
+    return _load_previous_timetables(data_dir).get("meta", {})
 
 
 def _adjacency(spec: LineSpec) -> dict[str, list[str]]:
@@ -561,22 +576,43 @@ def _routes_payload(
     }
 
 
-def _timetables_payload(services: list[dict[str, Any]]) -> dict[str, Any]:
-    return {
-        "meta": {
-            "description": "捷運營運模式。捷運不公布逐班時刻，因此這裡是「模式」而不是時刻表。",
-            "number_policy": (
-                "車次為本專案自訂：路線代號加四位數，奇數為去程、偶數為回程。"
-                "捷運沒有對外公布的車次編號，因此不假裝有。"
-            ),
-            "timetable_policy": (
-                "發車時刻不在條目裡，由 railway_sim.dataset.mrt_timetable 另外"
-                "匯入；重建資料集時會保留已匯入的時刻（停靠站沒變的話）。"
-            ),
-            "provenance": {"source": "維基百科各線條目的列車營運模式章節", "generator": "railway_sim.dataset.mrt"},
-        },
-        "services": services,
+def _timetables_payload(
+    services: list[dict[str, Any]], existing_meta: dict[str, Any] | None = None
+) -> dict[str, Any]:
+    """組出 ``timetables.json`` 的內容。
+
+    這次重建若保留了時刻表匯入補上的 ``departure_times``（見
+    :func:`_existing_departure_times`），說明這些時刻來源的欄位
+    （``timetable_sources``、``provenance.timetable_source`` 等，由
+    :mod:`railway_sim.dataset.mrt_timetable` 寫入）也要一併留下來，否則
+    寫出來的檔案會一邊帶著真實時刻、一邊在 meta 裡宣稱「捷運不公布逐班
+    時刻」，自相矛盾也遺失了時刻的出處。
+    """
+    meta: dict[str, Any] = {
+        "description": "捷運營運模式。捷運不公布逐班時刻，因此這裡是「模式」而不是時刻表。",
+        "number_policy": (
+            "車次為本專案自訂：路線代號加四位數，奇數為去程、偶數為回程。"
+            "捷運沒有對外公布的車次編號，因此不假裝有。"
+        ),
+        "timetable_policy": (
+            "發車時刻不在條目裡，由 railway_sim.dataset.mrt_timetable 另外"
+            "匯入；重建資料集時會保留已匯入的時刻（停靠站沒變的話）。"
+        ),
+        "provenance": {"source": "維基百科各線條目的列車營運模式章節", "generator": "railway_sim.dataset.mrt"},
     }
+
+    if existing_meta and any(service.get("departure_times") for service in services):
+        for key in ("description", "timetable_policy", "timetable_sources"):
+            if key in existing_meta:
+                meta[key] = existing_meta[key]
+        existing_provenance = existing_meta.get("provenance", {})
+        provenance = dict(meta["provenance"])
+        for key in ("timetable_source", "timetable_generator"):
+            if key in existing_provenance:
+                provenance[key] = existing_provenance[key]
+        meta["provenance"] = provenance
+
+    return {"meta": meta, "services": services}
 
 
 def write_mrt_dataset(result: MrtBuildResult, data_dir: str | Path) -> list[Path]:

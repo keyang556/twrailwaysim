@@ -20,6 +20,7 @@ import pytest
 from railway_sim.dataset.mrt_timetable import (
     MrtTimetableError,
     RouteTimetable,
+    TimetableImportResult,
     build_match,
     build_mrt_timetables,
     chain_trip,
@@ -317,6 +318,58 @@ class TestRebuildKeepsTimes:
 
         assert _existing_departure_times(tmp_path) == {}
 
+    def test_meta_carries_forward_the_timetable_provenance(self) -> None:
+        """時刻留著了，說明時刻來源的欄位不能被條目匯入的通用 meta 蓋掉。
+
+        否則寫出來的檔案會一邊帶著真實時刻、一邊在 meta 裡宣稱「捷運不公布
+        逐班時刻」，自相矛盾也遺失了 timetable_sources 這份出處紀錄。
+        """
+        from railway_sim.dataset.mrt import _timetables_payload
+
+        existing_meta = {
+            "description": "捷運營運模式。有公布逐班時刻的路線帶有實際發車時刻。",
+            "timetable_policy": "departure_times 取自來源時刻表的當天第一班。",
+            "timetable_sources": [{"file": "板南線平日.csv", "service_days": "平日"}],
+            "provenance": {
+                "source": "維基百科各線條目的列車營運模式章節",
+                "generator": "railway_sim.dataset.mrt",
+                "timetable_source": "臺北市政府資料平台　捷運各線時刻表（北市平台版）",
+                "timetable_generator": "railway_sim.dataset.mrt_timetable",
+            },
+        }
+        services = [
+            {
+                "train_number": "BL1001",
+                "stop_station_ids": ["BL01"],
+                "departure_times": {"BL01": "06:00"},
+            }
+        ]
+
+        meta = _timetables_payload(services, existing_meta)["meta"]
+
+        assert "不公布" not in meta["description"]
+        assert meta["timetable_sources"] == existing_meta["timetable_sources"]
+        assert meta["provenance"]["timetable_generator"] == "railway_sim.dataset.mrt_timetable"
+        # 條目匯入自己的出處說明也要留著，不是整段被時刻表那邊蓋過去。
+        assert meta["provenance"]["generator"] == "railway_sim.dataset.mrt"
+
+    def test_meta_stays_generic_when_nothing_was_carried_over(self) -> None:
+        """沒有任何班次留著時刻時，不該平白冒出時刻表的來源說明。"""
+        from railway_sim.dataset.mrt import _timetables_payload
+
+        existing_meta = {
+            "timetable_sources": [{"file": "板南線平日.csv"}],
+            "provenance": {"timetable_generator": "railway_sim.dataset.mrt_timetable"},
+        }
+        services = [
+            {"train_number": "BL1001", "stop_station_ids": ["BL01"], "departure_times": {}}
+        ]
+
+        meta = _timetables_payload(services, existing_meta)["meta"]
+
+        assert "不公布" in meta["description"]
+        assert "timetable_sources" not in meta
+
 
 class TestBuildingIntoTheDataset:
     """把時刻併進 ``timetables.json`` 的那一步。"""
@@ -425,6 +478,130 @@ class TestBuildingIntoTheDataset:
         with pytest.raises(MrtTimetableError, match="沒有 CSV"):
             build_mrt_timetables(empty, data_dir)
 
+    def test_existing_payload_is_matched_against_instead_of_the_file_on_disk(
+        self, tmp_path
+    ) -> None:
+        """``--source`` 與 ``--dry-run`` 合併執行時，磁碟還是重建前的舊檔。
+
+        這時要比對的是這次重建出、還沒寫入的候選資料——給了 ``existing_payload``
+        就不能再去讀磁碟，否則預覽會用錯資料（見
+        ``railway_sim.dataset.__main__._run_mrt``）。
+        """
+        # 磁碟上的舊檔停靠站對不上來源；若被誤讀，這一班就會落在 unmatched。
+        data_dir = self._dataset(
+            tmp_path,
+            [
+                {
+                    "train_number": "T1001",
+                    "stop_station_ids": ["Z01", "Z02"],
+                    "departure_times": {},
+                    "arrival_times": {},
+                }
+            ],
+        )
+        fresh_payload = {
+            "meta": {},
+            "services": [
+                {
+                    "train_number": "T1001",
+                    "stop_station_ids": ["A01", "A02", "A03", "A04"],
+                    "departure_times": {},
+                    "arrival_times": {},
+                }
+            ],
+        }
+
+        result = build_mrt_timetables(
+            self._source(tmp_path), data_dir, existing_payload=fresh_payload
+        )
+
+        assert result.unmatched == []
+        assert result.timetables["services"][0]["departure_times"]["A01"] == "06:00"
+        assert result.timetables is fresh_payload
+
+
+class TestCombinedCliDryRun:
+    """CLI 合併 ``--source`` 與 ``--timetables`` 且 ``--dry-run`` 時的預覽。
+
+    重建那一步在 dry-run 下不寫入磁碟，補時刻那一步因此不能照舊去讀
+    磁碟上的 ``timetables.json``——那是重建前的舊資料，讀了會得到跟真的
+    執行不一致的預覽（見 ``railway_sim.dataset.__main__._run_mrt``）。
+    """
+
+    def test_the_rebuilt_candidate_is_forwarded_to_the_timetable_step(
+        self, tmp_path, monkeypatch
+    ) -> None:
+        from railway_sim.dataset import __main__ as cli
+        from railway_sim.dataset.mrt import MrtBuildResult
+
+        built_timetables = {"meta": {}, "services": [{"train_number": "FRESH"}]}
+        seen: list[dict | None] = []
+
+        def fake_build_mrt_dataset(source_dir, out_dir):
+            return MrtBuildResult(
+                stations={}, routes={}, timetables=built_timetables, report=["建置完成"]
+            )
+
+        def fake_build_mrt_timetables(source_dir, out_dir, *, existing_payload=None):
+            seen.append(existing_payload)
+            return TimetableImportResult(
+                timetables=existing_payload if existing_payload is not None else {},
+                report=["時刻比對完成"],
+            )
+
+        monkeypatch.setattr(cli, "build_mrt_dataset", fake_build_mrt_dataset)
+        monkeypatch.setattr(cli, "build_mrt_timetables", fake_build_mrt_timetables)
+
+        code = cli.main(
+            [
+                "--system",
+                "mrt",
+                "--source",
+                str(tmp_path / "wiki"),
+                "--timetables",
+                str(tmp_path / "csv"),
+                "--out",
+                str(tmp_path),
+                "--dry-run",
+            ]
+        )
+
+        # 這裡若沒有先擋掉最後的驗證摘要，main() 會接著去讀 tmp_path 底下
+        # 根本不存在的正式資料檔而整個失敗——能跑到這裡就同時證明了
+        # dry-run 不會再做那一次多餘的驗證。
+        assert code == 0
+        assert seen == [built_timetables]
+
+    def test_run_mrt_dataset_only_returns_the_candidate_when_dry_run(
+        self, tmp_path, monkeypatch
+    ) -> None:
+        """非 dry-run 成功時第二個回傳值是 ``None``：那一步已經寫入磁碟了。"""
+        from types import SimpleNamespace
+
+        from railway_sim.dataset import __main__ as cli
+        from railway_sim.dataset.mrt import MrtBuildResult
+
+        built_timetables = {"meta": {}, "services": []}
+        monkeypatch.setattr(
+            cli,
+            "build_mrt_dataset",
+            lambda source_dir, out_dir: MrtBuildResult(
+                stations={}, routes={}, timetables=built_timetables, report=[]
+            ),
+        )
+
+        dry_args = SimpleNamespace(source=str(tmp_path / "wiki"), dry_run=True)
+        code, payload = cli._run_mrt_dataset(dry_args, tmp_path)
+        assert code == 0
+        assert payload is built_timetables
+
+        monkeypatch.setattr(
+            cli, "write_mrt_dataset", lambda result, out_dir: [out_dir / "routes.json"]
+        )
+        write_args = SimpleNamespace(source=str(tmp_path / "wiki"), dry_run=False)
+        code, payload = cli._run_mrt_dataset(write_args, tmp_path)
+        assert code == 0
+        assert payload is None
 
 
 class TestScheduleModel:

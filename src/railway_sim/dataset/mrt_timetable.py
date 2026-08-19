@@ -414,7 +414,10 @@ class TimetableImportResult:
 
 
 def build_mrt_timetables(
-    source_dir: str | Path, data_dir: str | Path
+    source_dir: str | Path,
+    data_dir: str | Path,
+    *,
+    existing_payload: dict[str, Any] | None = None,
 ) -> TimetableImportResult:
     """把時刻表 CSV 的內容併進現有的 ``timetables.json``。
 
@@ -424,10 +427,18 @@ def build_mrt_timetables(
     對不上的班次**保持原樣**並列在報告裡。捷運公布的時刻表只涵蓋部分路線
     （文湖線、環狀線、三鶯線、機場捷運都沒有），把它們補成空白或推估值只會
     讓人以為那是真的（§2.3）。
+
+    ``existing_payload`` 給定時直接拿它比對，不讀磁碟上的 ``timetables.json``
+    ——與 ``--source`` 合併執行且 ``--dry-run`` 時磁碟還是重建前的舊資料，
+    這時要比對的是這次重建出、還沒寫入的候選資料，讀舊檔只會得到不準確的
+    預覽。
     """
     files = read_timetable_dir(source_dir)
-    target = Path(data_dir)
-    payload = json.loads((target / "timetables.json").read_text(encoding="utf-8"))
+    if existing_payload is not None:
+        payload = existing_payload
+    else:
+        target = Path(data_dir)
+        payload = json.loads((target / "timetables.json").read_text(encoding="utf-8"))
 
     matched: list[ScheduleMatch] = []
     unmatched: list[str] = []
