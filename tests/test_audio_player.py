@@ -7,6 +7,7 @@
 
 from __future__ import annotations
 
+import time
 from pathlib import Path
 
 import pytest
@@ -156,5 +157,58 @@ class TestQueueing:
             accepted = [player.play(clip) for _ in range(20)]
             assert accepted.count(True) <= 6
             assert accepted[-1] is False
+        finally:
+            player.close()
+
+
+class TestLooping:
+    """「請勿上車」要在車門開著的整段時間裡持續播放。"""
+
+    def _player(self) -> tuple[AudioPlayer, SilentBackend]:
+        backend = SilentBackend()
+        return AudioPlayer(backend), backend  # type: ignore[arg-type]
+
+    def test_a_looping_clip_replays_itself(self, tmp_path: Path) -> None:
+        clip = tmp_path / "NOTICE.do_not_board.ogg"
+        clip.write_bytes(b"clip")
+        player, backend = self._player()
+        try:
+            assert player.play(clip, loop=True) is True
+            assert player.looping is True
+            # 播完會自己再排一次，因此會播不只一遍。
+            deadline = time.monotonic() + 2.0
+            while len(backend.started) < 3 and time.monotonic() < deadline:
+                time.sleep(0.01)
+            assert len(backend.started) >= 3
+            assert set(backend.started) == {"NOTICE.do_not_board.ogg"}
+        finally:
+            player.close()
+
+    def test_stop_cancels_the_loop(self, tmp_path: Path) -> None:
+        """關門動作一開始就要停，不能等這一輪播完。"""
+        clip = tmp_path / "NOTICE.do_not_board.ogg"
+        clip.write_bytes(b"clip")
+        player, backend = self._player()
+        try:
+            player.play(clip, loop=True)
+            player.stop()
+            assert player.looping is False
+            player._queue.join()
+            played = len(backend.started)
+            time.sleep(0.2)
+            assert len(backend.started) == played
+        finally:
+            player.close()
+
+    def test_a_plain_clip_is_played_once(self, tmp_path: Path) -> None:
+        clip = tmp_path / "TAIPEI.next.ogg"
+        clip.write_bytes(b"clip")
+        player, backend = self._player()
+        try:
+            player.play(clip)
+            player._queue.join()
+            time.sleep(0.2)
+            assert backend.started == ["TAIPEI.next.ogg"]
+            assert player.looping is False
         finally:
             player.close()

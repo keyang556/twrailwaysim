@@ -188,12 +188,12 @@ class TestDriving:
         assert frame.session.train.emergency_brake is True
 
     def test_query_keys_announce(self, frame: DriverFrame) -> None:
-        press(frame, "V")
+        press(frame, "S")
         assert "目前速度" in log_text(frame)
 
     def test_query_key_shows_only_that_item(self, frame: DriverFrame) -> None:
-        """按 V 之後狀態欄只顯示速度，顯示的與播報的是同一句。"""
-        press(frame, "V")
+        """按 S 之後狀態欄只顯示速度，顯示的與播報的是同一句。"""
+        press(frame, "S")
         shown = status_text(frame)
         assert shown.startswith("速度：")
         assert frame.session.last_status is not None
@@ -201,7 +201,7 @@ class TestDriving:
         assert "前方號誌" not in shown
 
     def test_query_key_replaces_the_previous_item(self, frame: DriverFrame) -> None:
-        press(frame, "V")
+        press(frame, "S")
         press(frame, "P")
         shown = status_text(frame)
         assert shown.startswith("位置：")
@@ -299,7 +299,7 @@ class TestStatusMenu:
 
         frame.session.last_status = None
         frame._status_text = ""
-        press(frame, "V")
+        press(frame, "S")
         assert status_text(frame).split("：", 1)[0] == from_menu.split("：", 1)[0]
 
     def test_menu_bar_is_attached(self, frame: DriverFrame) -> None:

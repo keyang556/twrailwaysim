@@ -23,6 +23,13 @@
 若直接疊著播，兩則廣播會同時出聲，什麼都聽不清楚。因此播放採單一佇列，
 由背景執行緒依序播放；:meth:`AudioPlayer.stop` 會清空佇列並中止目前這則，
 供「到站廣播必須蓋過還沒播完的下一站廣播」這類情況使用。
+
+循環播放
+--------
+
+「請勿上車」是**在車門開著的整段時間裡持續提醒**的廣播（提醒沒有買這班車
+的旅客不要上車），因此 :meth:`AudioPlayer.play` 收 ``loop=True``：播完自己
+再排一次，直到 :meth:`AudioPlayer.stop` 為止。同一時間只會有一則循環廣播。
 """
 
 from __future__ import annotations
@@ -193,6 +200,7 @@ class AudioPlayer:
         self._queue: queue.Queue[Path | None] = queue.Queue()
         self._stopping = threading.Event()
         self._closed = False
+        self._loop_path: Path | None = None
         self._worker = threading.Thread(
             target=self._run, name="railway-sim-audio", daemon=True
         )
@@ -215,11 +223,16 @@ class AudioPlayer:
         return target.is_file() and self._backend.can_load(target)
 
     # ------------------------------------------------------------------
-    def play(self, path: str | Path, *, interrupt: bool = False) -> bool:
+    def play(
+        self, path: str | Path, *, interrupt: bool = False, loop: bool = False
+    ) -> bool:
         """排入一則音檔。
 
         Args:
             interrupt: ``True`` 時先清掉佇列並中止目前這一則，讓新的立刻播。
+            loop: ``True`` 時反覆播放同一則，直到 :meth:`stop` 為止。用於
+                「請勿上車」這種**在車門開著的整段時間裡持續提醒**的廣播。
+                同一時間只會有一則循環廣播，新的會取代舊的。
 
         Returns:
             是否已排入。檔案不存在或播放器已關閉時回傳 ``False``——這是
@@ -234,11 +247,18 @@ class AudioPlayer:
             self.stop()
         if self._queue.qsize() >= _QUEUE_LIMIT:
             return False
+        if loop:
+            self._loop_path = target
         self._queue.put(target)
         return True
 
     def stop(self) -> None:
-        """清空佇列並中止目前播放的音檔。"""
+        """清空佇列、中止目前播放的音檔，並取消循環播放。
+
+        取消循環也在這裡，是因為呼叫 :meth:`stop` 的情境（關門、換一則廣播、
+        結束工作階段）沒有一種是「循環那一則應該繼續」。
+        """
+        self._loop_path = None
         while True:
             try:
                 self._queue.get_nowait()
@@ -248,6 +268,11 @@ class AudioPlayer:
                 self._queue.task_done()
         self._stopping.set()
         self._backend.stop()
+
+    @property
+    def looping(self) -> bool:
+        """目前是否有循環播放中的音檔。"""
+        return self._loop_path is not None
 
     def close(self) -> None:
         """關閉播放器並結束背景執行緒。可重複呼叫。"""
@@ -273,6 +298,10 @@ class AudioPlayer:
                     time.sleep(_POLL_INTERVAL_S)
                 if self._stopping.is_set():
                     self._backend.stop()
+                elif self._loop_path == item:
+                    # 循環播放：播完再排一次自己。停止是由 stop() 清掉
+                    # _loop_path 達成的，因此不需要另一個旗標。
+                    self._queue.put(item)
             except Exception:  # noqa: BLE001, S112 - 背景執行緒不得讓遊戲掛掉
                 continue
             finally:

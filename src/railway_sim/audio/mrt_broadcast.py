@@ -276,7 +276,7 @@ class MrtBroadcastSystem(BroadcastSystem):
         if timing == "before_departure":
             here = state.at_station_id
         elif timing == "after_departure":
-            here = state.previous_stop_id if state.moving else None
+            here = state.previous_stop_id if state.departed else None
         else:
             return
 
@@ -292,7 +292,7 @@ class MrtBroadcastSystem(BroadcastSystem):
 
     def _update_next_stop(self, state: RunState) -> None:
         assert state.next_stop_id is not None
-        if self._next_announced_for == state.next_stop_id or not state.moving:
+        if self._next_announced_for == state.next_stop_id or not state.departed:
             return
         variant = self.rules.next_variant(state, state.next_stop_id)
         # 記下來即使不播：這一站已經處理過，不必每個步長重新判斷一次。
@@ -308,7 +308,7 @@ class MrtBroadcastSystem(BroadcastSystem):
 
     def _update_notice(self, state: RunState) -> None:
         rule = self.rules.notice_for(state)
-        if rule is None or not state.moving:
+        if rule is None or not state.departed:
             return
         key = f"{rule.from_station_id}->{rule.to_station_id}"
         if key in self._notices_played:

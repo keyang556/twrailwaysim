@@ -21,10 +21,21 @@ from railway_sim.data_loader import (
     heal_interrupted_import,
     load_game_data,
 )
-from railway_sim.dataset.build import BuildResult, rolling_stock_for, write_dataset
+from railway_sim.dataset.build import (
+    BuildResult,
+    _merge_services,
+    rolling_stock_for,
+    write_dataset,
+)
 from railway_sim.dataset.ods import OdsReadError, read_ods
 from railway_sim.dataset.registry import StationRegistry, UnknownStationError
-from railway_sim.dataset.tra_parser import normalise_name, parse_sheet
+from railway_sim.dataset.tra_parser import (
+    ParsedService,
+    ParsedStop,
+    SourceBlock,
+    normalise_name,
+    parse_sheet,
+)
 
 _CONTENT_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
 <office:document-content
@@ -505,6 +516,86 @@ class TestColumnLayoutParsing:
         assert "Kaohsiung" not in block.station_names
 
 
+class TestArrivalDepartureRows:
+    """大站在對號時刻表裡占「到達」與「開車」兩列（issue #9）。
+
+    下面那一列最左欄只有羅馬拼音，中文站名只印在上面一列；漏掉它的話，
+    **始發於該站**的班次會整站不見，起點站往後挪一站。
+    """
+
+    def _sheet(self, tmp_path: Path):
+        table = (
+            '<table:table table:name="東部幹線">'
+            + _row(_cell(repeat=4) + _cell("T.C.") + _cell("T.C.") + _cell("T.C."))
+            + _row(
+                _cell(repeat=4) + _cell("自強3000") + _cell("普悠瑪") + _cell("莒光")
+            )
+            + _row(_cell(repeat=4) + _cell("306") + _cell("402") + _cell("602"))
+            + _row(_cell(repeat=4) + _cell("") + _cell("") + _cell(""))
+            + _row(
+                _cell("北 埔")
+                + _cell(repeat=3)
+                + _cell("")
+                + _cell("-")
+                + _cell("-")
+            )
+            # 花蓮：到達列有中文站名，開車列只有羅馬拼音。
+            + _row(
+                _cell("花蓮")
+                + _cell(repeat=2)
+                + _cell("到Arrival Time")
+                + _cell("")
+                + _cell("09:13")
+                + _cell("08:57")
+            )
+            + _row(
+                _cell("Hualien")
+                + _cell(repeat=2)
+                + _cell("開Departure Time")
+                + _cell("06:21")
+                + _cell("09:19")
+                + _cell("09:01")
+            )
+            + _row(
+                _cell("吉 安")
+                + _cell(repeat=3)
+                + _cell("06:29")
+                + _cell("-")
+                + _cell("09:06")
+            )
+            + "</table:table>"
+        )
+        return read_ods(_write_ods(tmp_path / "split.ods", table))[0]
+
+    def _stops(self, tmp_path: Path, number: str) -> dict[str, tuple[str, str]]:
+        block = parse_sheet(self._sheet(tmp_path))[0]
+        service = next(s for s in block.services if s.train_number == number)
+        return {s.station_name: (s.time_text, s.arrival_text) for s in service.stops}
+
+    def test_the_departure_row_is_not_a_separate_station(self, tmp_path: Path) -> None:
+        block = parse_sheet(self._sheet(tmp_path))[0]
+        assert "Hualien" not in block.station_names
+        assert block.station_names.count("花蓮") == 1
+
+    def test_departure_only_means_the_train_starts_there(self, tmp_path: Path) -> None:
+        """306 次始發於花蓮：到達列空白，只有開車列有時刻。"""
+        stops = self._stops(tmp_path, "306")
+        assert stops["花蓮"] == ("06:21", "")
+        block = parse_sheet(self._sheet(tmp_path))[0]
+        service = next(s for s in block.services if s.train_number == "306")
+        assert service.origin_name == "花蓮"
+
+    def test_both_times_become_departure_plus_arrival(self, tmp_path: Path) -> None:
+        """中途停靠：時刻表印的那一個是開車時刻，到達時刻另外記。"""
+        assert self._stops(tmp_path, "402")["花蓮"] == ("09:19", "09:13")
+
+    def test_pass_marker_still_reads_as_a_pass(self, tmp_path: Path) -> None:
+        assert self._stops(tmp_path, "402")["北埔"] == ("", "")
+        block = parse_sheet(self._sheet(tmp_path))[0]
+        service = next(s for s in block.services if s.train_number == "402")
+        assert [s.station_name for s in service.passes] == ["北埔", "吉安"]
+
+
 class TestParallelLineColumns:
     """竹南至彰化之間，對號時刻表把海線與山線站名並排成左右兩欄。
 
@@ -713,6 +804,70 @@ class TestImportedDataShape:
         for route in game_data.routes.values():
             ok, reason = game_data.network.is_traversable(list(route.node_ids))
             assert ok, f"{route.id}：{reason}"
+
+
+class TestMergingAcrossFiles:
+    """同一車次散在多份時刻表，合併後的站序必須是實際行車順序。"""
+
+    def _service(self, *stops: tuple[str, str], source: str) -> ParsedService:
+        return ParsedService(
+            train_number="452",
+            train_class="普悠瑪",
+            stops=tuple(
+                ParsedStop(name, time, bool(time)) for name, time in stops
+            ),
+            source_file=source,
+        )
+
+    def _block(self, service: ParsedService) -> SourceBlock:
+        return SourceBlock(
+            layout="column_per_train",
+            title="",
+            station_names=tuple(s.station_name for s in service.stops),
+            services=[service],
+        )
+
+    def test_overnight_service_keeps_its_running_order(self) -> None:
+        """樹林 23:57 開、繞東部幹線與南迴到新左營 07:52 的跨日班次。
+
+        照 ``HH:MM`` 大小排序會把玉里 04:19 排到樹林 23:57 前面，起訖站
+        因此變成「瑞穗→光復」這種毫無道理的組合。
+        """
+        east = self._service(
+            ("樹林", "23:57"),
+            ("臺北", "00:20"),
+            ("花蓮", "03:10"),
+            ("玉里", "04:19"),
+            ("臺東", "05:29"),
+            source="ShulinToTaitung.ods",
+        )
+        south = self._service(
+            ("臺東", "05:29"),
+            ("枋寮", "06:47"),
+            ("高雄", "07:44"),
+            ("新左營", "07:52"),
+            source="SouthLink.ods",
+        )
+        merged = _merge_services([self._block(east), self._block(south)])["452"]
+        assert [s.station_name for s in merged.stops] == [
+            "樹林", "臺北", "花蓮", "玉里", "臺東", "枋寮", "高雄", "新左營",
+        ]
+        assert merged.origin_name == "樹林"
+        assert merged.destination_name == "新左營"
+
+    def test_the_source_with_the_dwell_time_wins(self) -> None:
+        """只有對號時刻表印了停站時間，區間車時刻表沒有；不可被後者蓋掉。"""
+        detailed = ParsedService(
+            train_number="452",
+            train_class="普悠瑪",
+            stops=(ParsedStop("花蓮", "03:15", True, arrival_text="03:10"),),
+            source_file="A.ods",
+        )
+        plain = self._service(("花蓮", "03:10"), ("玉里", "04:19"), source="B.ods")
+        for order in ([detailed, plain], [plain, detailed]):
+            merged = _merge_services([self._block(s) for s in order])["452"]
+            hualien = next(s for s in merged.stops if s.station_name == "花蓮")
+            assert (hualien.time_text, hualien.arrival_text) == ("03:15", "03:10")
 
 
 class TestRollingStockAssignment:

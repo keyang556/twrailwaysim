@@ -4,7 +4,9 @@
 --------
 
 ``next``（下一站）
-    列車自車站**啟動之後**播放，內容是下一個停靠站。
+    列車自車站**離站之後**播放，內容是下一個停靠站。停短了往前推一點修正
+    停車位置時列車也在動，但那不算離站；界線是車頭有沒有通過該站的停車
+    位置（見 :attr:`RunState.departed`）。
 
 ``arrive``（到站）
     到達停靠站**之前**播放。
@@ -44,21 +46,38 @@ DR1000 型柴油客車沒有車上廣播設備，因此這型車不播廣播，�
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 
 from railway_sim.accessibility import messages as msg
 from railway_sim.accessibility.announcer import Announcer, Priority
 from railway_sim.audio.library import BroadcastLibrary
 from railway_sim.audio.player import AudioPlayer
+from railway_sim.timetable.door_side import DEFAULT_DOOR_SIDE
 
-__all__ = ["BROADCAST_DEPART_KMH", "BroadcastSystem", "RunState"]
+__all__ = [
+    "BROADCAST_DEPART_KMH",
+    "DOOR_CLIP_ID",
+    "NOTICE_CLIP_ID",
+    "BroadcastSystem",
+    "RunState",
+]
 
 #: 視為「列車已啟動」的速度（公里／小時）。
 #:
 #: 「下一站」廣播是列車自車站啟動之後才播的，因此需要一個明確的啟動門檻；
 #: 用大於零會在停妥判定的抖動下反覆觸發。
 BROADCAST_DEPART_KMH = 3.0
+
+#: 車門相關音檔的「車站代碼」。
+#:
+#: 索引以車站代碼為鍵（見 :mod:`railway_sim.audio.library`），車門聲不屬於
+#: 任何一站，因此給它一個保留字。種類為 ``open``／``close``／``side``。
+DOOR_CLIP_ID = "DOOR"
+
+#: 不屬於任何車站的提醒廣播代碼（``NOTICE.do_not_board``、
+#: ``NOTICE.unscheduled_stop``）。
+NOTICE_CLIP_ID = "NOTICE"
 
 
 @dataclass(frozen=True)
@@ -74,6 +93,8 @@ class RunState:
         origin_id: 本班次的起站。
         terminus_id: 本班次的終點站。
         service_class: 車種代碼（機捷的直達車與普通車廣播不同）。
+        aligning_at_id: 還在對準停車位置的那一站；車頭通過該站的停車位置
+            之後為 ``None``。
     """
 
     speed_kmh: float
@@ -85,10 +106,21 @@ class RunState:
     origin_id: str
     terminus_id: str
     service_class: str = ""
+    aligning_at_id: str | None = None
 
     @property
     def moving(self) -> bool:
         return self.speed_kmh >= BROADCAST_DEPART_KMH
+
+    @property
+    def departed(self) -> bool:
+        """列車是否真的離站了。
+
+        停短了往前推一點修正停車位置時，列車一樣在動——但那不是離站，
+        此時播「下一站」是錯的（issue #12）。真正的界線是車頭有沒有通過
+        該站的停車位置，那正是 ``aligning_at_id`` 歸 ``None`` 的時候。
+        """
+        return self.moving and self.aligning_at_id is None
 
 
 @dataclass
@@ -102,6 +134,13 @@ class BroadcastSystem:
         enabled: 本型車有沒有廣播設備。
         line_id: 目前路線，查詢音檔時優先使用同一條線的版本。
         called_station_ids: 本班次的停靠站，用來挑選分歧站的方向版本。
+        rolling_stock_id: 車輛型式代碼。開關門聲每一型車不同，用它挑版本
+            （``DOOR.open.emu900``）；沒有該型的版本就退回通用的
+            ``DOOR.open``，不會因為多了一型反而整個播不出來。
+        boarding_notice: 車門開啟中是否持續播放「請勿上車」（全車對號的
+            車型才有，由 ``trains.json`` 的同名欄位決定）。
+        door_sides: ``{車站代碼: "left"／"right"}``，本班次在各站的開門側。
+            沒有登記的車站一律當成預設的左側（見 :data:`DEFAULT_DOOR_SIDE`）。
     """
 
     library: BroadcastLibrary
@@ -110,6 +149,9 @@ class BroadcastSystem:
     enabled: bool = True
     line_id: str = ""
     called_station_ids: tuple[str, ...] = ()
+    rolling_stock_id: str = ""
+    boarding_notice: bool = False
+    door_sides: Mapping[str, str] = field(default_factory=dict)
 
     played: list[str] = field(default_factory=list, init=False)
     """已播出的音檔索引鍵，供測試與診斷使用。"""
@@ -123,6 +165,7 @@ class BroadcastSystem:
 
     _next_announced_for: str | None = field(default=None, init=False, repr=False)
     _arrival_announced: set[str] = field(default_factory=set, init=False, repr=False)
+    _boarding_notice_playing: bool = field(default=False, init=False, repr=False)
 
     # ------------------------------------------------------------------
     # 播放時機
@@ -139,7 +182,7 @@ class BroadcastSystem:
         if not self.enabled or state.next_stop_id is None:
             return
 
-        if self._next_announced_for != state.next_stop_id and state.moving:
+        if self._next_announced_for != state.next_stop_id and state.departed:
             self._next_announced_for = state.next_stop_id
             self.announce_next_stop(state.next_stop_id, state.next_stop_name)
 
@@ -165,34 +208,98 @@ class BroadcastSystem:
     def announce_arrival(
         self, station_id: str, name_zh_tw: str, *, is_terminus: bool = False
     ) -> bool:
-        """到達停靠站之前播報。
+        """到達停靠站之前播報，接著提醒開門側。
 
         ``is_terminus`` 為真且該站有終點廣播時播終點版本，否則播到站版本。
+
+        開門側是**接在到站廣播之後**的一小則，因此排進佇列而不是蓋掉前一則
+        （見 :meth:`announce_door_side`）。
         """
         if is_terminus and self._find(station_id, "terminus") is not None:
-            return self._announce(
+            spoken = self._announce(
                 station_id, "terminus", msg.broadcast_terminus(name_zh_tw)
             )
-        text = (
-            msg.broadcast_terminus(name_zh_tw)
-            if is_terminus
-            else msg.broadcast_arriving(name_zh_tw)
-        )
-        return self._announce(station_id, "arrive", text)
+        else:
+            text = (
+                msg.broadcast_terminus(name_zh_tw)
+                if is_terminus
+                else msg.broadcast_arriving(name_zh_tw)
+            )
+            spoken = self._announce(station_id, "arrive", text)
+        if spoken:
+            self.announce_door_side(self.door_side_at(station_id))
+        return spoken
+
+    def door_side_at(self, station_id: str) -> str:
+        """本班次在某一站的開門側。沒有登記的車站一律是預設側。"""
+        return self.door_sides.get(station_id, DEFAULT_DOOR_SIDE)
+
+    def announce_door_side(self, side: str) -> bool:
+        """提醒哪一側開門。接在到站廣播之後，不蓋掉它。"""
+        if not self.enabled:
+            return False
+        self._play(self._find_door("side", variant=side), interrupt=False)
+        self.announcer.announce(msg.broadcast_door_side(side), Priority.STATUS)
+        return True
 
     def announce_doors(self, side: str, *, opening: bool) -> bool:
         """車門開關廣播（§20.2「車門聲」）。
 
-        音檔放在 ``common`` 資料夾（``DOOR.open``、``DOOR.close``）；目前
-        來源資料尚未整理出這一組，因此通常只有文字。
+        開關門聲**每一型車不一樣**，因此以車輛型式為版本查詢
+        （``DOOR.open.emu900``）；該型沒有錄到就退回通用的 ``DOOR.open``。
+        新增一型車只要把音檔放進 ``common`` 資料夾，程式不必改。
+
+        全車對號的車型在開門中還要持續播放「請勿上車」，關門動作一開始就
+        立即停止（見 :meth:`_update_boarding_notice`）。
         """
         if not self.enabled:
             return False
         kind = "open" if opening else "close"
-        self._play(self._find("DOOR", kind))
+        # 關門聲要蓋掉還在循環的「請勿上車」，開門聲不必蓋掉任何東西。
+        self._play(
+            self._find_door(kind, variant=self.rolling_stock_id),
+            interrupt=not opening,
+        )
         self.announcer.announce(
             msg.broadcast_doors(side, opening=opening), Priority.STATUS
         )
+        self._update_boarding_notice(opening=opening)
+        return True
+
+    def _update_boarding_notice(self, *, opening: bool) -> None:
+        """車門開啟中持續播放「請勿上車」，關門時立即停止。
+
+        提醒的對象是月台上**沒有買這班列車車票**的旅客，因此必須在整段開門
+        時間裡一直播，播一次就停沒有意義；也因此關門動作一開始就要停，不能
+        等這一輪播完。
+        """
+        if not self.boarding_notice:
+            return
+        if not opening:
+            # 這一型車沒有關門聲時，上面那一步不會去動播放器，循環就會一直
+            # 播下去；因此停止循環要自己明說，不能靠關門聲順便把它蓋掉。
+            if self._boarding_notice_playing and self.player is not None:
+                self.player.stop()
+            self._boarding_notice_playing = False
+            return
+        clip = self._find_notice("do_not_board")
+        self.announcer.announce(msg.broadcast_do_not_board(), Priority.STATUS)
+        if clip is None or self.player is None:
+            return
+        if self.player.play(clip.path, loop=True):
+            self._boarding_notice_playing = True
+            self.played.append(clip.key)
+
+    def announce_unscheduled_stop(self) -> bool:
+        """臨時停車（不在月台的地方停下來）的廣播。
+
+        號誌、前方列車或事故造成的站外停車，旅客只知道車忽然不動了；這一則
+        就是告訴他們「這是臨時停車」。回到月台範圍內停車不算，那是正常到站。
+        """
+        if not self.enabled:
+            return False
+        self._play(self._find_notice("unscheduled_stop"))
+        self.announcer.announce(msg.broadcast_unscheduled_stop(), Priority.STATUS)
         return True
 
     # ------------------------------------------------------------------
@@ -204,6 +311,15 @@ class BroadcastSystem:
             called_station_ids=self.called_station_ids,
         )
 
+    def _find_door(self, kind: str, *, variant: str = ""):
+        """車門相關音檔。版本查不到時退回沒有版本的通用檔。"""
+        return self.library.find(
+            DOOR_CLIP_ID, kind, line_id=self.line_id or None, variant=variant or None
+        )
+
+    def _find_notice(self, kind: str):
+        return self.library.find(NOTICE_CLIP_ID, kind, line_id=self.line_id or None)
+
     def _announce(self, station_id: str, kind: str, text: str) -> bool:
         if not self.enabled:
             return False
@@ -213,12 +329,13 @@ class BroadcastSystem:
         self.announcer.announce(text, Priority.STATUS)
         return True
 
-    def _play(self, clip) -> None:
+    def _play(self, clip, *, interrupt: bool = True) -> None:
         if clip is None or self.player is None:
             return
         # 廣播動輒數十秒，新的一則必須蓋掉還沒播完的舊的，否則「到站」會
-        # 疊在「下一站」上面，兩則都聽不清楚。
-        if self.player.play(clip.path, interrupt=True):
+        # 疊在「下一站」上面，兩則都聽不清楚。接在後面的短句（開門側）例外，
+        # 那正是要跟在到站廣播之後聽到的。
+        if self.player.play(clip.path, interrupt=interrupt):
             self.played.append(clip.key)
 
     # ------------------------------------------------------------------

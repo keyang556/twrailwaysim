@@ -15,6 +15,7 @@ from __future__ import annotations
 __all__ = [
     "DIRECTION_NAMES",
     "DOOR_SIDE_NAMES",
+    "REVERSER_NAMES",
     "SIGNAL_ASPECT_NAMES",
     "STOP_KIND_NAMES",
     "approaching_platform_pass",
@@ -29,10 +30,13 @@ __all__ = [
     "brake_notch",
     "broadcast_arriving",
     "broadcast_destination",
+    "broadcast_do_not_board",
+    "broadcast_door_side",
     "broadcast_doors",
     "broadcast_next_stop",
     "broadcast_notice",
     "broadcast_terminus",
+    "broadcast_unscheduled_stop",
     "distance_phrase",
     "door_blocked_by_movement",
     "door_closed",
@@ -50,6 +54,9 @@ __all__ = [
     "power_blocked_by_doors",
     "power_notch",
     "quantise_stop_distance",
+    "reverser_at_end",
+    "reverser_blocked_by_movement",
+    "reverser_position",
     "signal_report",
     "speed_report",
     "station_arrival",
@@ -192,6 +199,14 @@ DIRECTION_NAMES: dict[str, str] = {
     "northbound": "北上",
 }
 
+#: 方向把手位置的名稱。鍵是 :mod:`railway_sim.simulation.train` 的
+#: ``REVERSER_*`` 常數值（與 OpenBVE 的 ``ReverserPosition`` 相同）。
+REVERSER_NAMES: dict[int, str] = {
+    1: "前進",
+    0: "切",
+    -1: "後退",
+}
+
 SIGNAL_ASPECT_NAMES: dict[str, str] = {
     "stop": "停止",
     "caution": "注意",
@@ -229,6 +244,28 @@ def brake_notch(notch: int) -> str:
 
 def coasting() -> str:
     return "惰行。"
+
+
+# ----------------------------------------------------------------------
+# 方向把手（鍵位取自 OpenBVE 的 REVERSER_FORWARD／REVERSER_BACKWARD）
+# ----------------------------------------------------------------------
+def reverser_position(position: int) -> str:
+    """方向把手移動後的回饋。
+
+    看不見手把的司機只有這一句能確認把手在哪一格，因此「切」也要說出來，
+    不能只在前進與後退時出聲。
+    """
+    return f"方向把手，{REVERSER_NAMES.get(position, str(position))}。"
+
+
+def reverser_at_end(position: int) -> str:
+    """已經在端點，再按沒有東西可動。按鍵一定要有回饋（§7.2）。"""
+    return f"方向把手已在{REVERSER_NAMES.get(position, str(position))}位。"
+
+
+def reverser_blocked_by_movement() -> str:
+    """行進中不得改變方向把手。"""
+    return "列車行進中，停妥後才可改變方向把手。"
 
 
 def horn() -> str:
@@ -310,6 +347,28 @@ def broadcast_terminus(name: str) -> str:
 def broadcast_doors(side: str, *, opening: bool) -> str:
     action = "開啟" if opening else "關閉"
     return f"車內廣播：{_side_name(side)}車門即將{action}。"
+
+
+def broadcast_door_side(side: str) -> str:
+    """接在到站廣播之後，提醒旅客往哪一側下車。"""
+    return f"車內廣播：{_side_name(side)}開門。"
+
+
+def broadcast_do_not_board() -> str:
+    """全車對號列車在開門中持續播放的提醒。
+
+    對象是月台上**沒有買這班列車車票**的旅客，不是車上的人。
+    """
+    return "車內廣播：本列車為對號列車，未持本車車票之旅客請勿上車。"
+
+
+def broadcast_unscheduled_stop() -> str:
+    """臨時停車（不在月台的地方停下來）的廣播。
+
+    停車原因不會出現在音檔檔名裡，因此文字只說明「這是臨時停車」而不編造
+    理由（§2.3）。
+    """
+    return "車內廣播：本列車臨時停車，請旅客稍候。"
 
 
 def broadcast_destination(name: str) -> str:
@@ -425,11 +484,17 @@ def train_status(
     brake: int,
     emergency: bool,
     direction: str,
+    reverser: int = 1,
 ) -> str:
-    """列車狀態總覽播報。"""
+    """列車狀態總覽播報。
+
+    方向把手也在這一句裡：看不見手把的司機沒有別的辦法確認它在哪一格，而
+    「加了電門卻不走」多半就是把手在「切」。
+    """
     direction_zh = DIRECTION_NAMES.get(direction, direction)
     parts = [
         f"{train_type}{train_number}次，{direction_zh}。",
+        f"方向把手{REVERSER_NAMES.get(reverser, str(reverser))}。",
         f"速度{num_to_zh(speed_kmh)}公里。",
     ]
     if emergency:

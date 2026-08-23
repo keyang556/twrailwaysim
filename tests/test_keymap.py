@@ -148,11 +148,13 @@ class TestLegacyProfile:
         [
             ("D", "power_up"),
             ("A", "brake_up"),
-            ("S", "notch_down"),
+            ("X", "notch_down"),
             ("SPACE", "emergency_brake"),
             ("R", "release_brake"),
             ("H", "horn"),
-            ("V", "announce_speed"),
+            ("S", "announce_speed"),
+            ("F", "reverser_forward"),
+            ("V", "reverser_backward"),
             ("E", "release_emergency"),
         ],
     )

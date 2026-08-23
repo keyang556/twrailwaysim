@@ -9,7 +9,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from railway_sim.simulation.physics import MS_PER_KMH, brake_decel_ms2
-from railway_sim.simulation.train import Train, TrainType
+from railway_sim.simulation.train import (
+    REVERSER_BACKWARD,
+    REVERSER_FORWARD,
+    Train,
+    TrainType,
+)
 
 __all__ = [
     "BrakeChange",
@@ -17,6 +22,7 @@ __all__ = [
     "brake_decel_ms2",
     "brake_up",
     "braking_distance_m",
+    "move_reverser",
     "notch_down",
     "power_up",
     "release_brake",
@@ -124,6 +130,29 @@ def single_brake(train: Train, spec: TrainType) -> BrakeChange:
     if train.brake_notch >= spec.brake_notches:
         return _snapshot(train, accepted=False, reason="max_brake")
     train.brake_notch += 1
+    return _snapshot(train, accepted=True)
+
+
+def move_reverser(train: Train, step: int) -> BrakeChange:
+    """把方向把手往指定方向移動一段（OpenBVE 的 ``REVERSER_FORWARD``／
+    ``REVERSER_BACKWARD``，預設鍵 ``F``／``V``）。
+
+    一次一段，順序固定為後退 → 切 → 前進，與 OpenBVE
+    ``source/TrainManager/Handles/CabHandles.cs`` 的處理相同：已在端點時
+    不再移動。
+
+    **列車必須停妥**才能改變方向把手。這一條是本專案加的：真實運轉本來就
+    要停妥才切換方向，而且本專案不模擬坡度與溜逸，行進中換方向會得出沒有
+    意義的狀態。被擋下時 :attr:`BrakeChange.reason` 為 ``not_stopped``。
+    """
+    if not train.is_stopped:
+        return _snapshot(train, accepted=False, reason="not_stopped")
+    target = max(REVERSER_BACKWARD, min(REVERSER_FORWARD, train.reverser + step))
+    if target == train.reverser:
+        return _snapshot(train, accepted=False, reason="at_end")
+    train.reverser = target
+    if target != 0:
+        train.motion_sign = 1 if target > 0 else -1
     return _snapshot(train, accepted=True)
 
 

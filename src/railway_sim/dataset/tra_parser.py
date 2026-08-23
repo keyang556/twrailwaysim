@@ -24,6 +24,15 @@
 （``T.C.``／``C.K.``）、車種、車次、經由線別、始發站、``↓``、終點站，
 接著每一列是一個車站（中文站名在最左欄，英文站名在右邊幾欄）。
 
+大站（花蓮、臺北、高雄、臺東）例外，占**兩列**：上面一列是到達時刻，
+下面一列是開車時刻，而中文站名只印在上面那一列::
+
+    花蓮      到Arrival Time              08:19  08:57
+    Hualien   開Departure Time     06:21  08:22  09:01
+
+始發於該站的班次在到達列是空白的，因此只讀到達列會整站漏掉，起點站往後
+挪一站（issue #9）。兩列由「到」／「開」標記配成一站。
+
 兩種排版共用的儲存格慣例：
 
 - ``HH:MM``：該站的時刻。
@@ -37,7 +46,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 
 from railway_sim.dataset.ods import Sheet, read_ods
@@ -65,6 +74,15 @@ _STATION_HEADER_RE = re.compile(r"站.*名")
 
 #: 排版 B 用來辨識班次欄的車種代碼列。
 _CLASS_CODES = frozenset({"T.C.", "C.K.", "TC", "CK"})
+
+#: 排版 B 中「到達時刻」與「開車時刻」的欄位標記。
+#:
+#: 大站（花蓮、臺北、高雄、臺東）在對號列車時刻表裡占**兩列**：上面一列是
+#: 到達時刻，下面一列是開車時刻。下面那一列的最左欄只印羅馬拼音
+#: （``Hualien``），中文站名只出現在上面一列，因此不能靠站名欄辨識，只能
+#: 靠這兩個標記把兩列配成一站。
+_ARRIVAL_MARKER_RE = re.compile(r"到|Arrival")
+_DEPARTURE_MARKER_RE = re.compile(r"開|Departure")
 
 #: 已知的車種名稱（出現在排版 A 的第一欄、排版 B 的車種列）。
 KNOWN_TRAIN_CLASSES = (
@@ -112,11 +130,6 @@ def normalise_name(raw: str) -> str:
     return NAME_ALIASES.get(text, text)
 
 
-def _is_latin_only(text: str) -> bool:
-    """整格只有英文（羅馬拼音列），不是中文站名。"""
-    return bool(text) and not re.search(r"[一-鿿]", text)
-
-
 #: 站名只由中文字構成，長度二到五字（最長為「林榮新光」「長榮大學」）。
 _STATION_NAME_RE = re.compile(r"^[一-鿿]{2,5}$")
 
@@ -162,7 +175,11 @@ class ParsedStop:
 
     station_name: str
     time_text: str
-    """``HH:MM``；通過站為空字串。"""
+    """**開車**時刻 ``HH:MM``；終點站為到達時刻，通過站為空字串。
+
+    這是臺鐵時刻表自己的慣例，各檔案末的「註」寫得很清楚：「時刻表所列
+    各次列車之起站及中間站為開車時刻，終點站時刻為到達時刻」。
+    """
 
     stops: bool
 
@@ -173,6 +190,14 @@ class ParsedStop:
     （左海線、右山線），同一列共用一個時刻欄；究竟是哪一站，要由該班次
     表頭的「山」／「海」標記決定。解析階段無從得知線別歸屬，因此把候選
     站名一起帶出來，交由 :mod:`railway_sim.dataset.build` 依線別解析。
+    """
+
+    arrival_text: str = ""
+    """到達時刻 ``HH:MM``；與 :attr:`time_text` 相同或未印出時為空字串。
+
+    只有大站在對號列車時刻表裡分開印了到達與開車兩個時刻，其餘車站的表格
+    只有一個時刻欄，停站時間無從得知。空字串代表「這一站沒有另外印到達
+    時刻」，不是「到達時刻是零」——呼叫端該退回 :attr:`time_text`。
     """
 
     @property
@@ -425,6 +450,53 @@ def _find_column_layout_header(sheet: Sheet) -> int | None:
     return None
 
 
+@dataclass(frozen=True)
+class _StationRows:
+    """排版 B 中一個車站占用的列。
+
+    多數車站只占一列（``departure_row`` 為 ``None``）；大站分成「到達」與
+    「開車」兩列，兩者共用同一組站名。
+    """
+
+    arrival_row: int
+    departure_row: int | None
+    names: tuple[str, ...]
+
+
+def _column_stop(sheet: Sheet, entry: _StationRows, col: int) -> ParsedStop | None:
+    """讀出某一班次在某一站的紀錄；該班次不行經此站時回傳 ``None``。
+
+    分成兩列的大站要把到達與開車合成一筆：只有開車時刻表示**始發**於此站，
+    只有到達時刻表示**終到**於此站，兩者都有則是中途停靠，停站時間就是兩者
+    之差。臺鐵時刻表在只印一個時刻時印的是開車時刻（終點站除外），因此
+    :attr:`ParsedStop.time_text` 一律放開車時刻，到達時刻另外放。
+    """
+    arrive = normalise_name(sheet.cell(entry.arrival_row, col))
+    depart = (
+        normalise_name(sheet.cell(entry.departure_row, col))
+        if entry.departure_row is not None
+        else ""
+    )
+    if not arrive and not depart:
+        return None
+
+    primary, alternatives = entry.names[0], entry.names[1:]
+    arrive_time = arrive if _is_time(arrive) else ""
+    depart_time = depart if _is_time(depart) else ""
+    if arrive_time or depart_time:
+        time_text = depart_time or arrive_time
+        return ParsedStop(
+            primary,
+            time_text,
+            True,
+            alternatives,
+            arrive_time if arrive_time != time_text else "",
+        )
+    if _is_pass(arrive) or _is_pass(depart):
+        return ParsedStop(primary, "", False, alternatives)
+    return None
+
+
 def _parse_column_block(sheet: Sheet, code_row: int, source_file: str) -> SourceBlock:
     title = ""
     if code_row:
@@ -447,7 +519,7 @@ def _parse_column_block(sheet: Sheet, code_row: int, source_file: str) -> Source
 
     # 車站列：中文站名在班次欄左邊；竹南至彰化之間有並排的兩欄（海線、山線）。
     first_train_col = min(columns) if columns else 0
-    station_rows: list[tuple[int, tuple[str, ...]]] = []
+    station_rows: list[_StationRows] = []
     legend = ""
     for index in range(number_row + 1, len(sheet.rows)):
         row = sheet.rows[index]
@@ -456,6 +528,7 @@ def _parse_column_block(sheet: Sheet, code_row: int, source_file: str) -> Source
         if normalise_name(row[0]).startswith("註"):
             legend = "".join(v for v in row if v.strip())
             continue
+        labels = "".join(row[:first_train_col])
         candidates: list[str] = []
         for col in range(first_train_col):
             name = normalise_name(sheet.cell(index, col))
@@ -466,17 +539,35 @@ def _parse_column_block(sheet: Sheet, code_row: int, source_file: str) -> Source
                 continue
             candidates.append(name)
         if candidates:
-            station_rows.append((index, tuple(candidates)))
+            station_rows.append(_StationRows(index, None, tuple(candidates)))
+            continue
+
+        # 沒有中文站名的一列，可能是前一站的「開Departure Time」續列：那一列
+        # 的最左欄只有羅馬拼音，站名在上面的「到Arrival Time」列。漏掉它的
+        # 代價不只是少一個停站時間——**始發於該站**的班次在到達列是空白的，
+        # 整站會被當成沒有停靠，起點站因此往後挪一站（issue #9 的花蓮／吉安）。
+        if (
+            station_rows
+            and station_rows[-1].departure_row is None
+            and _DEPARTURE_MARKER_RE.search(labels)
+            and _ARRIVAL_MARKER_RE.search(
+                "".join(sheet.rows[station_rows[-1].arrival_row][:first_train_col])
+            )
+        ):
+            station_rows[-1] = replace(station_rows[-1], departure_row=index)
 
     seen: list[str] = []
-    for _, group in station_rows:
-        for name in group:
+    for entry in station_rows:
+        for name in entry.names:
             if name not in seen:
                 seen.append(name)
-    sequences = [tuple(group[0] for _, group in station_rows)]
-    if any(len(group) > 1 for _, group in station_rows):
+    sequences = [tuple(entry.names[0] for entry in station_rows)]
+    if any(len(entry.names) > 1 for entry in station_rows):
         sequences.append(
-            tuple(group[1] if len(group) > 1 else group[0] for _, group in station_rows)
+            tuple(
+                entry.names[1] if len(entry.names) > 1 else entry.names[0]
+                for entry in station_rows
+            )
         )
 
     block = SourceBlock(
@@ -499,15 +590,10 @@ def _parse_column_block(sheet: Sheet, code_row: int, source_file: str) -> Source
             via = suffix
 
         stops: list[ParsedStop] = []
-        for index, group in station_rows:
-            value = normalise_name(sheet.cell(index, col))
-            if not value:
-                continue
-            primary, alternatives = group[0], group[1:]
-            if _is_time(value):
-                stops.append(ParsedStop(primary, value, True, alternatives))
-            elif _is_pass(value):
-                stops.append(ParsedStop(primary, "", False, alternatives))
+        for entry in station_rows:
+            stop = _column_stop(sheet, entry, col)
+            if stop is not None:
+                stops.append(stop)
         if not stops:
             continue
 

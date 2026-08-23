@@ -9,7 +9,19 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-__all__ = ["Train", "TrainType"]
+__all__ = [
+    "REVERSER_BACKWARD",
+    "REVERSER_FORWARD",
+    "REVERSER_NEUTRAL",
+    "Train",
+    "TrainType",
+]
+
+#: 方向把手的位置。數值與 OpenBVE 的 ``ReverserPosition`` 一致
+#: （``source/TrainManager/Handles/Reverser/Reverser.Positions.cs``）。
+REVERSER_FORWARD = 1
+REVERSER_NEUTRAL = 0
+REVERSER_BACKWARD = -1
 
 
 @dataclass(frozen=True)
@@ -27,6 +39,9 @@ class TrainType:
         has_broadcast: 有無車上自動廣播設備。DR1000 型柴油客車沒有，因此
             該型車不播放到站與下一站廣播（§20.2）。以資料欄位表示而不是在
             程式裡寫死車型代碼，日後多一型沒有廣播的車只要改資料。
+        boarding_notice: 車門開啟中是否持續播放「請勿上車」。全車對號的
+            TEMU1000、TEMU2000、EMU3000 需要，用來提醒沒有買這班列車車票的
+            旅客不要上車；關門動作一開始就立即停止。同樣以資料欄位表示。
     """
 
     id: str
@@ -42,6 +57,7 @@ class TrainType:
     resistance_ms2: tuple[float, float, float] = (0.02, 0.0005, 0.00035)
     verification_status: str = "test_data"
     has_broadcast: bool = True
+    boarding_notice: bool = False
 
     @classmethod
     def from_dict(cls, raw: dict[str, Any]) -> TrainType:
@@ -59,6 +75,7 @@ class TrainType:
             resistance_ms2=tuple(raw.get("resistance_ms2", (0.02, 0.0005, 0.00035))),  # type: ignore[arg-type]
             verification_status=raw.get("verification_status", "test_data"),
             has_broadcast=bool(raw.get("has_broadcast", True)),
+            boarding_notice=bool(raw.get("boarding_notice", False)),
         )
 
 
@@ -74,9 +91,30 @@ class Train:
     """車輛型式代碼，對應 :class:`TrainType`（例如 ``EMU3000``）。"""
 
     current_speed_kmh: float = 0.0
+    """速度**大小**（公里／小時），恆為非負；行進方向看 :attr:`motion_sign`。"""
+
     power_notch: int = 0
     brake_notch: int = 0
     emergency_brake: bool = False
+
+    reverser: int = REVERSER_FORWARD
+    """方向把手：``1`` 前進、``0`` 切、``-1`` 後退。
+
+    位置與 OpenBVE 的 ``ReverserPosition`` 相同（F／N／R），操作鍵也一樣是
+    ``F``／``V``。位於「切」時電門不產生牽引力——這正是方向把手的作用。
+
+    預設是**前進**位：本專案的工作階段是從「列車已備妥、等著發車」開始，
+    不含出庫與換端，因此把手一開始就在行車方向上。要倒退（例如停過頭了
+    退回停車位置）才需要動它。
+    """
+
+    motion_sign: int = 1
+    """列車目前滾動的方向：``1`` 前進、``-1`` 後退。
+
+    與 :attr:`reverser` 分開，是因為把方向把手推回「切」的瞬間列車還在滑行，
+    它不會就此改往反方向走。靜止時由方向把手決定，滑行時維持不變。
+    """
+
     left_doors_open: bool = False
     right_doors_open: bool = False
     position_m: float = 0.0
@@ -108,6 +146,11 @@ class Train:
     def rear_position_m(self) -> float:
         """車尾里程，可能為負值（列車尚未完全進入路線起點）。"""
         return self.position_m - self.length_m
+
+    @property
+    def reversing(self) -> bool:
+        """列車正在後退（方向把手在後退位且列車在動）。"""
+        return self.motion_sign < 0 and not self.is_stopped
 
     @property
     def speed_ms(self) -> float:

@@ -62,8 +62,13 @@ def resistance_ms2(spec: TrainType, speed_kmh: float) -> float:
 
 
 def net_accel_ms2(train: Train, spec: TrainType) -> float:
-    """目前的淨加速度（公尺／秒平方，正值為加速）。"""
-    power = 0 if train.emergency_brake else train.power_notch
+    """目前的淨加速度（公尺／秒平方，正值為加速）。
+
+    方向把手在「切」時電門不產生牽引力——那正是方向把手的作用，不是額外
+    加上去的連鎖。加速度算的是**速度大小**的變化，因此後退中加電門一樣是
+    正的加速度（愈退愈快），走哪一邊由 :attr:`Train.motion_sign` 決定。
+    """
+    power = 0 if train.emergency_brake or train.reverser == 0 else train.power_notch
     traction = traction_accel_ms2(spec, power, train.current_speed_kmh)
     braking = brake_decel_ms2(spec, train.brake_notch, train.emergency_brake)
     drag = resistance_ms2(spec, train.current_speed_kmh)
@@ -71,15 +76,22 @@ def net_accel_ms2(train: Train, spec: TrainType) -> float:
 
 
 def step(train: Train, spec: TrainType, dt_s: float) -> float:
-    """推進一個模擬步長，回傳本步移動的距離（公尺）。
+    """推進一個模擬步長，回傳本步移動的距離（公尺，恆為非負）。
 
     速度會被限制在 ``0`` 與車種最高速度之間；緊急制軔時電門強制歸零。
+
+    往前或往後由方向把手決定：靜止時把手指向哪一邊，列車就往哪一邊起步；
+    已經在滑行時把手推回「切」不會讓列車掉頭，只是不再有牽引力。里程不會
+    小於零——路線起點之前沒有路，退到底就停住。
     """
     if dt_s <= 0:
         return 0.0
 
     if train.emergency_brake:
         train.power_notch = 0  # §8.3：電門立即歸零
+
+    if train.is_stopped and train.reverser != 0:
+        train.motion_sign = 1 if train.reverser > 0 else -1
 
     accel = net_accel_ms2(train, spec)
     v0 = train.current_speed_kmh * MS_PER_KMH
@@ -96,6 +108,12 @@ def step(train: Train, spec: TrainType, dt_s: float) -> float:
         distance = (v0 + v1) * 0.5 * dt_s
         train.current_speed_kmh = v1 * KMH_PER_MS
 
-    train.position_m += distance
+    if train.motion_sign < 0:
+        # 路線起點之前沒有路：退到零就停住，不讓里程變成負值。
+        distance = min(distance, train.position_m)
+        if distance <= 0.0:
+            train.current_speed_kmh = 0.0
+
+    train.position_m += distance * train.motion_sign
     train.distance_travelled_m += distance
     return distance

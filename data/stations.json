@@ -5,7 +5,7 @@
     "stop_rules_policy": "stop_rules 表示「該車種在本站至少有一班列車辦理停靠」，不是臺鐵另行公布的停靠規則。某一班次停或不停一律以該班次的停靠表為準（規格 §9.1）。",
     "provenance": {
       "effective_date": "2026-07-01",
-      "generated_at": "2026-08-06T12:31:57Z",
+      "generated_at": "2026-08-23T12:32:49Z",
       "generator": "python -m railway_sim.dataset",
       "sources": [
         {

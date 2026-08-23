@@ -5,7 +5,7 @@
     "topology_source": "分歧節點、倒插方向限制與線別歸屬取自 data/topology_overrides.json，該檔為人工維護，內容依開發規格 §10 與 chat.md 的成功／追分／彰化結論。",
     "provenance": {
       "effective_date": "2026-07-01",
-      "generated_at": "2026-08-06T12:31:57Z",
+      "generated_at": "2026-08-23T12:32:49Z",
       "generator": "python -m railway_sim.dataset",
       "sources": [
         {
@@ -8347,10 +8347,13 @@
     },
     {
       "id": "R_AUTO_0044",
-      "name_zh_tw": "新城至樹林",
+      "name_zh_tw": "花蓮至樹林",
       "line_id": "yilan",
       "direction": "southbound",
       "node_ids": [
+        "STA_HUALIEN",
+        "STA_BEIPU",
+        "STA_JINGMEI",
         "STA_XINCHENG",
         "STA_CHONGDE",
         "STA_HEREN",
@@ -8466,53 +8469,6 @@
     },
     {
       "id": "R_AUTO_0046",
-      "name_zh_tw": "蘇澳新至樹林",
-      "line_id": "yilan",
-      "direction": "southbound",
-      "node_ids": [
-        "STA_SUAOXIN",
-        "STA_XINMA",
-        "STA_DONGSHAN",
-        "STA_LUODONG",
-        "STA_ZHONGLI_YL",
-        "STA_ERJIE",
-        "STA_YILAN",
-        "STA_SICHENG",
-        "STA_JIAOXI",
-        "STA_DINGPU",
-        "STA_TOUCHENG",
-        "STA_WAIAO",
-        "STA_GUISHAN",
-        "STA_DAXI",
-        "STA_DALI",
-        "STA_SHICHENG",
-        "STA_FULONG",
-        "STA_GONGLIAO",
-        "STA_SHUANGXI",
-        "STA_MUDAN",
-        "STA_SANDIAOLING",
-        "STA_HOUTONG",
-        "STA_RUIFANG",
-        "STA_SIJIAOTING",
-        "STA_NUANNUAN",
-        "STA_BADU",
-        "STA_QIDU",
-        "STA_BAIFU",
-        "STA_WUDU",
-        "STA_XIZHI",
-        "STA_XIKE",
-        "STA_NANGANG",
-        "STA_SONGSHAN",
-        "STA_TAIPEI",
-        "STA_WANHUA",
-        "STA_BANQIAO",
-        "STA_FUZHOU",
-        "STA_SHULIN"
-      ],
-      "verification_status": "derived_from_timetable"
-    },
-    {
-      "id": "R_AUTO_0047",
       "name_zh_tw": "樹林至花蓮",
       "line_id": "yilan",
       "direction": "northbound",
@@ -8571,121 +8527,12 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0048",
-      "name_zh_tw": "羅東至樹林",
-      "line_id": "yilan",
-      "direction": "southbound",
-      "node_ids": [
-        "STA_LUODONG",
-        "STA_ZHONGLI_YL",
-        "STA_ERJIE",
-        "STA_YILAN",
-        "STA_SICHENG",
-        "STA_JIAOXI",
-        "STA_DINGPU",
-        "STA_TOUCHENG",
-        "STA_WAIAO",
-        "STA_GUISHAN",
-        "STA_DAXI",
-        "STA_DALI",
-        "STA_SHICHENG",
-        "STA_FULONG",
-        "STA_GONGLIAO",
-        "STA_SHUANGXI",
-        "STA_MUDAN",
-        "STA_SANDIAOLING",
-        "STA_HOUTONG",
-        "STA_RUIFANG",
-        "STA_SIJIAOTING",
-        "STA_NUANNUAN",
-        "STA_BADU",
-        "STA_QIDU",
-        "STA_BAIFU",
-        "STA_WUDU",
-        "STA_XIZHI",
-        "STA_XIKE",
-        "STA_NANGANG",
-        "STA_SONGSHAN",
-        "STA_TAIPEI",
-        "STA_WANHUA",
-        "STA_BANQIAO",
-        "STA_FUZHOU",
-        "STA_SHULIN"
-      ],
-      "verification_status": "derived_from_timetable"
-    },
-    {
-      "id": "R_AUTO_0049",
-      "name_zh_tw": "南澳至樹林",
-      "line_id": "yilan",
-      "direction": "southbound",
-      "node_ids": [
-        "STA_NANAO",
-        "STA_DONGAO",
-        "STA_YONGLE",
-        "STA_SUAOXIN",
-        "STA_XINMA",
-        "STA_DONGSHAN",
-        "STA_LUODONG",
-        "STA_ZHONGLI_YL",
-        "STA_ERJIE",
-        "STA_YILAN",
-        "STA_SICHENG",
-        "STA_JIAOXI",
-        "STA_DINGPU",
-        "STA_TOUCHENG",
-        "STA_WAIAO",
-        "STA_GUISHAN",
-        "STA_DAXI",
-        "STA_DALI",
-        "STA_SHICHENG",
-        "STA_FULONG",
-        "STA_GONGLIAO",
-        "STA_SHUANGXI",
-        "STA_MUDAN",
-        "STA_SANDIAOLING",
-        "STA_HOUTONG",
-        "STA_RUIFANG",
-        "STA_SIJIAOTING",
-        "STA_NUANNUAN",
-        "STA_BADU",
-        "STA_QIDU",
-        "STA_BAIFU",
-        "STA_WUDU",
-        "STA_XIZHI",
-        "STA_XIKE",
-        "STA_NANGANG",
-        "STA_SONGSHAN",
-        "STA_TAIPEI",
-        "STA_WANHUA",
-        "STA_BANQIAO",
-        "STA_FUZHOU",
-        "STA_SHULIN"
-      ],
-      "verification_status": "derived_from_timetable"
-    },
-    {
-      "id": "R_AUTO_0050",
-      "name_zh_tw": "南港至樹林",
-      "line_id": "west_north",
-      "direction": "southbound",
-      "node_ids": [
-        "STA_NANGANG",
-        "STA_SONGSHAN",
-        "STA_TAIPEI",
-        "STA_WANHUA",
-        "STA_BANQIAO",
-        "STA_FUZHOU",
-        "STA_SHULIN"
-      ],
-      "verification_status": "derived_from_timetable"
-    },
-    {
-      "id": "R_AUTO_0051",
-      "name_zh_tw": "吉安至壽豐",
+      "id": "R_AUTO_0047",
+      "name_zh_tw": "花蓮至壽豐",
       "line_id": "taitung",
       "direction": "northbound",
       "node_ids": [
+        "STA_HUALIEN",
         "STA_JIAN",
         "STA_ZHIXUE",
         "STA_PINGHE",
@@ -8694,7 +8541,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0052",
+      "id": "R_AUTO_0048",
       "name_zh_tw": "樹林至壽豐",
       "line_id": "yilan",
       "direction": "northbound",
@@ -8757,7 +8604,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0053",
+      "id": "R_AUTO_0049",
       "name_zh_tw": "嘉義至花蓮",
       "line_id": "west_north",
       "direction": "northbound",
@@ -8877,11 +8724,26 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0054",
-      "name_zh_tw": "羅東至彰化",
+      "id": "R_AUTO_0050",
+      "name_zh_tw": "花蓮至彰化",
       "line_id": "west_north",
       "direction": "southbound",
       "node_ids": [
+        "STA_HUALIEN",
+        "STA_BEIPU",
+        "STA_JINGMEI",
+        "STA_XINCHENG",
+        "STA_CHONGDE",
+        "STA_HEREN",
+        "STA_HEPING",
+        "STA_HANBEN",
+        "STA_WUTA",
+        "STA_NANAO",
+        "STA_DONGAO",
+        "STA_YONGLE",
+        "STA_SUAOXIN",
+        "STA_XINMA",
+        "STA_DONGSHAN",
         "STA_LUODONG",
         "STA_ZHONGLI_YL",
         "STA_ERJIE",
@@ -8966,7 +8828,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0055",
+      "id": "R_AUTO_0051",
       "name_zh_tw": "苗栗至花蓮",
       "line_id": "west_north",
       "direction": "northbound",
@@ -9049,11 +8911,14 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0056",
-      "name_zh_tw": "新城至斗南",
+      "id": "R_AUTO_0052",
+      "name_zh_tw": "花蓮至斗南",
       "line_id": "west_north",
       "direction": "southbound",
       "node_ids": [
+        "STA_HUALIEN",
+        "STA_BEIPU",
+        "STA_JINGMEI",
         "STA_XINCHENG",
         "STA_CHONGDE",
         "STA_HEREN",
@@ -9161,7 +9026,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0057",
+      "id": "R_AUTO_0053",
       "name_zh_tw": "彰化至花蓮",
       "line_id": "west_north",
       "direction": "northbound",
@@ -9259,7 +9124,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0058",
+      "id": "R_AUTO_0054",
       "name_zh_tw": "斗六至花蓮",
       "line_id": "west_north",
       "direction": "northbound",
@@ -9373,11 +9238,14 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0059",
-      "name_zh_tw": "新城至屏東",
+      "id": "R_AUTO_0055",
+      "name_zh_tw": "花蓮至屏東",
       "line_id": "west_south",
       "direction": "southbound",
       "node_ids": [
+        "STA_HUALIEN",
+        "STA_BEIPU",
+        "STA_JINGMEI",
         "STA_XINCHENG",
         "STA_CHONGDE",
         "STA_HEREN",
@@ -9527,7 +9395,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0060",
+      "id": "R_AUTO_0056",
       "name_zh_tw": "彰化至花蓮",
       "line_id": "west_north",
       "direction": "northbound",
@@ -9631,7 +9499,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0061",
+      "id": "R_AUTO_0057",
       "name_zh_tw": "壽豐至斗六",
       "line_id": "west_north",
       "direction": "southbound",
@@ -9749,11 +9617,26 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0062",
-      "name_zh_tw": "羅東至彰化",
+      "id": "R_AUTO_0058",
+      "name_zh_tw": "花蓮至彰化",
       "line_id": "west_north",
       "direction": "southbound",
       "node_ids": [
+        "STA_HUALIEN",
+        "STA_BEIPU",
+        "STA_JINGMEI",
+        "STA_XINCHENG",
+        "STA_CHONGDE",
+        "STA_HEREN",
+        "STA_HEPING",
+        "STA_HANBEN",
+        "STA_WUTA",
+        "STA_NANAO",
+        "STA_DONGAO",
+        "STA_YONGLE",
+        "STA_SUAOXIN",
+        "STA_XINMA",
+        "STA_DONGSHAN",
         "STA_LUODONG",
         "STA_ZHONGLI_YL",
         "STA_ERJIE",
@@ -9832,7 +9715,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0063",
+      "id": "R_AUTO_0059",
       "name_zh_tw": "臺南至花蓮",
       "line_id": "taitung",
       "direction": "southbound",
@@ -9913,7 +9796,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0064",
+      "id": "R_AUTO_0060",
       "name_zh_tw": "臺東至新左營",
       "line_id": "pingtung",
       "direction": "northbound",
@@ -9959,7 +9842,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0065",
+      "id": "R_AUTO_0061",
       "name_zh_tw": "新左營至臺東",
       "line_id": "pingtung",
       "direction": "southbound",
@@ -10005,11 +9888,12 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0066",
-      "name_zh_tw": "吉安至新左營",
+      "id": "R_AUTO_0062",
+      "name_zh_tw": "花蓮至新左營",
       "line_id": "taitung",
       "direction": "northbound",
       "node_ids": [
+        "STA_HUALIEN",
         "STA_JIAN",
         "STA_ZHIXUE",
         "STA_PINGHE",
@@ -10076,7 +9960,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0067",
+      "id": "R_AUTO_0063",
       "name_zh_tw": "新左營至花蓮",
       "line_id": "taitung",
       "direction": "southbound",
@@ -10148,11 +10032,24 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0068",
-      "name_zh_tw": "瑞穗至臺南",
-      "line_id": "pingtung",
+      "id": "R_AUTO_0064",
+      "name_zh_tw": "花蓮至臺南",
+      "line_id": "taitung",
       "direction": "northbound",
       "node_ids": [
+        "STA_HUALIEN",
+        "STA_JIAN",
+        "STA_ZHIXUE",
+        "STA_PINGHE",
+        "STA_SHOUFENG",
+        "STA_FENGTIAN",
+        "STA_LINRONGSHINKONG",
+        "STA_NANPING",
+        "STA_FENGLIN",
+        "STA_WANRONG",
+        "STA_GUANGFU",
+        "STA_DAFU",
+        "STA_FUYUAN",
         "STA_RUISUI",
         "STA_SANMIN",
         "STA_YULI",
@@ -10216,7 +10113,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0069",
+      "id": "R_AUTO_0065",
       "name_zh_tw": "臺中至臺東",
       "line_id": "west_south",
       "direction": "southbound",
@@ -10309,7 +10206,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0070",
+      "id": "R_AUTO_0066",
       "name_zh_tw": "臺東至臺中",
       "line_id": "west_south",
       "direction": "northbound",
@@ -10402,7 +10299,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0071",
+      "id": "R_AUTO_0067",
       "name_zh_tw": "樹林至知本",
       "line_id": "taitung",
       "direction": "northbound",
@@ -10489,7 +10386,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0072",
+      "id": "R_AUTO_0068",
       "name_zh_tw": "樹林至新左營",
       "line_id": "taitung",
       "direction": "northbound",
@@ -10610,7 +10507,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0073",
+      "id": "R_AUTO_0069",
       "name_zh_tw": "新左營至樹林",
       "line_id": "taitung",
       "direction": "southbound",
@@ -10731,7 +10628,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0074",
+      "id": "R_AUTO_0070",
       "name_zh_tw": "知本至樹林",
       "line_id": "taitung",
       "direction": "southbound",
@@ -10818,203 +10715,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0075",
-      "name_zh_tw": "瑞穗至光復",
-      "line_id": "west_south",
-      "direction": "northbound",
-      "node_ids": [
-        "STA_RUISUI",
-        "STA_SANMIN",
-        "STA_YULI",
-        "STA_DONGLI",
-        "STA_DONGZHU",
-        "STA_FULI",
-        "STA_CHISHANG",
-        "STA_HAIDUAN",
-        "STA_GUANSHAN",
-        "STA_RUIHE",
-        "STA_RUIYUAN",
-        "STA_LUYE",
-        "STA_SHANLI",
-        "STA_TAITUNG",
-        "STA_KANGLE",
-        "STA_ZHIBEN",
-        "STA_TAIMALI",
-        "STA_JINLUN",
-        "STA_LONGXI",
-        "STA_DAWU",
-        "STA_FANGSHAN",
-        "STA_NEISHI",
-        "STA_JIALU",
-        "STA_FANGLIAO",
-        "STA_DONGHAI",
-        "STA_JIADONG",
-        "STA_LINBIAN",
-        "STA_ZHENAN",
-        "STA_NANZHOU",
-        "STA_KANDING",
-        "STA_CHAOZHOU",
-        "STA_ZHUTIAN",
-        "STA_XISHI",
-        "STA_LINLUO",
-        "STA_GUILAI",
-        "STA_PINGTUNG",
-        "STA_LIUKUAICUO",
-        "STA_JIUQUTANG",
-        "STA_HOUZHUANG",
-        "STA_FENGSHAN",
-        "STA_ZHENGYI",
-        "STA_KEGONGGUAN",
-        "STA_MINZU",
-        "STA_KAOHSIUNG",
-        "STA_SANKUAICUO",
-        "STA_GUSHAN",
-        "STA_MEISHUGUAN",
-        "STA_NEIWEI",
-        "STA_ZUOYING",
-        "STA_XINZUOYING",
-        "STA_NANZI",
-        "STA_QIAOTOU",
-        "STA_GANGSHAN",
-        "STA_LUZHU",
-        "STA_DAHU",
-        "STA_ZHONGZHOU",
-        "STA_RENDE",
-        "STA_BAOAN",
-        "STA_TAINAN",
-        "STA_DAQIAO",
-        "STA_YONGKANG",
-        "STA_XINSHI",
-        "STA_NANKE",
-        "STA_SHANHUA",
-        "STA_BALIN",
-        "STA_LONGTIAN",
-        "STA_LINFENGYING",
-        "STA_LIUYING",
-        "STA_XINYING",
-        "STA_HOUBI",
-        "STA_NANJING",
-        "STA_SHUISHANG",
-        "STA_CHIAYI",
-        "STA_JIABEI",
-        "STA_MINXIONG",
-        "STA_DALIN",
-        "STA_SHIGUI",
-        "STA_DOUNAN",
-        "STA_DOULIU",
-        "STA_SHILIU",
-        "STA_LINNEI",
-        "STA_ERSHUI",
-        "STA_TIANZHONG",
-        "STA_SHETOU",
-        "STA_YONGJING",
-        "STA_YUANLIN",
-        "STA_DACUN",
-        "STA_HUATAN",
-        "STA_CHANGHUA",
-        "JCT_CHANGHUA_N",
-        "STA_ZHUIFEN",
-        "STA_DADU",
-        "STA_LONGJING",
-        "STA_SHALU",
-        "STA_QINGSHUI",
-        "STA_TAICHUNGGANG",
-        "STA_DAJIA",
-        "STA_RINAN",
-        "STA_YUANLI",
-        "STA_TONGXIAO",
-        "STA_XINPU",
-        "STA_BAISHATUN",
-        "STA_LONGGANG",
-        "STA_HOULONG",
-        "STA_DASHAN",
-        "STA_TANWEN",
-        "STA_ZHUNAN",
-        "STA_QIDING",
-        "STA_XIANGSHAN",
-        "STA_SANXINGQIAO",
-        "STA_HSINCHU",
-        "STA_BEIXINZHU",
-        "STA_ZHUBEI",
-        "STA_XINFENG",
-        "STA_HUKOU",
-        "STA_BEIHU",
-        "STA_XINFU",
-        "STA_FUGANG",
-        "STA_YANGMEI",
-        "STA_PUXIN",
-        "STA_ZHONGLI",
-        "STA_NEILI",
-        "STA_TAOYUAN",
-        "STA_FENGMING",
-        "STA_YINGGE",
-        "STA_SHANJIA",
-        "STA_NANSHULIN",
-        "STA_SHULIN",
-        "STA_FUZHOU",
-        "STA_BANQIAO",
-        "STA_WANHUA",
-        "STA_TAIPEI",
-        "STA_SONGSHAN",
-        "STA_NANGANG",
-        "STA_XIKE",
-        "STA_XIZHI",
-        "STA_WUDU",
-        "STA_BAIFU",
-        "STA_QIDU",
-        "STA_BADU",
-        "STA_NUANNUAN",
-        "STA_SIJIAOTING",
-        "STA_RUIFANG",
-        "STA_HOUTONG",
-        "STA_SANDIAOLING",
-        "STA_MUDAN",
-        "STA_SHUANGXI",
-        "STA_GONGLIAO",
-        "STA_FULONG",
-        "STA_SHICHENG",
-        "STA_DALI",
-        "STA_DAXI",
-        "STA_GUISHAN",
-        "STA_WAIAO",
-        "STA_TOUCHENG",
-        "STA_DINGPU",
-        "STA_JIAOXI",
-        "STA_SICHENG",
-        "STA_YILAN",
-        "STA_ERJIE",
-        "STA_ZHONGLI_YL",
-        "STA_LUODONG",
-        "STA_DONGSHAN",
-        "STA_XINMA",
-        "STA_SUAOXIN",
-        "STA_YONGLE",
-        "STA_DONGAO",
-        "STA_NANAO",
-        "STA_WUTA",
-        "STA_HANBEN",
-        "STA_HEPING",
-        "STA_HEREN",
-        "STA_CHONGDE",
-        "STA_XINCHENG",
-        "STA_JINGMEI",
-        "STA_BEIPU",
-        "STA_HUALIEN",
-        "STA_JIAN",
-        "STA_ZHIXUE",
-        "STA_PINGHE",
-        "STA_SHOUFENG",
-        "STA_FENGTIAN",
-        "STA_LINRONGSHINKONG",
-        "STA_NANPING",
-        "STA_FENGLIN",
-        "STA_WANRONG",
-        "STA_GUANGFU"
-      ],
-      "verification_status": "derived_from_timetable"
-    },
-    {
-      "id": "R_AUTO_0076",
+      "id": "R_AUTO_0071",
       "name_zh_tw": "員林至臺東",
       "line_id": "west_north",
       "direction": "northbound",
@@ -11147,7 +10848,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0077",
+      "id": "R_AUTO_0072",
       "name_zh_tw": "臺東至員林",
       "line_id": "west_north",
       "direction": "southbound",
@@ -11280,7 +10981,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0078",
+      "id": "R_AUTO_0073",
       "name_zh_tw": "彰化至潮州",
       "line_id": "west_south",
       "direction": "southbound",
@@ -11348,7 +11049,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0079",
+      "id": "R_AUTO_0074",
       "name_zh_tw": "新左營至潮州",
       "line_id": "pingtung",
       "direction": "southbound",
@@ -11377,7 +11078,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0080",
+      "id": "R_AUTO_0075",
       "name_zh_tw": "潮州至花蓮",
       "line_id": "west_south",
       "direction": "northbound",
@@ -11533,11 +11234,12 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0081",
-      "name_zh_tw": "吉安至臺東",
+      "id": "R_AUTO_0076",
+      "name_zh_tw": "花蓮至臺東",
       "line_id": "taitung",
       "direction": "northbound",
       "node_ids": [
+        "STA_HUALIEN",
         "STA_JIAN",
         "STA_ZHIXUE",
         "STA_PINGHE",
@@ -11568,7 +11270,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0082",
+      "id": "R_AUTO_0077",
       "name_zh_tw": "臺東至彰化",
       "line_id": "west_north",
       "direction": "southbound",
@@ -11692,7 +11394,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0083",
+      "id": "R_AUTO_0078",
       "name_zh_tw": "潮州至臺東",
       "line_id": "south_link",
       "direction": "southbound",
@@ -11719,7 +11421,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0084",
+      "id": "R_AUTO_0079",
       "name_zh_tw": "埔心至七堵",
       "line_id": "west_north",
       "direction": "northbound",
@@ -11748,7 +11450,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0085",
+      "id": "R_AUTO_0080",
       "name_zh_tw": "基隆至鶯歌",
       "line_id": "west_north",
       "direction": "southbound",
@@ -11775,7 +11477,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0086",
+      "id": "R_AUTO_0081",
       "name_zh_tw": "七堵至埔心",
       "line_id": "west_north",
       "direction": "southbound",
@@ -11804,7 +11506,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0087",
+      "id": "R_AUTO_0082",
       "name_zh_tw": "北湖至七堵",
       "line_id": "west_north",
       "direction": "northbound",
@@ -11837,7 +11539,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0088",
+      "id": "R_AUTO_0083",
       "name_zh_tw": "七堵至基隆",
       "line_id": "west_north",
       "direction": "northbound",
@@ -11850,7 +11552,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0089",
+      "id": "R_AUTO_0084",
       "name_zh_tw": "北湖至苗栗",
       "line_id": "west_north",
       "direction": "southbound",
@@ -11872,7 +11574,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0090",
+      "id": "R_AUTO_0085",
       "name_zh_tw": "樹林至基隆",
       "line_id": "west_north",
       "direction": "northbound",
@@ -11896,7 +11598,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0091",
+      "id": "R_AUTO_0086",
       "name_zh_tw": "樹林至新竹",
       "line_id": "west_north",
       "direction": "southbound",
@@ -11923,7 +11625,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0092",
+      "id": "R_AUTO_0087",
       "name_zh_tw": "南港至基隆",
       "line_id": "west_north",
       "direction": "northbound",
@@ -11941,7 +11643,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0093",
+      "id": "R_AUTO_0088",
       "name_zh_tw": "新竹至基隆",
       "line_id": "west_north",
       "direction": "northbound",
@@ -11982,7 +11684,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0094",
+      "id": "R_AUTO_0089",
       "name_zh_tw": "基隆至苗栗",
       "line_id": "west_north",
       "direction": "southbound",
@@ -12030,7 +11732,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0095",
+      "id": "R_AUTO_0090",
       "name_zh_tw": "北湖至基隆",
       "line_id": "west_north",
       "direction": "northbound",
@@ -12066,7 +11768,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0096",
+      "id": "R_AUTO_0091",
       "name_zh_tw": "基隆至新竹",
       "line_id": "west_north",
       "direction": "southbound",
@@ -12107,7 +11809,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0097",
+      "id": "R_AUTO_0092",
       "name_zh_tw": "苗栗至基隆",
       "line_id": "west_north",
       "direction": "northbound",
@@ -12155,7 +11857,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0098",
+      "id": "R_AUTO_0093",
       "name_zh_tw": "基隆至北湖",
       "line_id": "west_north",
       "direction": "southbound",
@@ -12191,7 +11893,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0099",
+      "id": "R_AUTO_0094",
       "name_zh_tw": "湖口至七堵",
       "line_id": "west_north",
       "direction": "northbound",
@@ -12225,7 +11927,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0100",
+      "id": "R_AUTO_0095",
       "name_zh_tw": "北湖至瑞芳",
       "line_id": "west_north",
       "direction": "northbound",
@@ -12262,7 +11964,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0101",
+      "id": "R_AUTO_0096",
       "name_zh_tw": "三義至基隆",
       "line_id": "west_north",
       "direction": "northbound",
@@ -12313,7 +12015,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0102",
+      "id": "R_AUTO_0097",
       "name_zh_tw": "基隆至埔心",
       "line_id": "west_north",
       "direction": "southbound",
@@ -12345,7 +12047,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0103",
+      "id": "R_AUTO_0098",
       "name_zh_tw": "樹林至七堵",
       "line_id": "west_north",
       "direction": "northbound",
@@ -12366,7 +12068,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0104",
+      "id": "R_AUTO_0099",
       "name_zh_tw": "竹南至基隆",
       "line_id": "west_north",
       "direction": "northbound",
@@ -12411,7 +12113,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0105",
+      "id": "R_AUTO_0100",
       "name_zh_tw": "苗栗至瑞芳",
       "line_id": "west_north",
       "direction": "northbound",
@@ -12460,7 +12162,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0106",
+      "id": "R_AUTO_0101",
       "name_zh_tw": "北湖至松山",
       "line_id": "west_north",
       "direction": "northbound",
@@ -12487,7 +12189,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0107",
+      "id": "R_AUTO_0102",
       "name_zh_tw": "瑞芳至新竹",
       "line_id": "west_north",
       "direction": "southbound",
@@ -12529,7 +12231,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0108",
+      "id": "R_AUTO_0103",
       "name_zh_tw": "瑞芳至北湖",
       "line_id": "west_north",
       "direction": "southbound",
@@ -12566,7 +12268,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0109",
+      "id": "R_AUTO_0104",
       "name_zh_tw": "基隆至新豐",
       "line_id": "west_north",
       "direction": "southbound",
@@ -12604,7 +12306,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0110",
+      "id": "R_AUTO_0105",
       "name_zh_tw": "七堵至北湖",
       "line_id": "west_north",
       "direction": "southbound",
@@ -12637,7 +12339,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0111",
+      "id": "R_AUTO_0106",
       "name_zh_tw": "基隆至竹南",
       "line_id": "west_north",
       "direction": "southbound",
@@ -12682,7 +12384,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0112",
+      "id": "R_AUTO_0107",
       "name_zh_tw": "基隆至三義",
       "line_id": "west_north",
       "direction": "southbound",
@@ -12733,7 +12435,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0113",
+      "id": "R_AUTO_0108",
       "name_zh_tw": "埔心至瑞芳",
       "line_id": "west_north",
       "direction": "northbound",
@@ -12766,7 +12468,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0114",
+      "id": "R_AUTO_0109",
       "name_zh_tw": "新竹至南港",
       "line_id": "west_north",
       "direction": "northbound",
@@ -12799,7 +12501,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0115",
+      "id": "R_AUTO_0110",
       "name_zh_tw": "基隆至楊梅",
       "line_id": "west_north",
       "direction": "southbound",
@@ -12832,7 +12534,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0116",
+      "id": "R_AUTO_0111",
       "name_zh_tw": "基隆至中壢",
       "line_id": "west_north",
       "direction": "southbound",
@@ -12863,7 +12565,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0117",
+      "id": "R_AUTO_0112",
       "name_zh_tw": "基隆至樹林",
       "line_id": "west_north",
       "direction": "southbound",
@@ -12887,7 +12589,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0118",
+      "id": "R_AUTO_0113",
       "name_zh_tw": "基隆至七堵",
       "line_id": "west_north",
       "direction": "southbound",
@@ -12900,7 +12602,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0119",
+      "id": "R_AUTO_0114",
       "name_zh_tw": "苗栗至桃園",
       "line_id": "west_north",
       "direction": "northbound",
@@ -12929,7 +12631,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0120",
+      "id": "R_AUTO_0115",
       "name_zh_tw": "六家至新竹",
       "line_id": "neiwan",
       "direction": "southbound",
@@ -12944,7 +12646,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0121",
+      "id": "R_AUTO_0116",
       "name_zh_tw": "新竹至六家",
       "line_id": "neiwan",
       "direction": "northbound",
@@ -12959,7 +12661,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0122",
+      "id": "R_AUTO_0117",
       "name_zh_tw": "內灣至新竹",
       "line_id": "neiwan",
       "direction": "southbound",
@@ -12981,7 +12683,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0123",
+      "id": "R_AUTO_0118",
       "name_zh_tw": "新竹至內灣",
       "line_id": "neiwan",
       "direction": "northbound",
@@ -13003,7 +12705,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0124",
+      "id": "R_AUTO_0119",
       "name_zh_tw": "內灣至竹中",
       "line_id": "neiwan",
       "direction": "southbound",
@@ -13021,7 +12723,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0125",
+      "id": "R_AUTO_0120",
       "name_zh_tw": "竹中至內灣",
       "line_id": "neiwan",
       "direction": "northbound",
@@ -13039,7 +12741,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0126",
+      "id": "R_AUTO_0121",
       "name_zh_tw": "新竹至竹東",
       "line_id": "neiwan",
       "direction": "northbound",
@@ -13056,7 +12758,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0127",
+      "id": "R_AUTO_0122",
       "name_zh_tw": "彰化至嘉義",
       "line_id": "west_south",
       "direction": "southbound",
@@ -13082,7 +12784,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0128",
+      "id": "R_AUTO_0123",
       "name_zh_tw": "嘉義至臺中",
       "line_id": "west_south",
       "direction": "northbound",
@@ -13116,7 +12818,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0129",
+      "id": "R_AUTO_0124",
       "name_zh_tw": "基隆至二水",
       "line_id": "west_north",
       "direction": "southbound",
@@ -13186,7 +12888,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0130",
+      "id": "R_AUTO_0125",
       "name_zh_tw": "七堵至嘉義",
       "line_id": "west_north",
       "direction": "southbound",
@@ -13262,7 +12964,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0131",
+      "id": "R_AUTO_0126",
       "name_zh_tw": "二水至臺中",
       "line_id": "mountain",
       "direction": "northbound",
@@ -13287,7 +12989,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0132",
+      "id": "R_AUTO_0127",
       "name_zh_tw": "新竹至斗六",
       "line_id": "mountain",
       "direction": "southbound",
@@ -13335,7 +13037,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0133",
+      "id": "R_AUTO_0128",
       "name_zh_tw": "豐原至彰化",
       "line_id": "mountain",
       "direction": "southbound",
@@ -13360,7 +13062,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0134",
+      "id": "R_AUTO_0129",
       "name_zh_tw": "臺中至斗六",
       "line_id": "west_south",
       "direction": "southbound",
@@ -13388,7 +13090,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0135",
+      "id": "R_AUTO_0130",
       "name_zh_tw": "臺中至嘉義",
       "line_id": "west_south",
       "direction": "southbound",
@@ -13422,7 +13124,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0136",
+      "id": "R_AUTO_0131",
       "name_zh_tw": "彰化至新竹",
       "line_id": "mountain",
       "direction": "northbound",
@@ -13460,7 +13162,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0137",
+      "id": "R_AUTO_0132",
       "name_zh_tw": "二水至七堵",
       "line_id": "west_north",
       "direction": "northbound",
@@ -13533,7 +13235,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0138",
+      "id": "R_AUTO_0133",
       "name_zh_tw": "斗六至豐原",
       "line_id": "mountain",
       "direction": "northbound",
@@ -13568,7 +13270,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0139",
+      "id": "R_AUTO_0134",
       "name_zh_tw": "臺中至田中",
       "line_id": "mountain",
       "direction": "southbound",
@@ -13592,7 +13294,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0140",
+      "id": "R_AUTO_0135",
       "name_zh_tw": "新竹至嘉義",
       "line_id": "mountain",
       "direction": "southbound",
@@ -13646,7 +13348,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0141",
+      "id": "R_AUTO_0136",
       "name_zh_tw": "北湖至嘉義",
       "line_id": "mountain",
       "direction": "southbound",
@@ -13705,7 +13407,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0142",
+      "id": "R_AUTO_0137",
       "name_zh_tw": "彰化至基隆",
       "line_id": "west_north",
       "direction": "northbound",
@@ -13774,7 +13476,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0143",
+      "id": "R_AUTO_0138",
       "name_zh_tw": "彰化至臺中",
       "line_id": "mountain",
       "direction": "northbound",
@@ -13792,7 +13494,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0144",
+      "id": "R_AUTO_0139",
       "name_zh_tw": "二水至北湖",
       "line_id": "mountain",
       "direction": "northbound",
@@ -13842,7 +13544,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0145",
+      "id": "R_AUTO_0140",
       "name_zh_tw": "彰化至后里",
       "line_id": "mountain",
       "direction": "northbound",
@@ -13868,7 +13570,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0146",
+      "id": "R_AUTO_0141",
       "name_zh_tw": "嘉義至北湖",
       "line_id": "mountain",
       "direction": "northbound",
@@ -13927,7 +13629,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0147",
+      "id": "R_AUTO_0142",
       "name_zh_tw": "嘉義至銅鑼",
       "line_id": "mountain",
       "direction": "northbound",
@@ -13972,7 +13674,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0148",
+      "id": "R_AUTO_0143",
       "name_zh_tw": "基隆至嘉義",
       "line_id": "west_north",
       "direction": "southbound",
@@ -14057,7 +13759,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0149",
+      "id": "R_AUTO_0144",
       "name_zh_tw": "嘉義至基隆",
       "line_id": "west_north",
       "direction": "northbound",
@@ -14142,7 +13844,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0150",
+      "id": "R_AUTO_0145",
       "name_zh_tw": "新營至三義",
       "line_id": "west_south",
       "direction": "northbound",
@@ -14190,7 +13892,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0151",
+      "id": "R_AUTO_0146",
       "name_zh_tw": "彰化至豐原",
       "line_id": "mountain",
       "direction": "northbound",
@@ -14215,7 +13917,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0152",
+      "id": "R_AUTO_0147",
       "name_zh_tw": "嘉義至瑞芳",
       "line_id": "west_north",
       "direction": "northbound",
@@ -14301,7 +14003,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0153",
+      "id": "R_AUTO_0148",
       "name_zh_tw": "北湖至斗南",
       "line_id": "mountain",
       "direction": "southbound",
@@ -14355,7 +14057,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0154",
+      "id": "R_AUTO_0149",
       "name_zh_tw": "北湖至新烏日",
       "line_id": "mountain",
       "direction": "southbound",
@@ -14394,7 +14096,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0155",
+      "id": "R_AUTO_0150",
       "name_zh_tw": "后里至嘉義",
       "line_id": "west_south",
       "direction": "southbound",
@@ -14436,7 +14138,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0156",
+      "id": "R_AUTO_0151",
       "name_zh_tw": "后里至員林",
       "line_id": "mountain",
       "direction": "southbound",
@@ -14465,7 +14167,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0157",
+      "id": "R_AUTO_0152",
       "name_zh_tw": "苗栗至二水",
       "line_id": "mountain",
       "direction": "southbound",
@@ -14503,7 +14205,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0158",
+      "id": "R_AUTO_0153",
       "name_zh_tw": "新烏日至苗栗",
       "line_id": "mountain",
       "direction": "northbound",
@@ -14530,7 +14232,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0159",
+      "id": "R_AUTO_0154",
       "name_zh_tw": "基隆至彰化",
       "line_id": "west_north",
       "direction": "southbound",
@@ -14599,7 +14301,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0160",
+      "id": "R_AUTO_0155",
       "name_zh_tw": "嘉義至彰化",
       "line_id": "west_south",
       "direction": "northbound",
@@ -14625,7 +14327,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0161",
+      "id": "R_AUTO_0156",
       "name_zh_tw": "大甲至彰化",
       "line_id": "coast",
       "direction": "southbound",
@@ -14643,7 +14345,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0162",
+      "id": "R_AUTO_0157",
       "name_zh_tw": "大甲至新竹",
       "line_id": "coast",
       "direction": "northbound",
@@ -14667,7 +14369,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0163",
+      "id": "R_AUTO_0158",
       "name_zh_tw": "新竹至彰化",
       "line_id": "coast",
       "direction": "southbound",
@@ -14699,7 +14401,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0164",
+      "id": "R_AUTO_0159",
       "name_zh_tw": "彰化至北湖",
       "line_id": "coast",
       "direction": "northbound",
@@ -14736,7 +14438,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0165",
+      "id": "R_AUTO_0160",
       "name_zh_tw": "彰化至新竹",
       "line_id": "coast",
       "direction": "northbound",
@@ -14768,7 +14470,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0166",
+      "id": "R_AUTO_0161",
       "name_zh_tw": "湖口至彰化",
       "line_id": "coast",
       "direction": "southbound",
@@ -14804,7 +14506,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0167",
+      "id": "R_AUTO_0162",
       "name_zh_tw": "田中至新竹",
       "line_id": "coast",
       "direction": "northbound",
@@ -14842,7 +14544,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0168",
+      "id": "R_AUTO_0163",
       "name_zh_tw": "彰化至竹南",
       "line_id": "coast",
       "direction": "northbound",
@@ -14870,7 +14572,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0169",
+      "id": "R_AUTO_0164",
       "name_zh_tw": "竹南至彰化",
       "line_id": "coast",
       "direction": "southbound",
@@ -14898,7 +14600,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0170",
+      "id": "R_AUTO_0165",
       "name_zh_tw": "北湖至彰化",
       "line_id": "coast",
       "direction": "southbound",
@@ -14935,7 +14637,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0171",
+      "id": "R_AUTO_0166",
       "name_zh_tw": "竹北至彰化",
       "line_id": "coast",
       "direction": "southbound",
@@ -14969,7 +14671,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0172",
+      "id": "R_AUTO_0167",
       "name_zh_tw": "彰化至竹北",
       "line_id": "coast",
       "direction": "northbound",
@@ -15003,7 +14705,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0173",
+      "id": "R_AUTO_0168",
       "name_zh_tw": "竹北至沙鹿",
       "line_id": "coast",
       "direction": "southbound",
@@ -15032,7 +14734,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0174",
+      "id": "R_AUTO_0169",
       "name_zh_tw": "彰化至大甲",
       "line_id": "coast",
       "direction": "northbound",
@@ -15050,7 +14752,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0175",
+      "id": "R_AUTO_0170",
       "name_zh_tw": "臺中至大甲",
       "line_id": "mountain",
       "direction": "northbound",
@@ -15073,7 +14775,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0176",
+      "id": "R_AUTO_0171",
       "name_zh_tw": "大甲至豐原",
       "line_id": "mountain",
       "direction": "southbound",
@@ -15103,7 +14805,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0177",
+      "id": "R_AUTO_0172",
       "name_zh_tw": "豐原至竹南",
       "line_id": "coast",
       "direction": "northbound",
@@ -15143,7 +14845,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0178",
+      "id": "R_AUTO_0173",
       "name_zh_tw": "豐原至通霄",
       "line_id": "mountain",
       "direction": "northbound",
@@ -15176,7 +14878,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0179",
+      "id": "R_AUTO_0174",
       "name_zh_tw": "臺中至通霄",
       "line_id": "coast",
       "direction": "northbound",
@@ -15202,7 +14904,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0180",
+      "id": "R_AUTO_0175",
       "name_zh_tw": "通霄至豐原",
       "line_id": "mountain",
       "direction": "southbound",
@@ -15235,7 +14937,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0181",
+      "id": "R_AUTO_0176",
       "name_zh_tw": "大甲至臺中",
       "line_id": "mountain",
       "direction": "southbound",
@@ -15258,7 +14960,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0182",
+      "id": "R_AUTO_0177",
       "name_zh_tw": "豐原至大甲",
       "line_id": "mountain",
       "direction": "northbound",
@@ -15288,7 +14990,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0183",
+      "id": "R_AUTO_0178",
       "name_zh_tw": "竹南至臺中",
       "line_id": "coast",
       "direction": "southbound",
@@ -15321,7 +15023,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0184",
+      "id": "R_AUTO_0179",
       "name_zh_tw": "大甲至苗栗",
       "line_id": "mountain",
       "direction": "southbound",
@@ -15357,7 +15059,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0185",
+      "id": "R_AUTO_0180",
       "name_zh_tw": "苗栗至通霄",
       "line_id": "mountain",
       "direction": "northbound",
@@ -15396,7 +15098,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0186",
+      "id": "R_AUTO_0181",
       "name_zh_tw": "通霄至臺中",
       "line_id": "coast",
       "direction": "southbound",
@@ -15422,7 +15124,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0187",
+      "id": "R_AUTO_0182",
       "name_zh_tw": "豐原至沙鹿",
       "line_id": "mountain",
       "direction": "northbound",
@@ -15449,7 +15151,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0188",
+      "id": "R_AUTO_0183",
       "name_zh_tw": "水里至彰化",
       "line_id": "west_south",
       "direction": "northbound",
@@ -15471,7 +15173,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0189",
+      "id": "R_AUTO_0184",
       "name_zh_tw": "彰化至車埕",
       "line_id": "west_south",
       "direction": "southbound",
@@ -15494,7 +15196,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0190",
+      "id": "R_AUTO_0185",
       "name_zh_tw": "車埕至二水",
       "line_id": "jiji",
       "direction": "northbound",
@@ -15510,7 +15212,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0191",
+      "id": "R_AUTO_0186",
       "name_zh_tw": "二水至車埕",
       "line_id": "jiji",
       "direction": "southbound",
@@ -15526,7 +15228,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0192",
+      "id": "R_AUTO_0187",
       "name_zh_tw": "車埕至彰化",
       "line_id": "west_south",
       "direction": "northbound",
@@ -15549,7 +15251,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0193",
+      "id": "R_AUTO_0188",
       "name_zh_tw": "臺東至潮州",
       "line_id": "south_link",
       "direction": "northbound",
@@ -15576,7 +15278,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0194",
+      "id": "R_AUTO_0189",
       "name_zh_tw": "潮州至豐原",
       "line_id": "west_south",
       "direction": "northbound",
@@ -15659,7 +15361,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0195",
+      "id": "R_AUTO_0190",
       "name_zh_tw": "斗六至枋寮",
       "line_id": "west_south",
       "direction": "southbound",
@@ -15724,7 +15426,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0196",
+      "id": "R_AUTO_0191",
       "name_zh_tw": "臺東至彰化",
       "line_id": "west_south",
       "direction": "northbound",
@@ -15809,7 +15511,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0197",
+      "id": "R_AUTO_0192",
       "name_zh_tw": "豐原至潮州",
       "line_id": "west_south",
       "direction": "southbound",
@@ -15892,7 +15594,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0198",
+      "id": "R_AUTO_0193",
       "name_zh_tw": "臺南至潮州",
       "line_id": "west_south",
       "direction": "southbound",
@@ -15930,7 +15632,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0199",
+      "id": "R_AUTO_0194",
       "name_zh_tw": "枋寮至臺南",
       "line_id": "pingtung",
       "direction": "northbound",
@@ -15975,7 +15677,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0200",
+      "id": "R_AUTO_0195",
       "name_zh_tw": "新左營至枋寮",
       "line_id": "pingtung",
       "direction": "southbound",
@@ -16011,7 +15713,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0201",
+      "id": "R_AUTO_0196",
       "name_zh_tw": "枋寮至新左營",
       "line_id": "pingtung",
       "direction": "northbound",
@@ -16047,7 +15749,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0202",
+      "id": "R_AUTO_0197",
       "name_zh_tw": "臺南至嘉義",
       "line_id": "west_south",
       "direction": "northbound",
@@ -16071,7 +15773,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0203",
+      "id": "R_AUTO_0198",
       "name_zh_tw": "高雄至后里",
       "line_id": "west_south",
       "direction": "northbound",
@@ -16142,7 +15844,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0204",
+      "id": "R_AUTO_0199",
       "name_zh_tw": "嘉義至潮州",
       "line_id": "west_south",
       "direction": "southbound",
@@ -16194,7 +15896,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0205",
+      "id": "R_AUTO_0200",
       "name_zh_tw": "潮州至后里",
       "line_id": "west_south",
       "direction": "northbound",
@@ -16278,7 +15980,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0206",
+      "id": "R_AUTO_0201",
       "name_zh_tw": "二水至潮州",
       "line_id": "west_south",
       "direction": "southbound",
@@ -16339,7 +16041,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0207",
+      "id": "R_AUTO_0202",
       "name_zh_tw": "潮州至北湖",
       "line_id": "west_south",
       "direction": "northbound",
@@ -16440,7 +16142,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0208",
+      "id": "R_AUTO_0203",
       "name_zh_tw": "潮州至新左營",
       "line_id": "pingtung",
       "direction": "northbound",
@@ -16469,7 +16171,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0209",
+      "id": "R_AUTO_0204",
       "name_zh_tw": "大林至潮州",
       "line_id": "west_south",
       "direction": "southbound",
@@ -16524,7 +16226,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0210",
+      "id": "R_AUTO_0205",
       "name_zh_tw": "潮州至嘉義",
       "line_id": "west_south",
       "direction": "northbound",
@@ -16576,7 +16278,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0211",
+      "id": "R_AUTO_0206",
       "name_zh_tw": "新左營至屏東",
       "line_id": "pingtung",
       "direction": "southbound",
@@ -16600,7 +16302,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0212",
+      "id": "R_AUTO_0207",
       "name_zh_tw": "后里至潮州",
       "line_id": "west_south",
       "direction": "southbound",
@@ -16684,7 +16386,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0213",
+      "id": "R_AUTO_0208",
       "name_zh_tw": "新竹至潮州",
       "line_id": "west_south",
       "direction": "southbound",
@@ -16780,7 +16482,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0214",
+      "id": "R_AUTO_0209",
       "name_zh_tw": "銅鑼至潮州",
       "line_id": "west_south",
       "direction": "southbound",
@@ -16867,7 +16569,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0215",
+      "id": "R_AUTO_0210",
       "name_zh_tw": "屏東至新左營",
       "line_id": "pingtung",
       "direction": "northbound",
@@ -16891,7 +16593,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0216",
+      "id": "R_AUTO_0211",
       "name_zh_tw": "三義至潮州",
       "line_id": "west_south",
       "direction": "southbound",
@@ -16977,7 +16679,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0217",
+      "id": "R_AUTO_0212",
       "name_zh_tw": "潮州至斗六",
       "line_id": "west_south",
       "direction": "northbound",
@@ -17035,7 +16737,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0218",
+      "id": "R_AUTO_0213",
       "name_zh_tw": "后里至屏東",
       "line_id": "west_south",
       "direction": "southbound",
@@ -17114,7 +16816,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0219",
+      "id": "R_AUTO_0214",
       "name_zh_tw": "斗南至潮州",
       "line_id": "west_south",
       "direction": "southbound",
@@ -17171,7 +16873,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0220",
+      "id": "R_AUTO_0215",
       "name_zh_tw": "潮州至民雄",
       "line_id": "west_south",
       "direction": "northbound",
@@ -17225,7 +16927,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0221",
+      "id": "R_AUTO_0216",
       "name_zh_tw": "屏東至新竹",
       "line_id": "west_south",
       "direction": "northbound",
@@ -17316,7 +17018,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0222",
+      "id": "R_AUTO_0217",
       "name_zh_tw": "潮州至新竹",
       "line_id": "west_south",
       "direction": "northbound",
@@ -17412,7 +17114,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0223",
+      "id": "R_AUTO_0218",
       "name_zh_tw": "潮州至二水",
       "line_id": "west_south",
       "direction": "northbound",
@@ -17473,7 +17175,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0224",
+      "id": "R_AUTO_0219",
       "name_zh_tw": "屏東至善化",
       "line_id": "west_south",
       "direction": "northbound",
@@ -17511,7 +17213,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0225",
+      "id": "R_AUTO_0220",
       "name_zh_tw": "潮州至彰化",
       "line_id": "west_south",
       "direction": "northbound",
@@ -17579,7 +17281,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0226",
+      "id": "R_AUTO_0221",
       "name_zh_tw": "民雄至潮州",
       "line_id": "west_south",
       "direction": "southbound",
@@ -17633,7 +17335,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0227",
+      "id": "R_AUTO_0222",
       "name_zh_tw": "善化至潮州",
       "line_id": "west_south",
       "direction": "southbound",
@@ -17676,7 +17378,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0228",
+      "id": "R_AUTO_0223",
       "name_zh_tw": "潮州至善化",
       "line_id": "west_south",
       "direction": "northbound",
@@ -17719,7 +17421,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0229",
+      "id": "R_AUTO_0224",
       "name_zh_tw": "嘉義至臺南",
       "line_id": "west_south",
       "direction": "southbound",
@@ -17743,7 +17445,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0230",
+      "id": "R_AUTO_0225",
       "name_zh_tw": "潮州至臺南",
       "line_id": "west_south",
       "direction": "northbound",
@@ -17781,7 +17483,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0231",
+      "id": "R_AUTO_0226",
       "name_zh_tw": "后里至臺南",
       "line_id": "west_south",
       "direction": "southbound",
@@ -17837,7 +17539,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0232",
+      "id": "R_AUTO_0227",
       "name_zh_tw": "潮州至枋寮",
       "line_id": "pingtung",
       "direction": "southbound",
@@ -17854,7 +17556,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0233",
+      "id": "R_AUTO_0228",
       "name_zh_tw": "潮州至加祿",
       "line_id": "pingtung",
       "direction": "southbound",
@@ -17872,7 +17574,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0234",
+      "id": "R_AUTO_0229",
       "name_zh_tw": "加祿至新左營",
       "line_id": "pingtung",
       "direction": "northbound",
@@ -17909,7 +17611,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0235",
+      "id": "R_AUTO_0230",
       "name_zh_tw": "枋寮至潮州",
       "line_id": "pingtung",
       "direction": "northbound",
@@ -17926,7 +17628,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0236",
+      "id": "R_AUTO_0231",
       "name_zh_tw": "臺南至沙崙",
       "line_id": "west_south",
       "direction": "southbound",
@@ -17941,7 +17643,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0237",
+      "id": "R_AUTO_0232",
       "name_zh_tw": "沙崙至臺南",
       "line_id": "west_south",
       "direction": "northbound",
@@ -17956,7 +17658,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0238",
+      "id": "R_AUTO_0233",
       "name_zh_tw": "沙崙至善化",
       "line_id": "west_south",
       "direction": "northbound",
@@ -17976,7 +17678,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0239",
+      "id": "R_AUTO_0234",
       "name_zh_tw": "嘉義至沙崙",
       "line_id": "west_south",
       "direction": "southbound",
@@ -18005,7 +17707,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0240",
+      "id": "R_AUTO_0235",
       "name_zh_tw": "善化至沙崙",
       "line_id": "west_south",
       "direction": "southbound",
@@ -18025,7 +17727,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0241",
+      "id": "R_AUTO_0236",
       "name_zh_tw": "沙崙至永康",
       "line_id": "west_south",
       "direction": "northbound",
@@ -18042,7 +17744,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0242",
+      "id": "R_AUTO_0237",
       "name_zh_tw": "永康至沙崙",
       "line_id": "west_south",
       "direction": "southbound",
@@ -18059,7 +17761,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0243",
+      "id": "R_AUTO_0238",
       "name_zh_tw": "沙崙至嘉義",
       "line_id": "west_south",
       "direction": "northbound",
@@ -18088,7 +17790,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0244",
+      "id": "R_AUTO_0239",
       "name_zh_tw": "蘇澳至樹林",
       "line_id": "yilan",
       "direction": "southbound",
@@ -18136,7 +17838,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0245",
+      "id": "R_AUTO_0240",
       "name_zh_tw": "桃園至和平",
       "line_id": "yilan",
       "direction": "northbound",
@@ -18194,7 +17896,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0246",
+      "id": "R_AUTO_0241",
       "name_zh_tw": "板橋至和平",
       "line_id": "yilan",
       "direction": "northbound",
@@ -18245,66 +17947,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0247",
-      "name_zh_tw": "花蓮至樹林",
-      "line_id": "yilan",
-      "direction": "southbound",
-      "node_ids": [
-        "STA_HUALIEN",
-        "STA_BEIPU",
-        "STA_JINGMEI",
-        "STA_XINCHENG",
-        "STA_CHONGDE",
-        "STA_HEREN",
-        "STA_HEPING",
-        "STA_HANBEN",
-        "STA_WUTA",
-        "STA_NANAO",
-        "STA_DONGAO",
-        "STA_YONGLE",
-        "STA_SUAOXIN",
-        "STA_XINMA",
-        "STA_DONGSHAN",
-        "STA_LUODONG",
-        "STA_ZHONGLI_YL",
-        "STA_ERJIE",
-        "STA_YILAN",
-        "STA_SICHENG",
-        "STA_JIAOXI",
-        "STA_DINGPU",
-        "STA_TOUCHENG",
-        "STA_WAIAO",
-        "STA_GUISHAN",
-        "STA_DAXI",
-        "STA_DALI",
-        "STA_SHICHENG",
-        "STA_FULONG",
-        "STA_GONGLIAO",
-        "STA_SHUANGXI",
-        "STA_MUDAN",
-        "STA_SANDIAOLING",
-        "STA_HOUTONG",
-        "STA_RUIFANG",
-        "STA_SIJIAOTING",
-        "STA_NUANNUAN",
-        "STA_BADU",
-        "STA_QIDU",
-        "STA_BAIFU",
-        "STA_WUDU",
-        "STA_XIZHI",
-        "STA_XIKE",
-        "STA_NANGANG",
-        "STA_SONGSHAN",
-        "STA_TAIPEI",
-        "STA_WANHUA",
-        "STA_BANQIAO",
-        "STA_FUZHOU",
-        "STA_SHULIN"
-      ],
-      "verification_status": "derived_from_timetable"
-    },
-    {
-      "id": "R_AUTO_0248",
+      "id": "R_AUTO_0242",
       "name_zh_tw": "玉里至花蓮",
       "line_id": "taitung",
       "direction": "southbound",
@@ -18329,7 +17972,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0249",
+      "id": "R_AUTO_0243",
       "name_zh_tw": "瑞芳至樹林",
       "line_id": "west_north",
       "direction": "southbound",
@@ -18354,7 +17997,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0250",
+      "id": "R_AUTO_0244",
       "name_zh_tw": "和平至樹林",
       "line_id": "yilan",
       "direction": "southbound",
@@ -18407,7 +18050,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0251",
+      "id": "R_AUTO_0245",
       "name_zh_tw": "鶯歌至蘇澳新",
       "line_id": "yilan",
       "direction": "northbound",
@@ -18457,7 +18100,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0252",
+      "id": "R_AUTO_0246",
       "name_zh_tw": "宜蘭至七堵",
       "line_id": "yilan",
       "direction": "southbound",
@@ -18487,9 +18130,9 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0253",
+      "id": "R_AUTO_0247",
       "name_zh_tw": "蘇澳新至湖口",
-      "line_id": "west_north",
+      "line_id": "yilan",
       "direction": "southbound",
       "node_ids": [
         "STA_SUAOXIN",
@@ -18547,7 +18190,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0254",
+      "id": "R_AUTO_0248",
       "name_zh_tw": "臺東至池上",
       "line_id": "taitung",
       "direction": "southbound",
@@ -18564,7 +18207,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0255",
+      "id": "R_AUTO_0249",
       "name_zh_tw": "花蓮至宜蘭",
       "line_id": "north_link",
       "direction": "southbound",
@@ -18592,7 +18235,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0256",
+      "id": "R_AUTO_0250",
       "name_zh_tw": "花蓮至板橋",
       "line_id": "yilan",
       "direction": "southbound",
@@ -18649,7 +18292,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0257",
+      "id": "R_AUTO_0251",
       "name_zh_tw": "花蓮至桃園",
       "line_id": "yilan",
       "direction": "southbound",
@@ -18713,7 +18356,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0258",
+      "id": "R_AUTO_0252",
       "name_zh_tw": "池上至臺東",
       "line_id": "taitung",
       "direction": "northbound",
@@ -18730,7 +18373,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0259",
+      "id": "R_AUTO_0253",
       "name_zh_tw": "宜蘭至花蓮",
       "line_id": "north_link",
       "direction": "northbound",
@@ -18758,7 +18401,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0260",
+      "id": "R_AUTO_0254",
       "name_zh_tw": "花蓮至蘇澳新",
       "line_id": "north_link",
       "direction": "southbound",
@@ -18780,7 +18423,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0261",
+      "id": "R_AUTO_0255",
       "name_zh_tw": "七堵至羅東",
       "line_id": "yilan",
       "direction": "northbound",
@@ -18813,7 +18456,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0262",
+      "id": "R_AUTO_0256",
       "name_zh_tw": "新豐至花蓮",
       "line_id": "west_north",
       "direction": "northbound",
@@ -18886,7 +18529,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0263",
+      "id": "R_AUTO_0257",
       "name_zh_tw": "樹林至蘇澳",
       "line_id": "yilan",
       "direction": "northbound",
@@ -18934,7 +18577,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0264",
+      "id": "R_AUTO_0258",
       "name_zh_tw": "宜蘭至北湖",
       "line_id": "west_north",
       "direction": "southbound",
@@ -18987,7 +18630,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0265",
+      "id": "R_AUTO_0259",
       "name_zh_tw": "頭城至蘇澳",
       "line_id": "yilan",
       "direction": "northbound",
@@ -19008,7 +18651,101 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0266",
+      "id": "R_AUTO_0260",
+      "name_zh_tw": "羅東至樹林",
+      "line_id": "yilan",
+      "direction": "southbound",
+      "node_ids": [
+        "STA_LUODONG",
+        "STA_ZHONGLI_YL",
+        "STA_ERJIE",
+        "STA_YILAN",
+        "STA_SICHENG",
+        "STA_JIAOXI",
+        "STA_DINGPU",
+        "STA_TOUCHENG",
+        "STA_WAIAO",
+        "STA_GUISHAN",
+        "STA_DAXI",
+        "STA_DALI",
+        "STA_SHICHENG",
+        "STA_FULONG",
+        "STA_GONGLIAO",
+        "STA_SHUANGXI",
+        "STA_MUDAN",
+        "STA_SANDIAOLING",
+        "STA_HOUTONG",
+        "STA_RUIFANG",
+        "STA_SIJIAOTING",
+        "STA_NUANNUAN",
+        "STA_BADU",
+        "STA_QIDU",
+        "STA_BAIFU",
+        "STA_WUDU",
+        "STA_XIZHI",
+        "STA_XIKE",
+        "STA_NANGANG",
+        "STA_SONGSHAN",
+        "STA_TAIPEI",
+        "STA_WANHUA",
+        "STA_BANQIAO",
+        "STA_FUZHOU",
+        "STA_SHULIN"
+      ],
+      "verification_status": "derived_from_timetable"
+    },
+    {
+      "id": "R_AUTO_0261",
+      "name_zh_tw": "南澳至樹林",
+      "line_id": "yilan",
+      "direction": "southbound",
+      "node_ids": [
+        "STA_NANAO",
+        "STA_DONGAO",
+        "STA_YONGLE",
+        "STA_SUAOXIN",
+        "STA_XINMA",
+        "STA_DONGSHAN",
+        "STA_LUODONG",
+        "STA_ZHONGLI_YL",
+        "STA_ERJIE",
+        "STA_YILAN",
+        "STA_SICHENG",
+        "STA_JIAOXI",
+        "STA_DINGPU",
+        "STA_TOUCHENG",
+        "STA_WAIAO",
+        "STA_GUISHAN",
+        "STA_DAXI",
+        "STA_DALI",
+        "STA_SHICHENG",
+        "STA_FULONG",
+        "STA_GONGLIAO",
+        "STA_SHUANGXI",
+        "STA_MUDAN",
+        "STA_SANDIAOLING",
+        "STA_HOUTONG",
+        "STA_RUIFANG",
+        "STA_SIJIAOTING",
+        "STA_NUANNUAN",
+        "STA_BADU",
+        "STA_QIDU",
+        "STA_BAIFU",
+        "STA_WUDU",
+        "STA_XIZHI",
+        "STA_XIKE",
+        "STA_NANGANG",
+        "STA_SONGSHAN",
+        "STA_TAIPEI",
+        "STA_WANHUA",
+        "STA_BANQIAO",
+        "STA_FUZHOU",
+        "STA_SHULIN"
+      ],
+      "verification_status": "derived_from_timetable"
+    },
+    {
+      "id": "R_AUTO_0262",
       "name_zh_tw": "七堵至蘇澳",
       "line_id": "yilan",
       "direction": "northbound",
@@ -19045,7 +18782,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0267",
+      "id": "R_AUTO_0263",
       "name_zh_tw": "花蓮至頭城",
       "line_id": "north_link",
       "direction": "southbound",
@@ -19077,7 +18814,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0268",
+      "id": "R_AUTO_0264",
       "name_zh_tw": "和平至花蓮",
       "line_id": "north_link",
       "direction": "northbound",
@@ -19093,7 +18830,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0269",
+      "id": "R_AUTO_0265",
       "name_zh_tw": "頭城至花蓮",
       "line_id": "north_link",
       "direction": "northbound",
@@ -19125,7 +18862,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0270",
+      "id": "R_AUTO_0266",
       "name_zh_tw": "蘇澳至瑞芳",
       "line_id": "yilan",
       "direction": "southbound",
@@ -19158,7 +18895,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0271",
+      "id": "R_AUTO_0267",
       "name_zh_tw": "蘇澳至頭城",
       "line_id": "yilan",
       "direction": "southbound",
@@ -19179,7 +18916,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0272",
+      "id": "R_AUTO_0268",
       "name_zh_tw": "福隆至樹林",
       "line_id": "west_north",
       "direction": "southbound",
@@ -19210,7 +18947,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0273",
+      "id": "R_AUTO_0269",
       "name_zh_tw": "中壢至蘇澳",
       "line_id": "yilan",
       "direction": "northbound",
@@ -19265,7 +19002,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0274",
+      "id": "R_AUTO_0270",
       "name_zh_tw": "樹林至瑞芳",
       "line_id": "west_north",
       "direction": "northbound",
@@ -19290,7 +19027,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0275",
+      "id": "R_AUTO_0271",
       "name_zh_tw": "楊梅至福隆",
       "line_id": "west_north",
       "direction": "northbound",
@@ -19330,7 +19067,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0276",
+      "id": "R_AUTO_0272",
       "name_zh_tw": "瑞芳至蘇澳",
       "line_id": "yilan",
       "direction": "northbound",
@@ -19363,7 +19100,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0277",
+      "id": "R_AUTO_0273",
       "name_zh_tw": "蘇澳至北湖",
       "line_id": "yilan",
       "direction": "southbound",
@@ -19423,7 +19160,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0278",
+      "id": "R_AUTO_0274",
       "name_zh_tw": "蘇澳至桃園",
       "line_id": "yilan",
       "direction": "southbound",
@@ -19476,7 +19213,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0279",
+      "id": "R_AUTO_0275",
       "name_zh_tw": "福隆至北湖",
       "line_id": "west_north",
       "direction": "southbound",
@@ -19519,7 +19256,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0280",
+      "id": "R_AUTO_0276",
       "name_zh_tw": "樹林至南澳",
       "line_id": "yilan",
       "direction": "northbound",
@@ -19569,7 +19306,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0281",
+      "id": "R_AUTO_0277",
       "name_zh_tw": "七堵至福隆",
       "line_id": "yilan",
       "direction": "northbound",
@@ -19589,7 +19326,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0282",
+      "id": "R_AUTO_0278",
       "name_zh_tw": "樹林至宜蘭",
       "line_id": "yilan",
       "direction": "northbound",
@@ -19630,7 +19367,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0283",
+      "id": "R_AUTO_0279",
       "name_zh_tw": "北湖至蘇澳",
       "line_id": "yilan",
       "direction": "northbound",
@@ -19690,7 +19427,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0284",
+      "id": "R_AUTO_0280",
       "name_zh_tw": "樹林至福隆",
       "line_id": "west_north",
       "direction": "northbound",
@@ -19721,7 +19458,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0285",
+      "id": "R_AUTO_0281",
       "name_zh_tw": "羅東至北湖",
       "line_id": "west_north",
       "direction": "southbound",
@@ -19777,7 +19514,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0286",
+      "id": "R_AUTO_0282",
       "name_zh_tw": "蘇澳至蘇澳新",
       "line_id": "yilan",
       "direction": "southbound",
@@ -19788,7 +19525,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0287",
+      "id": "R_AUTO_0283",
       "name_zh_tw": "桃園至南澳",
       "line_id": "yilan",
       "direction": "northbound",
@@ -19843,7 +19580,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0288",
+      "id": "R_AUTO_0284",
       "name_zh_tw": "蘇澳至七堵",
       "line_id": "yilan",
       "direction": "southbound",
@@ -19880,7 +19617,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0289",
+      "id": "R_AUTO_0285",
       "name_zh_tw": "北湖至福隆",
       "line_id": "west_north",
       "direction": "northbound",
@@ -19923,7 +19660,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0290",
+      "id": "R_AUTO_0286",
       "name_zh_tw": "光復至花蓮",
       "line_id": "taitung",
       "direction": "southbound",
@@ -19943,7 +19680,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0291",
+      "id": "R_AUTO_0287",
       "name_zh_tw": "關山至臺東",
       "line_id": "taitung",
       "direction": "northbound",
@@ -19958,7 +19695,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0292",
+      "id": "R_AUTO_0288",
       "name_zh_tw": "臺東至玉里",
       "line_id": "taitung",
       "direction": "southbound",
@@ -19979,7 +19716,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0293",
+      "id": "R_AUTO_0289",
       "name_zh_tw": "玉里至臺東",
       "line_id": "taitung",
       "direction": "northbound",
@@ -20000,7 +19737,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0294",
+      "id": "R_AUTO_0290",
       "name_zh_tw": "玉里至和平",
       "line_id": "taitung",
       "direction": "southbound",
@@ -20031,7 +19768,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0295",
+      "id": "R_AUTO_0291",
       "name_zh_tw": "花蓮至玉里",
       "line_id": "taitung",
       "direction": "northbound",
@@ -20056,7 +19793,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0296",
+      "id": "R_AUTO_0292",
       "name_zh_tw": "宜蘭至臺東",
       "line_id": "taitung",
       "direction": "northbound",
@@ -20110,7 +19847,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0297",
+      "id": "R_AUTO_0293",
       "name_zh_tw": "臺東至花蓮",
       "line_id": "taitung",
       "direction": "southbound",
@@ -20146,43 +19883,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0298",
-      "name_zh_tw": "花蓮至臺東",
-      "line_id": "taitung",
-      "direction": "northbound",
-      "node_ids": [
-        "STA_HUALIEN",
-        "STA_JIAN",
-        "STA_ZHIXUE",
-        "STA_PINGHE",
-        "STA_SHOUFENG",
-        "STA_FENGTIAN",
-        "STA_LINRONGSHINKONG",
-        "STA_NANPING",
-        "STA_FENGLIN",
-        "STA_WANRONG",
-        "STA_GUANGFU",
-        "STA_DAFU",
-        "STA_FUYUAN",
-        "STA_RUISUI",
-        "STA_SANMIN",
-        "STA_YULI",
-        "STA_DONGLI",
-        "STA_DONGZHU",
-        "STA_FULI",
-        "STA_CHISHANG",
-        "STA_HAIDUAN",
-        "STA_GUANSHAN",
-        "STA_RUIHE",
-        "STA_RUIYUAN",
-        "STA_LUYE",
-        "STA_SHANLI",
-        "STA_TAITUNG"
-      ],
-      "verification_status": "derived_from_timetable"
-    },
-    {
-      "id": "R_AUTO_0299",
+      "id": "R_AUTO_0294",
       "name_zh_tw": "和平至玉里",
       "line_id": "taitung",
       "direction": "northbound",
@@ -20213,7 +19914,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0300",
+      "id": "R_AUTO_0295",
       "name_zh_tw": "臺東至光復",
       "line_id": "taitung",
       "direction": "southbound",
@@ -20239,7 +19940,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0301",
+      "id": "R_AUTO_0296",
       "name_zh_tw": "菁桐至八堵",
       "line_id": "pingxi",
       "direction": "southbound",
@@ -20260,7 +19961,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0302",
+      "id": "R_AUTO_0297",
       "name_zh_tw": "瑞芳至菁桐",
       "line_id": "pingxi",
       "direction": "northbound",
@@ -20278,7 +19979,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0303",
+      "id": "R_AUTO_0298",
       "name_zh_tw": "八堵至菁桐",
       "line_id": "pingxi",
       "direction": "northbound",
@@ -20299,7 +20000,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0304",
+      "id": "R_AUTO_0299",
       "name_zh_tw": "菁桐至瑞芳",
       "line_id": "pingxi",
       "direction": "southbound",
@@ -20317,9 +20018,9 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0305",
+      "id": "R_AUTO_0300",
       "name_zh_tw": "八堵至十分",
-      "line_id": "pingxi",
+      "line_id": "yilan",
       "direction": "northbound",
       "node_ids": [
         "STA_BADU",
@@ -20334,7 +20035,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0306",
+      "id": "R_AUTO_0301",
       "name_zh_tw": "菁桐至八斗子",
       "line_id": "pingxi",
       "direction": "southbound",
@@ -20354,7 +20055,7 @@
       "verification_status": "derived_from_timetable"
     },
     {
-      "id": "R_AUTO_0307",
+      "id": "R_AUTO_0302",
       "name_zh_tw": "八斗子至菁桐",
       "line_id": "pingxi",
       "direction": "northbound",
