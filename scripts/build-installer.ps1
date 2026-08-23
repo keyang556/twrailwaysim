@@ -127,8 +127,11 @@ $missingWxWarnings = @(Select-String -LiteralPath $pyInstallerWarningFile -Patte
 if ($missingWxWarnings.Count -gt 0) {
     throw "PyInstaller reported a missing wx module. Recreate the build environment with .[installer] before packaging a release."
 }
+$knownOptionalPygameWarnings =
+    "missing module named '?pygame\.(?:_common|overlay|cdrom)'?"
 $missingAudioWarnings = @(
-    Select-String -LiteralPath $pyInstallerWarningFile -Pattern 'missing module named [''"]?(pygame|sdl2?)([.''"]|$)'
+    Select-String -LiteralPath $pyInstallerWarningFile -Pattern 'missing module named [''"]?(pygame|sdl2?)([.''"]|$)' |
+        Where-Object { $_.Line -notmatch $knownOptionalPygameWarnings }
 )
 if ($missingAudioWarnings.Count -gt 0) {
     throw "PyInstaller reported a missing pygame or SDL module. Recreate the build environment with .[installer] before packaging a release."

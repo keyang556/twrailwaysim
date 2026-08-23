@@ -30,6 +30,7 @@ class TestInstallerAudioRequirements:
 
         assert "import pygame" in build_script
         assert "pygame or SDL module" in build_script
+        assert "knownOptionalPygameWarnings" in build_script
         assert '"--check-audio"' in build_script
         assert "SDL_AUDIODRIVER" in build_script
         assert '"pygame"' in spec
