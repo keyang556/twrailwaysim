@@ -200,6 +200,29 @@ class TestLooping:
         finally:
             player.close()
 
+    def test_a_stale_item_pulled_before_stop_is_discarded(
+        self, tmp_path: Path
+    ) -> None:
+        """stop() 只能清掉還在佇列裡的項目；一旦背景執行緒已經用 get() 把
+        循環的下一輪取出、只是還沒開始播，清空佇列完全碰不到它。用世代
+        編號補這個洞：手動模擬「已取出、世代卻是舊的」這個先天無法穩定
+        用真實時間點重現的情境，確認背景執行緒真的會丟棄它，不會播出來。
+        """
+        clip = tmp_path / "NOTICE.do_not_board.ogg"
+        clip.write_bytes(b"clip")
+        player, backend = self._player()
+        try:
+            player.play(clip, loop=True)
+            player.stop()
+            assert backend.started == []
+            # 模擬 stop() 呼叫當下，那一輪早就被 get() 取出、只是還沒開始
+            # 播的項目——它帶著 stop() 之前的舊世代編號。
+            player._queue.put((0, clip))
+            player._queue.join()
+            assert backend.started == []
+        finally:
+            player.close()
+
     def test_a_plain_clip_is_played_once(self, tmp_path: Path) -> None:
         clip = tmp_path / "TAIPEI.next.ogg"
         clip.write_bytes(b"clip")

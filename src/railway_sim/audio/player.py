@@ -197,11 +197,14 @@ class AudioPlayer:
 
     def __init__(self, backend: _Backend) -> None:
         self._backend = backend
-        self._queue: queue.Queue[Path | None] = queue.Queue()
+        self._queue: queue.Queue[tuple[int, Path] | None] = queue.Queue()
         self._stopping = threading.Event()
         self._closed = False
         self._loop_path: Path | None = None
-        self._loop_lock = threading.Lock()
+        self._lock = threading.Lock()
+        #: stop() 每次呼叫都會加一，用來讓已經被 get() 取出、還沒開始播的
+        #: 項目也能被判定為「已作廢」（見 stop() 與 _run() 的說明）。
+        self._epoch = 0
         self._worker = threading.Thread(
             target=self._run, name="railway-sim-audio", daemon=True
         )
@@ -248,10 +251,10 @@ class AudioPlayer:
             self.stop()
         if self._queue.qsize() >= _QUEUE_LIMIT:
             return False
-        with self._loop_lock:
+        with self._lock:
             if loop:
                 self._loop_path = target
-            self._queue.put(target)
+            self._queue.put((self._epoch, target))
         return True
 
     def stop(self) -> None:
@@ -260,12 +263,17 @@ class AudioPlayer:
         取消循環也在這裡，是因為呼叫 :meth:`stop` 的情境（關門、換一則廣播、
         結束工作階段）沒有一種是「循環那一則應該繼續」。
 
-        清掉 ``_loop_path`` 與清空佇列必須跟 :meth:`_run` 判斷是否要重新排入
-        循環那一步互斥，否則背景執行緒可能剛好在這中間讀到還沒清掉的舊值，
-        在佇列清空之後才把同一則廣播插回去，變成停止之後又多播一次、甚至
-        繼續循環。
+        清掉佇列裡還沒被取走的項目只解決一半的問題：背景執行緒可能已經用
+        ``get()`` 把某一項目取出、正要開始播，這時項目早就不在佇列裡，
+        清空佇列完全碰不到它。因此另外用一個世代編號（``_epoch``）標記——
+        每次 :meth:`play` 排入的項目都記下當時的世代，``stop()`` 一定會把
+        世代加一；:meth:`_run` 真正要開始播之前會重新核對世代是否還一致，
+        不一致就代表排入之後、開始播之前這段時間被 ``stop()`` 作廢了，直接
+        丟棄，不會播出來。這一步跟世代加一、清掉 ``_loop_path`` 用同一把鎖，
+        兩者才不會交錯。
         """
-        with self._loop_lock:
+        with self._lock:
+            self._epoch += 1
             self._loop_path = None
             while True:
                 try:
@@ -295,11 +303,19 @@ class AudioPlayer:
     # ------------------------------------------------------------------
     def _run(self) -> None:
         while True:
-            item = self._queue.get()
+            queued = self._queue.get()
             try:
-                if item is None:
+                if queued is None:
                     return
-                self._stopping.clear()
+                epoch, item = queued
+                with self._lock:
+                    # 開始播之前重新核對世代：不一致代表 stop() 已經在這個
+                    # 項目排入之後、被取出之前把它作廢了，直接丟棄不播（見
+                    # stop() 的說明），不能只看 _stopping 這個旗標——那個旗標
+                    # 會在下一行被清掉，蓋掉 stop() 剛留下的訊號。
+                    if epoch != self._epoch:
+                        continue
+                    self._stopping.clear()
                 if not self._backend.start(item):
                     continue
                 while self._backend.is_busy() and not self._stopping.is_set():
@@ -307,12 +323,12 @@ class AudioPlayer:
                 if self._stopping.is_set():
                     self._backend.stop()
                 else:
-                    with self._loop_lock:
+                    with self._lock:
                         # 循環播放：播完再排一次自己。停止是由 stop() 清掉
                         # _loop_path 達成的，因此不需要另一個旗標；用鎖讓這
                         # 個判斷跟 stop() 的清空互斥，見 stop() 的說明。
-                        if self._loop_path == item:
-                            self._queue.put(item)
+                        if self._loop_path == item and epoch == self._epoch:
+                            self._queue.put((self._epoch, item))
             except Exception:  # noqa: BLE001, S112 - 背景執行緒不得讓遊戲掛掉
                 continue
             finally:
