@@ -883,6 +883,7 @@ def run_wx(
     systems: Sequence[StartChoice] = (),
     initial_system: str | None = None,
     initial_key: str | None = None,
+    startup_message: str | None = None,
 ) -> int:  # pragma: no cover - 需要圖形環境
     """啟動 wx 介面。
 
@@ -895,6 +896,7 @@ def run_wx(
         systems: 鐵路系統選項。只有一個（或已用 ``--system`` 指定）時不會問。
         initial_system: 直接使用的系統；``None`` 表示先問。
         initial_key: 直接開始的車次；``None`` 表示先顯示車次選擇視窗。
+        startup_message: 建立視窗後顯示一次的可存取提示。
 
     Returns:
         結束碼。玩家在選擇視窗按離開也算正常結束。
@@ -902,6 +904,8 @@ def run_wx(
     import wx
 
     app = wx.App(False)
+    if startup_message:
+        wx.MessageBox(startup_message, "音訊播放", wx.OK | wx.ICON_INFORMATION)
     ask_system, system = initial_system_choice(initial_system, systems)
     key = initial_key
 

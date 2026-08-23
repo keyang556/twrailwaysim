@@ -9,6 +9,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
+from railway_sim.audio import player as player_module
 from railway_sim.audio.player import AudioPlayer, create_player
 
 
@@ -45,6 +48,59 @@ class TestCreatePlayer:
         finally:
             if player is not None:
                 player.close()
+
+    def test_uses_pygame_when_it_initializes(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        backend = SilentBackend()
+        backend.name = "pygame"
+        monkeypatch.setattr(player_module, "PygameBackend", lambda: backend)
+
+        creation = player_module.create_player_with_diagnostics()
+        assert creation.player is not None
+        try:
+            assert creation.player.backend_name == "pygame"
+            assert creation.diagnostics == ()
+        finally:
+            creation.player.close()
+
+    def test_falls_back_to_ffplay_with_pygame_diagnostic(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        def unavailable_pygame() -> None:
+            raise RuntimeError("mixer initialization failed")
+
+        monkeypatch.setattr(player_module, "PygameBackend", unavailable_pygame)
+        monkeypatch.setattr(
+            player_module, "_find_ffplay", lambda: "C:/tools/ffplay.exe"
+        )
+
+        creation = player_module.create_player_with_diagnostics()
+        assert creation.player is not None
+        try:
+            assert creation.player.backend_name == "ffplay"
+            assert "pygame unavailable (RuntimeError): mixer initialization failed" in (
+                creation.diagnostics
+            )
+            assert "using ffplay fallback: C:/tools/ffplay.exe" in creation.diagnostics
+        finally:
+            creation.player.close()
+
+    def test_no_backends_returns_diagnostics(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        def unavailable_pygame() -> None:
+            raise ImportError("No module named pygame")
+
+        monkeypatch.setattr(player_module, "PygameBackend", unavailable_pygame)
+        monkeypatch.setattr(player_module, "_find_ffplay", lambda: None)
+
+        creation = player_module.create_player_with_diagnostics()
+        assert creation.player is None
+        assert "pygame unavailable (ImportError): No module named pygame" in (
+            creation.diagnostics
+        )
+        assert "ffplay not found on PATH" in creation.diagnostics
 
 
 class TestQueueing:

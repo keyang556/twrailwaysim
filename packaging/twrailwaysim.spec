@@ -26,7 +26,10 @@ a = Analysis(
         (str(PROJECT_ROOT / "data"), "data"),
         (str(NVDA_CONTROLLER_LICENSE), "third_party_licenses/nvda-controller-client"),
     ],
-    hiddenimports=["railway_sim.ui.wx_app"],
+    # pygame is imported lazily so source installations can keep audio optional.
+    # Windows releases, however, always ship the broadcast clips and must include
+    # its SDL_mixer backend even if static analysis changes in the future.
+    hiddenimports=["railway_sim.ui.wx_app", "pygame"],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
