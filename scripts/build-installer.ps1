@@ -26,13 +26,17 @@ function Assert-InstallerDependencies {
 
     $dependencyCheck = @'
 import PyInstaller
+import pygame
 import wx
 
-print(f'PyInstaller {PyInstaller.__version__}; wxPython {wx.version()} is available.')
+print(
+    f'PyInstaller {PyInstaller.__version__}; wxPython {wx.version()}; '
+    f'pygame {pygame.version.ver} are available.'
+)
 '@
     & $PythonExecutable "-c" $dependencyCheck
     if ($LASTEXITCODE -ne 0) {
-        throw "Installer builds require the Python environment supplied with -Python to have .[installer] installed (PyInstaller and wxPython)."
+        throw "Installer builds require the Python environment supplied with -Python to have .[installer] installed (PyInstaller, wxPython, and pygame)."
     }
 }
 
@@ -123,6 +127,15 @@ $missingWxWarnings = @(Select-String -LiteralPath $pyInstallerWarningFile -Patte
 if ($missingWxWarnings.Count -gt 0) {
     throw "PyInstaller reported a missing wx module. Recreate the build environment with .[installer] before packaging a release."
 }
+$knownOptionalPygameWarnings =
+    "missing module named '?pygame\.(?:_common|overlay|cdrom)'?"
+$missingAudioWarnings = @(
+    Select-String -LiteralPath $pyInstallerWarningFile -Pattern 'missing module named [''"]?(pygame|sdl2?)([.''"]|$)' |
+        Where-Object { $_.Line -notmatch $knownOptionalPygameWarnings }
+)
+if ($missingAudioWarnings.Count -gt 0) {
+    throw "PyInstaller reported a missing pygame or SDL module. Recreate the build environment with .[installer] before packaging a release."
+}
 
 $consoleExecutable = Join-Path $applicationDirectory "twrailwaysim-console.exe"
 $guiExecutable = Join-Path $applicationDirectory "twrailwaysim.exe"
@@ -164,6 +177,24 @@ Invoke-NativeChecked $consoleExecutable @("--check")
 Invoke-NativeChecked $consoleExecutable @("--list-scenarios")
 Invoke-NativeChecked $consoleExecutable @("--check-nvda-controller")
 Invoke-NativeChecked $guiExecutable @("--check-gui")
+
+# GitHub Actions runners have no physical output device. SDL's dummy driver
+# still exercises the frozen pygame/SDL_mixer import and Ogg decoder, without
+# allowing a runner-provided ffplay binary to mask a missing bundled backend.
+$hadSdlAudioDriver = Test-Path Env:SDL_AUDIODRIVER
+$previousSdlAudioDriver = $env:SDL_AUDIODRIVER
+try {
+    $env:SDL_AUDIODRIVER = "dummy"
+    Invoke-NativeChecked $consoleExecutable @("--check-audio")
+}
+finally {
+    if ($hadSdlAudioDriver) {
+        $env:SDL_AUDIODRIVER = $previousSdlAudioDriver
+    }
+    else {
+        Remove-Item Env:SDL_AUDIODRIVER
+    }
+}
 
 if ($SkipInstaller) {
     Write-Host "Portable application created: $applicationDirectory"

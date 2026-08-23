@@ -21,6 +21,7 @@ dev = ["pytest>=8.0"]
 installer = [
     "pyinstaller==6.21.0",
     "wxPython==4.3.1",
+    "pygame>=2.5",
 ]
 
 [project.scripts]

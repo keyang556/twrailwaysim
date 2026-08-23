@@ -9,12 +9,17 @@ from __future__ import annotations
 import argparse
 import sys
 from dataclasses import dataclass
+from pathlib import Path
 
 from railway_sim import __version__
 from railway_sim.accessibility.announcer import Announcer
 from railway_sim.accessibility.speech import NvdaController, create_screen_reader
-from railway_sim.audio.player import AudioPlayer, create_player
-from railway_sim.data_loader import GameData, load_game_data
+from railway_sim.audio.player import (
+    AudioPlayer,
+    PlayerCreation,
+    create_player_with_diagnostics,
+)
+from railway_sim.data_loader import GameData, default_data_dir, load_game_data
 from railway_sim.input.keymap import Keymap
 from railway_sim.roles.driver import DriverSession
 from railway_sim.systems import DEFAULT_SYSTEM, SYSTEMS
@@ -44,6 +49,10 @@ SERVICE_KEY_PREFIX = "service:"
 # Keep Chinese CLI output usable when a Windows process inherits a western code
 # page (for example, a frozen executable run by GitHub Actions).
 _UNICODE_OUTPUT_PROBE = "臺灣鐵路人員模擬器（司機員模式）：區間車 2701 次＋§"
+
+# Keep this path fixed: a frozen-build smoke test must fail if this particular
+# Ogg asset is omitted, rather than passing because some unrelated data survived.
+_AUDIO_SMOKE_CLIP = Path("audio/announcements/xinbeitou/R22A.arrive.ogg")
 
 
 @dataclass(frozen=True)
@@ -380,6 +389,52 @@ def _ask_service(data: GameData) -> str | None:
         print(f"請輸入 1 到 {len(numbers)}，或一個存在的車次。", flush=True)
 
 
+def _audio_unavailable_message(creation: PlayerCreation) -> str:
+    details = "；".join(creation.diagnostics)
+    return "無法使用音訊播放後端，廣播仍會以文字顯示。" f"診斷：{details}"
+
+
+def _check_audio(data_dir: str | None) -> int:
+    """驗證目前程序可用 pygame 載入一個隨附的廣播音檔。"""
+    creation = create_player_with_diagnostics()
+    player = creation.player
+    if player is None:
+        print("Audio check failed: no audio backend is available.", file=sys.stderr)
+        for detail in creation.diagnostics:
+            print(f"- {detail}", file=sys.stderr)
+        return 2
+
+    try:
+        if player.backend_name != "pygame":
+            print(
+                "Audio check failed: expected the bundled pygame backend, "
+                f"but selected {player.backend_name}.",
+                file=sys.stderr,
+            )
+            for detail in creation.diagnostics:
+                print(f"- {detail}", file=sys.stderr)
+            return 2
+
+        root = Path(data_dir) if data_dir is not None else default_data_dir()
+        clip = root / _AUDIO_SMOKE_CLIP
+        if not clip.is_file():
+            print(
+                f"Audio check failed: bundled clip is missing: {clip}",
+                file=sys.stderr,
+            )
+            return 2
+        if not player.can_load(clip):
+            print(
+                f"Audio check failed: pygame could not load bundled clip: {clip}",
+                file=sys.stderr,
+            )
+            return 2
+        print(f"pygame audio backend loaded bundled clip: {_AUDIO_SMOKE_CLIP}")
+        return 0
+    finally:
+        player.close()
+
+
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="railway-sim",
@@ -442,6 +497,11 @@ def _build_parser() -> argparse.ArgumentParser:
         help="只執行資料驗證與鍵位衝突檢查後結束，不啟動遊戲。",
     )
     parser.add_argument(
+        "--check-audio",
+        action="store_true",
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument(
         "--check-nvda-controller",
         action="store_true",
         help=argparse.SUPPRESS,
@@ -498,6 +558,9 @@ def main(argv: list[str] | None = None) -> int:
         connection = "connected" if controller.available else "not connected"
         print(f"NVDA Controller Client loaded ({connection}).")
         return 0
+
+    if args.check_audio:
+        return _check_audio(args.data_dir)
 
     if args.list_scenarios:
         for scenario in SCENARIOS.values():
@@ -572,7 +635,11 @@ def main(argv: list[str] | None = None) -> int:
     # 因此只送語音的主控台介面不必知道點字的存在。
     speak = create_screen_reader()
     # 播放後端是選用的：放不出聲音時廣播仍以文字送出（§20.1）。
-    player = None if args.no_audio else create_player()
+    creation = None if args.no_audio else create_player_with_diagnostics()
+    player = None if creation is None else creation.player
+    audio_warning = None
+    if creation is not None and player is None:
+        audio_warning = _audio_unavailable_message(creation)
 
     if args.ui == "wx":
         try:
@@ -582,6 +649,8 @@ def main(argv: list[str] | None = None) -> int:
 
             from railway_sim.ui.wx_app import run_wx
         except ImportError:
+            if player is not None:
+                player.close()
             print(
                 "找不到 wxPython，請改用 --ui console 或安裝：pip install wxPython",
                 file=sys.stderr,
@@ -613,12 +682,16 @@ def main(argv: list[str] | None = None) -> int:
                 systems=system_choices(),
                 initial_system=system,
                 initial_key=initial_key,
+                startup_message=audio_warning,
             )
         finally:
             if player is not None:
                 player.close()
 
     from railway_sim.ui.console_app import ConsoleApp
+
+    if audio_warning is not None:
+        print(f"警告：{audio_warning}", file=sys.stderr)
 
     if scenario is None:
         if data.system.id == DEFAULT_SYSTEM:

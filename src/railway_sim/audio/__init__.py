@@ -23,14 +23,21 @@ from railway_sim.audio.library import (
     BroadcastLibrary,
     ClipKind,
 )
-from railway_sim.audio.player import AudioPlayer, create_player
+from railway_sim.audio.player import (
+    AudioPlayer,
+    PlayerCreation,
+    create_player,
+    create_player_with_diagnostics,
+)
 
 __all__ = [
     "ANNOUNCEMENT_DIRNAME",
     "AudioPlayer",
+    "PlayerCreation",
     "BroadcastClip",
     "BroadcastLibrary",
     "BroadcastSystem",
     "ClipKind",
     "create_player",
+    "create_player_with_diagnostics",
 ]

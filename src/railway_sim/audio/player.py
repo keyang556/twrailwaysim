@@ -33,9 +33,17 @@ import subprocess
 import sys
 import threading
 import time
+from dataclasses import dataclass
 from pathlib import Path
 
-__all__ = ["AudioPlayer", "FfplayBackend", "PygameBackend", "create_player"]
+__all__ = [
+    "AudioPlayer",
+    "FfplayBackend",
+    "PlayerCreation",
+    "PygameBackend",
+    "create_player",
+    "create_player_with_diagnostics",
+]
 
 #: 背景執行緒輪詢「這一則播完了沒」的間隔（秒）。
 _POLL_INTERVAL_S = 0.05
@@ -66,6 +74,10 @@ class _Backend:
     def close(self) -> None:
         self.stop()
 
+    def can_load(self, path: Path) -> bool:
+        """確認後端能否讀取音檔，不開始播放。"""
+        return path.is_file()
+
 
 class PygameBackend(_Backend):
     """以 ``pygame.mixer`` 播放。"""
@@ -83,6 +95,13 @@ class PygameBackend(_Backend):
             self._pygame.mixer.music.load(str(path))
             self._pygame.mixer.music.play()
         except Exception:  # noqa: BLE001 - 播放失敗不得影響運轉
+            return False
+        return True
+
+    def can_load(self, path: Path) -> bool:
+        try:
+            self._pygame.mixer.music.load(str(path))
+        except Exception:  # noqa: BLE001 - 診斷不可讓遊戲失敗
             return False
         return True
 
@@ -188,6 +207,13 @@ class AudioPlayer:
     def available(self) -> bool:
         return not self._closed
 
+    def can_load(self, path: str | Path) -> bool:
+        """確認目前後端可讀取音檔，但不播放它。"""
+        if self._closed:
+            return False
+        target = Path(path)
+        return target.is_file() and self._backend.can_load(target)
+
     # ------------------------------------------------------------------
     def play(self, path: str | Path, *, interrupt: bool = False) -> bool:
         """排入一則音檔。
@@ -257,19 +283,47 @@ def _find_ffplay() -> str | None:
     return shutil.which("ffplay")
 
 
-def create_player() -> AudioPlayer | None:
-    """建立播放器；沒有任何可用後端時回傳 ``None``。
+@dataclass(frozen=True)
+class PlayerCreation:
+    """建立播放後端的結果，以及可供診斷使用的退回原因。"""
+
+    player: AudioPlayer | None
+    diagnostics: tuple[str, ...]
+
+
+def _exception_diagnostic(backend: str, error: Exception) -> str:
+    detail = str(error).strip()
+    suffix = f": {detail}" if detail else ""
+    return f"{backend} unavailable ({type(error).__name__}){suffix}"
+
+
+def create_player_with_diagnostics() -> PlayerCreation:
+    """建立播放器並保留後端選擇過程的診斷資訊。
 
     回傳 ``None`` **不是錯誤**：廣播內容仍會以文字送出（§20.1）。
     """
+    diagnostics: list[str] = []
     # 沒裝 pygame、或有裝但這台機器沒有音效裝置：兩者都只代表「用下一個
-    # 後端」，不是需要回報的錯誤。
+    # 後端；一般遊戲不會拋出例外，但保留原因供啟動提示和 --check-audio 使用。
     try:
-        return AudioPlayer(PygameBackend())
-    except Exception:  # noqa: BLE001, S110
-        pass
+        return PlayerCreation(AudioPlayer(PygameBackend()), tuple(diagnostics))
+    except Exception as error:  # noqa: BLE001 - 音效裝置錯誤屬正常 fallback
+        diagnostics.append(_exception_diagnostic("pygame", error))
 
     executable = _find_ffplay()
     if executable is not None:
-        return AudioPlayer(FfplayBackend(executable))
-    return None
+        diagnostics.append(f"using ffplay fallback: {executable}")
+        return PlayerCreation(
+            AudioPlayer(FfplayBackend(executable)), tuple(diagnostics)
+        )
+    diagnostics.append("ffplay not found on PATH")
+    return PlayerCreation(None, tuple(diagnostics))
+
+
+def create_player() -> AudioPlayer | None:
+    """建立播放器；沒有任何可用後端時回傳 ``None``。
+
+    新程式若要顯示或記錄退回原因，請改用
+    :func:`create_player_with_diagnostics`。保留此函式以相容既有呼叫端。
+    """
+    return create_player_with_diagnostics().player
