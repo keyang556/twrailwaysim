@@ -201,6 +201,7 @@ class AudioPlayer:
         self._stopping = threading.Event()
         self._closed = False
         self._loop_path: Path | None = None
+        self._loop_lock = threading.Lock()
         self._worker = threading.Thread(
             target=self._run, name="railway-sim-audio", daemon=True
         )
@@ -247,9 +248,10 @@ class AudioPlayer:
             self.stop()
         if self._queue.qsize() >= _QUEUE_LIMIT:
             return False
-        if loop:
-            self._loop_path = target
-        self._queue.put(target)
+        with self._loop_lock:
+            if loop:
+                self._loop_path = target
+            self._queue.put(target)
         return True
 
     def stop(self) -> None:
@@ -257,15 +259,21 @@ class AudioPlayer:
 
         取消循環也在這裡，是因為呼叫 :meth:`stop` 的情境（關門、換一則廣播、
         結束工作階段）沒有一種是「循環那一則應該繼續」。
+
+        清掉 ``_loop_path`` 與清空佇列必須跟 :meth:`_run` 判斷是否要重新排入
+        循環那一步互斥，否則背景執行緒可能剛好在這中間讀到還沒清掉的舊值，
+        在佇列清空之後才把同一則廣播插回去，變成停止之後又多播一次、甚至
+        繼續循環。
         """
-        self._loop_path = None
-        while True:
-            try:
-                self._queue.get_nowait()
-            except queue.Empty:
-                break
-            else:
-                self._queue.task_done()
+        with self._loop_lock:
+            self._loop_path = None
+            while True:
+                try:
+                    self._queue.get_nowait()
+                except queue.Empty:
+                    break
+                else:
+                    self._queue.task_done()
         self._stopping.set()
         self._backend.stop()
 
@@ -298,10 +306,13 @@ class AudioPlayer:
                     time.sleep(_POLL_INTERVAL_S)
                 if self._stopping.is_set():
                     self._backend.stop()
-                elif self._loop_path == item:
-                    # 循環播放：播完再排一次自己。停止是由 stop() 清掉
-                    # _loop_path 達成的，因此不需要另一個旗標。
-                    self._queue.put(item)
+                else:
+                    with self._loop_lock:
+                        # 循環播放：播完再排一次自己。停止是由 stop() 清掉
+                        # _loop_path 達成的，因此不需要另一個旗標；用鎖讓這
+                        # 個判斷跟 stop() 的清空互斥，見 stop() 的說明。
+                        if self._loop_path == item:
+                            self._queue.put(item)
             except Exception:  # noqa: BLE001, S112 - 背景執行緒不得讓遊戲掛掉
                 continue
             finally:

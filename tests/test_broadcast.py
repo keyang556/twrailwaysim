@@ -252,6 +252,20 @@ class TestBoardingNotice:
         system.announce_doors("left", opening=False)
         assert player.looping is None
 
+    def test_one_side_closing_does_not_stop_it_while_the_other_is_open(
+        self, clips: Path
+    ) -> None:
+        """兩側都開著時關掉一側，另一側還能上人，提醒不能消失。"""
+        system, _, player = make_system(
+            clips, rolling_stock_id="EMU3000", boarding_notice=True
+        )
+        system.announce_doors("left", opening=True)
+        system.announce_doors("right", opening=True)
+        system.announce_doors("left", opening=False)
+        assert player.looping == "NOTICE.do_not_board.ogg"
+        system.announce_doors("right", opening=False)
+        assert player.looping is None
+
     def test_closing_stops_it_even_without_a_close_clip(
         self, tmp_path: Path
     ) -> None:

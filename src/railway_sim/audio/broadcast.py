@@ -166,6 +166,7 @@ class BroadcastSystem:
     _next_announced_for: str | None = field(default=None, init=False, repr=False)
     _arrival_announced: set[str] = field(default_factory=set, init=False, repr=False)
     _boarding_notice_playing: bool = field(default=False, init=False, repr=False)
+    _open_sides: set[str] = field(default_factory=set, init=False, repr=False)
 
     # ------------------------------------------------------------------
     # 播放時機
@@ -254,33 +255,48 @@ class BroadcastSystem:
         """
         if not self.enabled:
             return False
+        if opening:
+            self._open_sides.add(side)
+        else:
+            self._open_sides.discard(side)
         kind = "open" if opening else "close"
         # 關門聲要蓋掉還在循環的「請勿上車」，開門聲不必蓋掉任何東西。
+        interrupted = not opening
         self._play(
             self._find_door(kind, variant=self.rolling_stock_id),
-            interrupt=not opening,
+            interrupt=interrupted,
         )
         self.announcer.announce(
             msg.broadcast_doors(side, opening=opening), Priority.STATUS
         )
-        self._update_boarding_notice(opening=opening)
+        self._update_boarding_notice(
+            any_open=bool(self._open_sides), interrupted=interrupted
+        )
         return True
 
-    def _update_boarding_notice(self, *, opening: bool) -> None:
-        """車門開啟中持續播放「請勿上車」，關門時立即停止。
+    def _update_boarding_notice(self, *, any_open: bool, interrupted: bool) -> None:
+        """車門開啟中持續播放「請勿上車」，兩側都關上才停止。
 
         提醒的對象是月台上**沒有買這班列車車票**的旅客，因此必須在整段開門
-        時間裡一直播，播一次就停沒有意義；也因此關門動作一開始就要停，不能
-        等這一輪播完。
+        時間裡一直播，播一次就停沒有意義；左右兩側各自獨立開關（§16.2），
+        只關掉其中一側時另一側還能上人，因此要等 :attr:`_open_sides` 全空
+        才算真的關門，不能因為單側關門的動作就停。
+
+        麻煩的是**關門聲本身一定會蓋掉循環**（見上面的 ``interrupted``），
+        不管另一側是不是還開著；因此單側關門、另一側仍開著時，播放器裡的
+        循環其實已經被這一次關門聲打斷了，必須重新排入，不能只看
+        :attr:`_boarding_notice_playing` 這個旗標就以為它還在播。
         """
         if not self.boarding_notice:
             return
-        if not opening:
+        if not any_open:
             # 這一型車沒有關門聲時，上面那一步不會去動播放器，循環就會一直
             # 播下去；因此停止循環要自己明說，不能靠關門聲順便把它蓋掉。
             if self._boarding_notice_playing and self.player is not None:
                 self.player.stop()
             self._boarding_notice_playing = False
+            return
+        if self._boarding_notice_playing and not interrupted:
             return
         clip = self._find_notice("do_not_board")
         self.announcer.announce(msg.broadcast_do_not_board(), Priority.STATUS)
