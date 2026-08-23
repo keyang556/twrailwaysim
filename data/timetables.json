@@ -6,7 +6,7 @@
     "time_note": "來源時刻表印的是開車時刻（終點站為到達時刻）。只有花蓮、臺北、高雄、臺東這幾個大站在對號列車時刻表裡另外印了到達時刻，因此只有這些站的 arrival_times 與 departure_times 不同；其餘車站的停站時間無公開來源，兩者一律相同。",
     "provenance": {
       "effective_date": "2026-07-01",
-      "generated_at": "2026-08-23T12:32:49Z",
+      "generated_at": "2026-08-23T14:03:15Z",
       "generator": "python -m railway_sim.dataset",
       "sources": [
         {
@@ -105,11 +105,6 @@
           "bytes": 13261
         },
         {
-          "file": "Taitung20250626.ods",
-          "sha256": "f9832fea55621140c7a77a9dda42428354cfeb16fd74b0be2197f48524c9dbc2",
-          "bytes": 11428
-        },
-        {
           "file": "TaitungToShulin20260701.ods",
           "sha256": "689578b179ced62148a742977247f214d7dd56db6d1454f97f15a5355e96244e",
           "bytes": 27262
@@ -128,6 +123,11 @@
           "file": "南迴線(台東→枋寮→新左營)-20260701.ods",
           "sha256": "1981510925b0e259525bfead95c31755692e0dfbaf3cf208669c308cf9c9104d",
           "bytes": 51681
+        },
+        {
+          "file": "台東線-20260701.ods",
+          "sha256": "3ab8348dee6341a04c01246aa14b534bbade071ace22597f224c7c115bbf8bd8",
+          "bytes": 10665
         }
       ]
     }
@@ -76727,7 +76727,7 @@
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4017",
@@ -77409,18 +77409,18 @@
       ],
       "departure_times": {
         "TAITUNG": "15:50",
-        "GUANSHAN": "16:27",
-        "CHISHANG": "16:38"
+        "GUANSHAN": "16:26",
+        "CHISHANG": "16:37"
       },
       "arrival_times": {
         "TAITUNG": "15:50",
-        "GUANSHAN": "16:27",
-        "CHISHANG": "16:38"
+        "GUANSHAN": "16:26",
+        "CHISHANG": "16:37"
       },
       "via_note": "",
       "operating_mark": "▲",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4032",
@@ -77849,6 +77849,93 @@
       "source_file": "KeelungToHsinchu20260701.ods、NorthLink20260701.ods、SuaoToBadu20260701.ods"
     },
     {
+      "train_number": "4038",
+      "name_zh_tw": "區間快4038次",
+      "train_type": "local_express",
+      "train_class_zh_tw": "區間快",
+      "rolling_stock_id": "EMU900",
+      "route_id": "R_AUTO_0076",
+      "stop_station_ids": [
+        "HUALIEN",
+        "JIAN",
+        "ZHIXUE",
+        "SHOUFENG",
+        "FENGTIAN",
+        "LINRONGSHINKONG",
+        "FENGLIN",
+        "WANRONG",
+        "GUANGFU",
+        "FUYUAN",
+        "RUISUI",
+        "YULI",
+        "DONGLI",
+        "DONGZHU",
+        "FULI",
+        "CHISHANG",
+        "GUANSHAN",
+        "RUIYUAN",
+        "LUYE",
+        "TAITUNG"
+      ],
+      "pass_station_ids": [
+        "PINGHE",
+        "NANPING",
+        "DAFU",
+        "SANMIN",
+        "HAIDUAN",
+        "RUIHE",
+        "SHANLI"
+      ],
+      "departure_times": {
+        "HUALIEN": "14:04",
+        "JIAN": "14:10",
+        "ZHIXUE": "14:22",
+        "SHOUFENG": "14:28",
+        "FENGTIAN": "14:33",
+        "LINRONGSHINKONG": "14:39",
+        "FENGLIN": "14:47",
+        "WANRONG": "14:53",
+        "GUANGFU": "15:14",
+        "FUYUAN": "15:32",
+        "RUISUI": "15:42",
+        "YULI": "16:03",
+        "DONGLI": "16:12",
+        "DONGZHU": "16:22",
+        "FULI": "16:30",
+        "CHISHANG": "16:37",
+        "GUANSHAN": "16:49",
+        "RUIYUAN": "16:58",
+        "LUYE": "17:10",
+        "TAITUNG": "17:23"
+      },
+      "arrival_times": {
+        "HUALIEN": "14:04",
+        "JIAN": "14:10",
+        "ZHIXUE": "14:22",
+        "SHOUFENG": "14:28",
+        "FENGTIAN": "14:33",
+        "LINRONGSHINKONG": "14:39",
+        "FENGLIN": "14:47",
+        "WANRONG": "14:53",
+        "GUANGFU": "15:14",
+        "FUYUAN": "15:32",
+        "RUISUI": "15:42",
+        "YULI": "16:03",
+        "DONGLI": "16:12",
+        "DONGZHU": "16:22",
+        "FULI": "16:30",
+        "CHISHANG": "16:37",
+        "GUANSHAN": "16:49",
+        "RUIYUAN": "16:58",
+        "LUYE": "17:10",
+        "TAITUNG": "17:23"
+      },
+      "via_note": "",
+      "operating_mark": "",
+      "verification_status": "official",
+      "source_file": "台東線-20260701.ods"
+    },
+    {
       "train_number": "4040",
       "name_zh_tw": "區間快4040次",
       "train_type": "local_express",
@@ -77870,17 +77957,17 @@
       "departure_times": {
         "CHISHANG": "17:07",
         "GUANSHAN": "17:18",
-        "TAITUNG": "17:41"
+        "TAITUNG": "17:42"
       },
       "arrival_times": {
         "CHISHANG": "17:07",
         "GUANSHAN": "17:18",
-        "TAITUNG": "17:41"
+        "TAITUNG": "17:42"
       },
       "via_note": "",
       "operating_mark": "▲",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4041",
@@ -77888,8 +77975,26 @@
       "train_type": "local_express",
       "train_class_zh_tw": "區間快",
       "rolling_stock_id": "EMU900",
-      "route_id": "R_AUTO_0044",
+      "route_id": "R_AUTO_0001",
       "stop_station_ids": [
+        "TAITUNG",
+        "LUYE",
+        "RUIYUAN",
+        "GUANSHAN",
+        "CHISHANG",
+        "FULI",
+        "DONGZHU",
+        "DONGLI",
+        "YULI",
+        "RUISUI",
+        "FUYUAN",
+        "GUANGFU",
+        "WANRONG",
+        "FENGLIN",
+        "FENGTIAN",
+        "SHOUFENG",
+        "ZHIXUE",
+        "JIAN",
         "HUALIEN",
         "XINCHENG",
         "HEPING",
@@ -77910,6 +78015,14 @@
         "SHULIN"
       ],
       "pass_station_ids": [
+        "SHANLI",
+        "RUIHE",
+        "HAIDUAN",
+        "SANMIN",
+        "DAFU",
+        "NANPING",
+        "LINRONGSHINKONG",
+        "PINGHE",
         "BEIPU",
         "JINGMEI",
         "CHONGDE",
@@ -77944,6 +78057,24 @@
         "FUZHOU"
       ],
       "departure_times": {
+        "TAITUNG": "18:04",
+        "LUYE": "18:28",
+        "RUIYUAN": "18:35",
+        "GUANSHAN": "19:02",
+        "CHISHANG": "19:14",
+        "FULI": "19:22",
+        "DONGZHU": "19:28",
+        "DONGLI": "19:34",
+        "YULI": "19:51",
+        "RUISUI": "20:08",
+        "FUYUAN": "20:21",
+        "GUANGFU": "20:31",
+        "WANRONG": "20:36",
+        "FENGLIN": "20:42",
+        "FENGTIAN": "20:52",
+        "SHOUFENG": "20:56",
+        "ZHIXUE": "21:03",
+        "JIAN": "21:13",
         "HUALIEN": "21:20",
         "XINCHENG": "21:33",
         "HEPING": "21:54",
@@ -77964,6 +78095,24 @@
         "SHULIN": "00:23"
       },
       "arrival_times": {
+        "TAITUNG": "18:04",
+        "LUYE": "18:28",
+        "RUIYUAN": "18:35",
+        "GUANSHAN": "19:02",
+        "CHISHANG": "19:14",
+        "FULI": "19:22",
+        "DONGZHU": "19:28",
+        "DONGLI": "19:34",
+        "YULI": "19:51",
+        "RUISUI": "20:08",
+        "FUYUAN": "20:21",
+        "GUANGFU": "20:31",
+        "WANRONG": "20:36",
+        "FENGLIN": "20:42",
+        "FENGTIAN": "20:52",
+        "SHOUFENG": "20:56",
+        "ZHIXUE": "21:03",
+        "JIAN": "21:13",
         "HUALIEN": "21:20",
         "XINCHENG": "21:33",
         "HEPING": "21:54",
@@ -77986,7 +78135,7 @@
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "KeelungToHsinchu20260701.ods、NorthLink20260701.ods、SuaoToBadu20260701.ods"
+      "source_file": "KeelungToHsinchu20260701.ods、NorthLink20260701.ods、SuaoToBadu20260701.ods、台東線-20260701.ods"
     },
     {
       "train_number": "4042",
@@ -86583,7 +86732,7 @@
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4504",
@@ -86620,7 +86769,7 @@
       "via_note": "",
       "operating_mark": "▲",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4507",
@@ -86675,7 +86824,7 @@
       "via_note": "",
       "operating_mark": "▲",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4508",
@@ -86730,7 +86879,7 @@
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4509",
@@ -86755,11 +86904,11 @@
       ],
       "pass_station_ids": [],
       "departure_times": {
-        "TAITUNG": "05:30",
-        "SHANLI": "05:39",
-        "LUYE": "05:47",
-        "RUIYUAN": "05:53",
-        "RUIHE": "05:57",
+        "TAITUNG": "05:31",
+        "SHANLI": "05:40",
+        "LUYE": "05:48",
+        "RUIYUAN": "05:54",
+        "RUIHE": "05:58",
         "GUANSHAN": "06:06",
         "HAIDUAN": "06:13",
         "CHISHANG": "06:21",
@@ -86769,11 +86918,11 @@
         "YULI": "06:49"
       },
       "arrival_times": {
-        "TAITUNG": "05:30",
-        "SHANLI": "05:39",
-        "LUYE": "05:47",
-        "RUIYUAN": "05:53",
-        "RUIHE": "05:57",
+        "TAITUNG": "05:31",
+        "SHANLI": "05:40",
+        "LUYE": "05:48",
+        "RUIYUAN": "05:54",
+        "RUIHE": "05:58",
         "GUANSHAN": "06:06",
         "HAIDUAN": "06:13",
         "CHISHANG": "06:21",
@@ -86785,7 +86934,7 @@
       "via_note": "",
       "operating_mark": "△",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4512",
@@ -86828,7 +86977,7 @@
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4513",
@@ -86912,7 +87061,7 @@
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "NorthLink20260701.ods、Taitung20250626.ods"
+      "source_file": "NorthLink20260701.ods、台東線-20260701.ods"
     },
     {
       "train_number": "4514",
@@ -86978,7 +87127,7 @@
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4516",
@@ -87131,7 +87280,7 @@
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "BaduToSuao20260701.ods、NorthLink20260701.ods、Taitung20250626.ods"
+      "source_file": "BaduToSuao20260701.ods、NorthLink20260701.ods、台東線-20260701.ods"
     },
     {
       "train_number": "4517",
@@ -87193,11 +87342,11 @@
         "NANPING": "09:37",
         "LINRONGSHINKONG": "09:41",
         "FENGTIAN": "09:46",
-        "SHOUFENG": "09:54",
-        "PINGHE": "09:58",
+        "SHOUFENG": "09:52",
+        "PINGHE": "09:55",
         "ZHIXUE": "10:03",
-        "JIAN": "10:16",
-        "HUALIEN": "10:22"
+        "JIAN": "10:14",
+        "HUALIEN": "10:20"
       },
       "arrival_times": {
         "TAITUNG": "06:53",
@@ -87222,16 +87371,16 @@
         "NANPING": "09:37",
         "LINRONGSHINKONG": "09:41",
         "FENGTIAN": "09:46",
-        "SHOUFENG": "09:54",
-        "PINGHE": "09:58",
+        "SHOUFENG": "09:52",
+        "PINGHE": "09:55",
         "ZHIXUE": "10:03",
-        "JIAN": "10:16",
-        "HUALIEN": "10:22"
+        "JIAN": "10:14",
+        "HUALIEN": "10:20"
       },
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4519",
@@ -87274,7 +87423,7 @@
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4521",
@@ -87321,10 +87470,10 @@
         "RUIHE": "10:27",
         "GUANSHAN": "10:36",
         "HAIDUAN": "10:46",
-        "CHISHANG": "10:53",
-        "FULI": "11:01",
-        "DONGZHU": "11:13",
-        "DONGLI": "11:20",
+        "CHISHANG": "10:56",
+        "FULI": "11:03",
+        "DONGZHU": "11:12",
+        "DONGLI": "11:18",
         "YULI": "11:29",
         "SANMIN": "11:39",
         "RUISUI": "11:57",
@@ -87350,10 +87499,10 @@
         "RUIHE": "10:27",
         "GUANSHAN": "10:36",
         "HAIDUAN": "10:46",
-        "CHISHANG": "10:53",
-        "FULI": "11:01",
-        "DONGZHU": "11:13",
-        "DONGLI": "11:20",
+        "CHISHANG": "10:56",
+        "FULI": "11:03",
+        "DONGZHU": "11:12",
+        "DONGLI": "11:18",
         "YULI": "11:29",
         "SANMIN": "11:39",
         "RUISUI": "11:57",
@@ -87374,7 +87523,7 @@
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4528",
@@ -87403,45 +87552,45 @@
       ],
       "pass_station_ids": [],
       "departure_times": {
-        "HUALIEN": "12:00",
-        "JIAN": "12:06",
-        "ZHIXUE": "12:15",
-        "PINGHE": "12:18",
-        "SHOUFENG": "12:22",
-        "FENGTIAN": "12:26",
-        "LINRONGSHINKONG": "12:32",
-        "NANPING": "12:35",
-        "FENGLIN": "12:40",
-        "WANRONG": "12:45",
-        "GUANGFU": "12:53",
-        "DAFU": "13:00",
-        "FUYUAN": "13:09",
-        "RUISUI": "13:18",
-        "SANMIN": "13:27",
-        "YULI": "13:37"
+        "HUALIEN": "12:18",
+        "JIAN": "12:24",
+        "ZHIXUE": "12:37",
+        "PINGHE": "12:41",
+        "SHOUFENG": "12:45",
+        "FENGTIAN": "12:49",
+        "LINRONGSHINKONG": "12:55",
+        "NANPING": "12:58",
+        "FENGLIN": "13:03",
+        "WANRONG": "13:08",
+        "GUANGFU": "13:15",
+        "DAFU": "13:22",
+        "FUYUAN": "13:26",
+        "RUISUI": "13:37",
+        "SANMIN": "13:49",
+        "YULI": "13:59"
       },
       "arrival_times": {
-        "HUALIEN": "12:00",
-        "JIAN": "12:06",
-        "ZHIXUE": "12:15",
-        "PINGHE": "12:18",
-        "SHOUFENG": "12:22",
-        "FENGTIAN": "12:26",
-        "LINRONGSHINKONG": "12:32",
-        "NANPING": "12:35",
-        "FENGLIN": "12:40",
-        "WANRONG": "12:45",
-        "GUANGFU": "12:53",
-        "DAFU": "13:00",
-        "FUYUAN": "13:09",
-        "RUISUI": "13:18",
-        "SANMIN": "13:27",
-        "YULI": "13:37"
+        "HUALIEN": "12:18",
+        "JIAN": "12:24",
+        "ZHIXUE": "12:37",
+        "PINGHE": "12:41",
+        "SHOUFENG": "12:45",
+        "FENGTIAN": "12:49",
+        "LINRONGSHINKONG": "12:55",
+        "NANPING": "12:58",
+        "FENGLIN": "13:03",
+        "WANRONG": "13:08",
+        "GUANGFU": "13:15",
+        "DAFU": "13:22",
+        "FUYUAN": "13:26",
+        "RUISUI": "13:37",
+        "SANMIN": "13:49",
+        "YULI": "13:59"
       },
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4534",
@@ -87541,7 +87690,7 @@
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4537",
@@ -87641,7 +87790,7 @@
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4540",
@@ -87674,10 +87823,10 @@
         "HAIDUAN": "17:29",
         "GUANSHAN": "17:45",
         "RUIHE": "17:52",
-        "RUIYUAN": "18:15",
-        "LUYE": "18:22",
-        "SHANLI": "18:28",
-        "TAITUNG": "18:37"
+        "RUIYUAN": "18:16",
+        "LUYE": "18:25",
+        "SHANLI": "18:31",
+        "TAITUNG": "18:40"
       },
       "arrival_times": {
         "YULI": "16:46",
@@ -87688,15 +87837,15 @@
         "HAIDUAN": "17:29",
         "GUANSHAN": "17:45",
         "RUIHE": "17:52",
-        "RUIYUAN": "18:15",
-        "LUYE": "18:22",
-        "SHANLI": "18:28",
-        "TAITUNG": "18:37"
+        "RUIYUAN": "18:16",
+        "LUYE": "18:25",
+        "SHANLI": "18:31",
+        "TAITUNG": "18:40"
       },
       "via_note": "",
       "operating_mark": "□",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4542",
@@ -87751,7 +87900,7 @@
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4543",
@@ -87817,7 +87966,7 @@
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4547",
@@ -87842,7 +87991,7 @@
       ],
       "pass_station_ids": [],
       "departure_times": {
-        "TAITUNG": "16:54",
+        "TAITUNG": "16:49",
         "SHANLI": "17:03",
         "LUYE": "17:12",
         "RUIYUAN": "17:32",
@@ -87856,7 +88005,7 @@
         "YULI": "18:38"
       },
       "arrival_times": {
-        "TAITUNG": "16:54",
+        "TAITUNG": "16:49",
         "SHANLI": "17:03",
         "LUYE": "17:12",
         "RUIYUAN": "17:32",
@@ -87872,7 +88021,7 @@
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4548",
@@ -87900,12 +88049,12 @@
         "YULI": "18:51",
         "DONGLI": "18:58",
         "DONGZHU": "19:04",
-        "FULI": "19:20",
-        "CHISHANG": "19:33",
-        "HAIDUAN": "19:40",
-        "GUANSHAN": "19:51",
-        "RUIHE": "19:58",
-        "RUIYUAN": "20:02",
+        "FULI": "19:21",
+        "CHISHANG": "19:29",
+        "HAIDUAN": "19:35",
+        "GUANSHAN": "19:49",
+        "RUIHE": "19:56",
+        "RUIYUAN": "20:00",
         "LUYE": "20:12",
         "SHANLI": "20:19",
         "TAITUNG": "20:28"
@@ -87914,12 +88063,12 @@
         "YULI": "18:51",
         "DONGLI": "18:58",
         "DONGZHU": "19:04",
-        "FULI": "19:20",
-        "CHISHANG": "19:33",
-        "HAIDUAN": "19:40",
-        "GUANSHAN": "19:51",
-        "RUIHE": "19:58",
-        "RUIYUAN": "20:02",
+        "FULI": "19:21",
+        "CHISHANG": "19:29",
+        "HAIDUAN": "19:35",
+        "GUANSHAN": "19:49",
+        "RUIHE": "19:56",
+        "RUIYUAN": "20:00",
         "LUYE": "20:12",
         "SHANLI": "20:19",
         "TAITUNG": "20:28"
@@ -87927,7 +88076,7 @@
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4550",
@@ -87993,7 +88142,7 @@
       "via_note": "",
       "operating_mark": "△",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4552",
@@ -88077,7 +88226,7 @@
       "via_note": "",
       "operating_mark": "▲",
       "verification_status": "official",
-      "source_file": "NorthLink20260701.ods、Taitung20250626.ods"
+      "source_file": "NorthLink20260701.ods、台東線-20260701.ods"
     },
     {
       "train_number": "4553",
@@ -88107,47 +88256,47 @@
       ],
       "pass_station_ids": [],
       "departure_times": {
-        "TAITUNG": "19:16",
-        "SHANLI": "19:25",
-        "LUYE": "19:33",
-        "RUIYUAN": "19:39",
-        "RUIHE": "19:43",
-        "GUANSHAN": "19:52",
-        "HAIDUAN": "19:59",
-        "CHISHANG": "20:11",
-        "FULI": "20:19",
-        "DONGZHU": "20:26",
-        "DONGLI": "20:33",
-        "YULI": "21:11",
-        "SANMIN": "21:21",
-        "RUISUI": "21:32",
-        "FUYUAN": "21:40",
-        "DAFU": "21:44",
-        "GUANGFU": "21:52"
+        "TAITUNG": "19:13",
+        "SHANLI": "19:22",
+        "LUYE": "19:30",
+        "RUIYUAN": "19:36",
+        "RUIHE": "19:40",
+        "GUANSHAN": "19:50",
+        "HAIDUAN": "19:57",
+        "CHISHANG": "20:10",
+        "FULI": "20:18",
+        "DONGZHU": "20:25",
+        "DONGLI": "20:32",
+        "YULI": "20:56",
+        "SANMIN": "21:06",
+        "RUISUI": "21:16",
+        "FUYUAN": "21:29",
+        "DAFU": "21:33",
+        "GUANGFU": "21:40"
       },
       "arrival_times": {
-        "TAITUNG": "19:16",
-        "SHANLI": "19:25",
-        "LUYE": "19:33",
-        "RUIYUAN": "19:39",
-        "RUIHE": "19:43",
-        "GUANSHAN": "19:52",
-        "HAIDUAN": "19:59",
-        "CHISHANG": "20:11",
-        "FULI": "20:19",
-        "DONGZHU": "20:26",
-        "DONGLI": "20:33",
-        "YULI": "21:11",
-        "SANMIN": "21:21",
-        "RUISUI": "21:32",
-        "FUYUAN": "21:40",
-        "DAFU": "21:44",
-        "GUANGFU": "21:52"
+        "TAITUNG": "19:13",
+        "SHANLI": "19:22",
+        "LUYE": "19:30",
+        "RUIYUAN": "19:36",
+        "RUIHE": "19:40",
+        "GUANSHAN": "19:50",
+        "HAIDUAN": "19:57",
+        "CHISHANG": "20:10",
+        "FULI": "20:18",
+        "DONGZHU": "20:25",
+        "DONGLI": "20:32",
+        "YULI": "20:56",
+        "SANMIN": "21:06",
+        "RUISUI": "21:16",
+        "FUYUAN": "21:29",
+        "DAFU": "21:33",
+        "GUANGFU": "21:40"
       },
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4556",
@@ -88188,65 +88337,65 @@
         "LINRONGSHINKONG"
       ],
       "departure_times": {
-        "HUALIEN": "19:20",
-        "JIAN": "19:26",
-        "ZHIXUE": "19:35",
-        "PINGHE": "19:38",
-        "SHOUFENG": "19:42",
-        "FENGTIAN": "19:46",
-        "NANPING": "19:53",
-        "FENGLIN": "19:58",
-        "WANRONG": "20:03",
-        "GUANGFU": "20:17",
-        "DAFU": "20:24",
-        "FUYUAN": "20:28",
-        "RUISUI": "20:36",
-        "SANMIN": "20:44",
-        "YULI": "20:55",
-        "DONGLI": "21:02",
-        "DONGZHU": "21:08",
-        "FULI": "21:15",
+        "HUALIEN": "19:17",
+        "JIAN": "19:23",
+        "ZHIXUE": "19:32",
+        "PINGHE": "19:35",
+        "SHOUFENG": "19:39",
+        "FENGTIAN": "19:43",
+        "NANPING": "19:50",
+        "FENGLIN": "19:55",
+        "WANRONG": "20:00",
+        "GUANGFU": "20:07",
+        "DAFU": "20:14",
+        "FUYUAN": "20:24",
+        "RUISUI": "20:33",
+        "SANMIN": "20:41",
+        "YULI": "20:54",
+        "DONGLI": "21:01",
+        "DONGZHU": "21:07",
+        "FULI": "21:14",
         "CHISHANG": "21:22",
         "HAIDUAN": "21:28",
-        "GUANSHAN": "21:37",
-        "RUIHE": "21:45",
-        "RUIYUAN": "21:49",
-        "LUYE": "21:56",
-        "SHANLI": "22:02",
-        "TAITUNG": "22:11"
+        "GUANSHAN": "21:46",
+        "RUIHE": "21:54",
+        "RUIYUAN": "21:58",
+        "LUYE": "22:05",
+        "SHANLI": "22:11",
+        "TAITUNG": "22:20"
       },
       "arrival_times": {
-        "HUALIEN": "19:20",
-        "JIAN": "19:26",
-        "ZHIXUE": "19:35",
-        "PINGHE": "19:38",
-        "SHOUFENG": "19:42",
-        "FENGTIAN": "19:46",
-        "NANPING": "19:53",
-        "FENGLIN": "19:58",
-        "WANRONG": "20:03",
-        "GUANGFU": "20:17",
-        "DAFU": "20:24",
-        "FUYUAN": "20:28",
-        "RUISUI": "20:36",
-        "SANMIN": "20:44",
-        "YULI": "20:55",
-        "DONGLI": "21:02",
-        "DONGZHU": "21:08",
-        "FULI": "21:15",
+        "HUALIEN": "19:17",
+        "JIAN": "19:23",
+        "ZHIXUE": "19:32",
+        "PINGHE": "19:35",
+        "SHOUFENG": "19:39",
+        "FENGTIAN": "19:43",
+        "NANPING": "19:50",
+        "FENGLIN": "19:55",
+        "WANRONG": "20:00",
+        "GUANGFU": "20:07",
+        "DAFU": "20:14",
+        "FUYUAN": "20:24",
+        "RUISUI": "20:33",
+        "SANMIN": "20:41",
+        "YULI": "20:54",
+        "DONGLI": "21:01",
+        "DONGZHU": "21:07",
+        "FULI": "21:14",
         "CHISHANG": "21:22",
         "HAIDUAN": "21:28",
-        "GUANSHAN": "21:37",
-        "RUIHE": "21:45",
-        "RUIYUAN": "21:49",
-        "LUYE": "21:56",
-        "SHANLI": "22:02",
-        "TAITUNG": "22:11"
+        "GUANSHAN": "21:46",
+        "RUIHE": "21:54",
+        "RUIYUAN": "21:58",
+        "LUYE": "22:05",
+        "SHANLI": "22:11",
+        "TAITUNG": "22:20"
       },
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4558",
@@ -88276,43 +88425,43 @@
         "LINRONGSHINKONG"
       ],
       "departure_times": {
-        "HUALIEN": "21:03",
-        "JIAN": "21:09",
-        "ZHIXUE": "21:19",
-        "PINGHE": "21:22",
-        "SHOUFENG": "21:26",
-        "FENGTIAN": "21:30",
-        "NANPING": "21:37",
-        "FENGLIN": "21:42",
-        "WANRONG": "21:47",
-        "GUANGFU": "21:55",
-        "DAFU": "22:02",
-        "FUYUAN": "22:06",
-        "RUISUI": "22:14",
-        "SANMIN": "22:23",
-        "YULI": "22:33"
+        "HUALIEN": "21:05",
+        "JIAN": "21:14",
+        "ZHIXUE": "21:24",
+        "PINGHE": "21:27",
+        "SHOUFENG": "21:31",
+        "FENGTIAN": "21:35",
+        "NANPING": "21:42",
+        "FENGLIN": "21:47",
+        "WANRONG": "21:52",
+        "GUANGFU": "22:00",
+        "DAFU": "22:07",
+        "FUYUAN": "22:11",
+        "RUISUI": "22:19",
+        "SANMIN": "22:27",
+        "YULI": "22:37"
       },
       "arrival_times": {
-        "HUALIEN": "21:03",
-        "JIAN": "21:09",
-        "ZHIXUE": "21:19",
-        "PINGHE": "21:22",
-        "SHOUFENG": "21:26",
-        "FENGTIAN": "21:30",
-        "NANPING": "21:37",
-        "FENGLIN": "21:42",
-        "WANRONG": "21:47",
-        "GUANGFU": "21:55",
-        "DAFU": "22:02",
-        "FUYUAN": "22:06",
-        "RUISUI": "22:14",
-        "SANMIN": "22:23",
-        "YULI": "22:33"
+        "HUALIEN": "21:05",
+        "JIAN": "21:14",
+        "ZHIXUE": "21:24",
+        "PINGHE": "21:27",
+        "SHOUFENG": "21:31",
+        "FENGTIAN": "21:35",
+        "NANPING": "21:42",
+        "FENGLIN": "21:47",
+        "WANRONG": "21:52",
+        "GUANGFU": "22:00",
+        "DAFU": "22:07",
+        "FUYUAN": "22:11",
+        "RUISUI": "22:19",
+        "SANMIN": "22:27",
+        "YULI": "22:37"
       },
       "via_note": "",
       "operating_mark": "",
       "verification_status": "official",
-      "source_file": "Taitung20250626.ods"
+      "source_file": "台東線-20260701.ods"
     },
     {
       "train_number": "4703",

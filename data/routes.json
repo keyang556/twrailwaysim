@@ -5,7 +5,7 @@
     "topology_source": "分歧節點、倒插方向限制與線別歸屬取自 data/topology_overrides.json，該檔為人工維護，內容依開發規格 §10 與 chat.md 的成功／追分／彰化結論。",
     "provenance": {
       "effective_date": "2026-07-01",
-      "generated_at": "2026-08-23T12:32:49Z",
+      "generated_at": "2026-08-23T14:03:15Z",
       "generator": "python -m railway_sim.dataset",
       "sources": [
         {
@@ -104,11 +104,6 @@
           "bytes": 13261
         },
         {
-          "file": "Taitung20250626.ods",
-          "sha256": "f9832fea55621140c7a77a9dda42428354cfeb16fd74b0be2197f48524c9dbc2",
-          "bytes": 11428
-        },
-        {
           "file": "TaitungToShulin20260701.ods",
           "sha256": "689578b179ced62148a742977247f214d7dd56db6d1454f97f15a5355e96244e",
           "bytes": 27262
@@ -127,6 +122,11 @@
           "file": "南迴線(台東→枋寮→新左營)-20260701.ods",
           "sha256": "1981510925b0e259525bfead95c31755692e0dfbaf3cf208669c308cf9c9104d",
           "bytes": 51681
+        },
+        {
+          "file": "台東線-20260701.ods",
+          "sha256": "3ab8348dee6341a04c01246aa14b534bbade071ace22597f224c7c115bbf8bd8",
+          "bytes": 10665
         }
       ]
     }
@@ -3091,7 +3091,7 @@
     {
       "from": "STA_GUANGFU",
       "to": "STA_WANRONG",
-      "length_m": 5500.0,
+      "length_m": 4580.0,
       "line_id": "taitung",
       "max_speed_kmh": 110.0,
       "verification_status": "estimated_from_timetable"

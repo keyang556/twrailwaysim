@@ -5,7 +5,7 @@
     "stop_rules_policy": "stop_rules 表示「該車種在本站至少有一班列車辦理停靠」，不是臺鐵另行公布的停靠規則。某一班次停或不停一律以該班次的停靠表為準（規格 §9.1）。",
     "provenance": {
       "effective_date": "2026-07-01",
-      "generated_at": "2026-08-23T12:32:49Z",
+      "generated_at": "2026-08-23T14:03:15Z",
       "generator": "python -m railway_sim.dataset",
       "sources": [
         {
@@ -104,11 +104,6 @@
           "bytes": 13261
         },
         {
-          "file": "Taitung20250626.ods",
-          "sha256": "f9832fea55621140c7a77a9dda42428354cfeb16fd74b0be2197f48524c9dbc2",
-          "bytes": 11428
-        },
-        {
           "file": "TaitungToShulin20260701.ods",
           "sha256": "689578b179ced62148a742977247f214d7dd56db6d1454f97f15a5355e96244e",
           "bytes": 27262
@@ -127,6 +122,11 @@
           "file": "南迴線(台東→枋寮→新左營)-20260701.ods",
           "sha256": "1981510925b0e259525bfead95c31755692e0dfbaf3cf208669c308cf9c9104d",
           "bytes": 51681
+        },
+        {
+          "file": "台東線-20260701.ods",
+          "sha256": "3ab8348dee6341a04c01246aa14b534bbade071ace22597f224c7c115bbf8bd8",
+          "bytes": 10665
         }
       ]
     }
@@ -1709,7 +1709,7 @@
       "stop_rules": {
         "chu_kuang": true,
         "local": true,
-        "local_express": false,
+        "local_express": true,
         "tze_chiang": true
       },
       "platforms": [],
@@ -2491,7 +2491,7 @@
       "stop_rules": {
         "chu_kuang": true,
         "local": true,
-        "local_express": false,
+        "local_express": true,
         "tze_chiang": false
       },
       "platforms": [],
@@ -2511,7 +2511,7 @@
       "stop_rules": {
         "chu_kuang": true,
         "local": true,
-        "local_express": false,
+        "local_express": true,
         "tze_chiang": false
       },
       "platforms": [],
@@ -2652,7 +2652,7 @@
       "stop_rules": {
         "chu_kuang": false,
         "local": true,
-        "local_express": false,
+        "local_express": true,
         "tze_chiang": true
       },
       "platforms": [],
@@ -3532,7 +3532,7 @@
       "stop_rules": {
         "chu_kuang": true,
         "local": true,
-        "local_express": false,
+        "local_express": true,
         "tze_chiang": false
       },
       "platforms": [],
@@ -4338,7 +4338,7 @@
       "stop_rules": {
         "chu_kuang": true,
         "local": true,
-        "local_express": false,
+        "local_express": true,
         "tze_chiang": false
       },
       "platforms": [],
@@ -4819,7 +4819,7 @@
       "stop_rules": {
         "chu_kuang": true,
         "local": true,
-        "local_express": false,
+        "local_express": true,
         "tze_chiang": true
       },
       "platforms": [],
