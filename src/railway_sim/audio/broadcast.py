@@ -167,6 +167,10 @@ class BroadcastSystem:
     _arrival_announced: set[str] = field(default_factory=set, init=False, repr=False)
     _boarding_notice_playing: bool = field(default=False, init=False, repr=False)
     _open_sides: set[str] = field(default_factory=set, init=False, repr=False)
+    _unscheduled_stop_audio_active: bool = field(
+        default=False, init=False, repr=False
+    )
+    """臨停音檔是否仍是播放器最後一則可中止的廣播。"""
 
     # ------------------------------------------------------------------
     # 播放時機
@@ -314,9 +318,21 @@ class BroadcastSystem:
         """
         if not self.enabled:
             return False
-        self._play(self._find_notice("unscheduled_stop"))
+        played = self._play(self._find_notice("unscheduled_stop"))
+        if played:
+            self._unscheduled_stop_audio_active = True
         self.announcer.announce(msg.broadcast_unscheduled_stop(), Priority.STATUS)
         return True
+
+    def stop_unscheduled_stop(self) -> None:
+        """停止仍在播放的臨停廣播。
+
+        只有臨停音檔仍是最後一則中斷式廣播時才停止；若已被到站或下一站等
+        正常廣播取代，不能因列車重新起動而誤切掉新的內容。
+        """
+        if self._unscheduled_stop_audio_active and self.player is not None:
+            self.player.stop()
+        self._unscheduled_stop_audio_active = False
 
     # ------------------------------------------------------------------
     def _find(self, station_id: str, kind: str):
@@ -345,14 +361,18 @@ class BroadcastSystem:
         self.announcer.announce(text, Priority.STATUS)
         return True
 
-    def _play(self, clip, *, interrupt: bool = True) -> None:
+    def _play(self, clip, *, interrupt: bool = True) -> bool:
         if clip is None or self.player is None:
-            return
+            return False
         # 廣播動輒數十秒，新的一則必須蓋掉還沒播完的舊的，否則「到站」會
         # 疊在「下一站」上面，兩則都聽不清楚。接在後面的短句（開門側）例外，
         # 那正是要跟在到站廣播之後聽到的。
         if self.player.play(clip.path, interrupt=interrupt):
             self.played.append(clip.key)
+            if interrupt:
+                self._unscheduled_stop_audio_active = False
+            return True
+        return False
 
     # ------------------------------------------------------------------
     @classmethod

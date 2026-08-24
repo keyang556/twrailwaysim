@@ -1134,6 +1134,8 @@ class DriverSession:
         每一個步長不會一直重播。
         """
         if not self.train.is_stopped:
+            if self._unscheduled_stop_announced:
+                self.broadcast.stop_unscheduled_stop()
             self._unscheduled_stop_announced = False
             return
         if self._unscheduled_stop_announced or self.at_platform():

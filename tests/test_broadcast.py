@@ -302,13 +302,20 @@ class TestUnscheduledStop:
     def test_it_has_text_even_without_a_clip(self) -> None:
         system, announcer, player = make_system(None)
         system.announce_unscheduled_stop()
+        system.stop_unscheduled_stop()
         assert player.played == []
+        assert player.stops == 0
         assert texts(announcer) == ["車內廣播：本列車臨時停車，請旅客稍候。"]
 
     def test_it_plays_the_notice_clip(self, clips: Path) -> None:
         system, _, player = make_system(clips)
         system.announce_unscheduled_stop()
         assert player.played == ["NOTICE.unscheduled_stop.ogg"]
+
+    def test_stopping_it_is_a_no_op_without_an_active_clip(self, clips: Path) -> None:
+        system, _, player = make_system(clips)
+        system.stop_unscheduled_stop()
+        assert player.stops == 0
 
 
 class TestDoorSideSelection:
@@ -486,6 +493,54 @@ class TestUnscheduledStopDuringAService:
             session.tick(0.1)
         spoken = [t for t in broadcast_texts(announcer) if "臨時停車" in t]
         assert len(spoken) == 1
+
+    def test_restart_stops_unscheduled_stop_audio(
+        self, game_data: GameData
+    ) -> None:
+        session, _, player = make_driver(game_data, "2115")
+        first, second = session.stations[0], session.stations[1]
+        session.train.position_m = (first.position_m + second.position_m) / 2
+        session.tick(0.1)
+        stops_before_restart = player.stops
+
+        session.train.current_speed_kmh = BROADCAST_DEPART_KMH + 1.0
+        session.tick(0.1)
+        assert player.stops == stops_before_restart + 1
+
+        session.tick(0.1)
+        assert player.stops == stops_before_restart + 1
+
+    def test_second_stop_in_same_interstation_section_is_independent(
+        self, game_data: GameData
+    ) -> None:
+        session, announcer, player = make_driver(game_data, "2115")
+        first, second = session.stations[0], session.stations[1]
+        session.train.position_m = (first.position_m + second.position_m) / 2
+        session.tick(0.1)
+
+        session.train.current_speed_kmh = BROADCAST_DEPART_KMH + 1.0
+        session.tick(0.1)
+        session.train.current_speed_kmh = 0.0
+        session.tick(0.1)
+
+        spoken = [t for t in broadcast_texts(announcer) if "臨時停車" in t]
+        assert len(spoken) == 2
+        assert player.played.count("NOTICE.unscheduled_stop.ogg") == 2
+
+    def test_restart_does_not_cancel_broadcast_replacing_unscheduled_stop(
+        self, game_data: GameData
+    ) -> None:
+        session, _, player = make_driver(game_data, "2115")
+        first, second = session.stations[0], session.stations[1]
+        session.train.position_m = (first.position_m + second.position_m) / 2
+        session.tick(0.1)
+        session.broadcast.announce_next_stop("TAIPEI", "臺北")
+        stops_before_restart = player.stops
+
+        session.train.current_speed_kmh = BROADCAST_DEPART_KMH + 1.0
+        session._handle_unscheduled_stop()
+
+        assert player.stops == stops_before_restart
 
 
 class TestStoppingPatternRules:
