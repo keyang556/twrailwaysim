@@ -23,6 +23,13 @@
 若直接疊著播，兩則廣播會同時出聲，什麼都聽不清楚。因此播放採單一佇列，
 由背景執行緒依序播放；:meth:`AudioPlayer.stop` 會清空佇列並中止目前這則，
 供「到站廣播必須蓋過還沒播完的下一站廣播」這類情況使用。
+
+循環播放
+--------
+
+「請勿上車」是**在車門開著的整段時間裡持續提醒**的廣播（提醒沒有買這班車
+的旅客不要上車），因此 :meth:`AudioPlayer.play` 收 ``loop=True``：播完自己
+再排一次，直到 :meth:`AudioPlayer.stop` 為止。同一時間只會有一則循環廣播。
 """
 
 from __future__ import annotations
@@ -190,9 +197,14 @@ class AudioPlayer:
 
     def __init__(self, backend: _Backend) -> None:
         self._backend = backend
-        self._queue: queue.Queue[Path | None] = queue.Queue()
+        self._queue: queue.Queue[tuple[int, Path] | None] = queue.Queue()
         self._stopping = threading.Event()
         self._closed = False
+        self._loop_path: Path | None = None
+        self._lock = threading.Lock()
+        #: stop() 每次呼叫都會加一，用來讓已經被 get() 取出、還沒開始播的
+        #: 項目也能被判定為「已作廢」（見 stop() 與 _run() 的說明）。
+        self._epoch = 0
         self._worker = threading.Thread(
             target=self._run, name="railway-sim-audio", daemon=True
         )
@@ -215,11 +227,16 @@ class AudioPlayer:
         return target.is_file() and self._backend.can_load(target)
 
     # ------------------------------------------------------------------
-    def play(self, path: str | Path, *, interrupt: bool = False) -> bool:
+    def play(
+        self, path: str | Path, *, interrupt: bool = False, loop: bool = False
+    ) -> bool:
         """排入一則音檔。
 
         Args:
             interrupt: ``True`` 時先清掉佇列並中止目前這一則，讓新的立刻播。
+            loop: ``True`` 時反覆播放同一則，直到 :meth:`stop` 為止。用於
+                「請勿上車」這種**在車門開著的整段時間裡持續提醒**的廣播。
+                同一時間只會有一則循環廣播，新的會取代舊的。
 
         Returns:
             是否已排入。檔案不存在或播放器已關閉時回傳 ``False``——這是
@@ -234,20 +251,47 @@ class AudioPlayer:
             self.stop()
         if self._queue.qsize() >= _QUEUE_LIMIT:
             return False
-        self._queue.put(target)
+        with self._lock:
+            if loop:
+                self._loop_path = target
+            self._queue.put((self._epoch, target))
         return True
 
     def stop(self) -> None:
-        """清空佇列並中止目前播放的音檔。"""
-        while True:
-            try:
-                self._queue.get_nowait()
-            except queue.Empty:
-                break
-            else:
-                self._queue.task_done()
+        """清空佇列、中止目前播放的音檔，並取消循環播放。
+
+        取消循環也在這裡，是因為呼叫 :meth:`stop` 的情境（關門、換一則廣播、
+        結束工作階段）沒有一種是「循環那一則應該繼續」。
+
+        清掉佇列裡還沒被取走的項目只解決一半的問題：背景執行緒可能已經用
+        ``get()`` 把某一項目取出、正要開始播，這時項目早就不在佇列裡，
+        清空佇列完全碰不到它。因此另外用一個世代編號（``_epoch``）標記——
+        每次 :meth:`play` 排入的項目都記下當時的世代，``stop()`` 一定會把
+        世代加一；:meth:`_run` 核對世代跟真正呼叫 ``backend.start()`` 是
+        同一把鎖護住的同一段，中間不留空檔，因此世代一旦不一致就保證還
+        沒開始播，直接丟棄。代價是萬一 ``stop()`` 剛好在 :meth:`_run` 正
+        要開始播的那一瞬間撞上，會等它把這一則播出去之後才繼續（不會等到
+        播完，只等 ``backend.start()`` 這一步返回），隨即立刻補上
+        ``backend.stop()``；比起讓一則已經作廢的廣播整輪播完甚至繼續循環，
+        這個等待很短，可以接受。
+        """
+        with self._lock:
+            self._epoch += 1
+            self._loop_path = None
+            while True:
+                try:
+                    self._queue.get_nowait()
+                except queue.Empty:
+                    break
+                else:
+                    self._queue.task_done()
         self._stopping.set()
         self._backend.stop()
+
+    @property
+    def looping(self) -> bool:
+        """目前是否有循環播放中的音檔。"""
+        return self._loop_path is not None
 
     def close(self) -> None:
         """關閉播放器並結束背景執行緒。可重複呼叫。"""
@@ -262,17 +306,36 @@ class AudioPlayer:
     # ------------------------------------------------------------------
     def _run(self) -> None:
         while True:
-            item = self._queue.get()
+            queued = self._queue.get()
             try:
-                if item is None:
+                if queued is None:
                     return
-                self._stopping.clear()
-                if not self._backend.start(item):
+                epoch, item = queued
+                with self._lock:
+                    # 核對世代、清 _stopping、呼叫 backend.start() 三步都在
+                    # 同一把鎖裡做完，這樣「核對通過」跟「真的開始播」中間
+                    # 不會留一個空檔讓 stop() 插進來——stop() 一樣要拿這把
+                    # 鎖才能把世代加一，撞在一起時只會等這裡做完才繼續，
+                    # 隨後立刻呼叫 backend.stop()，不會有作廢的項目在核對
+                    # 通過之後才被 stop() 取消掉、卻還是播了出來（見 stop()
+                    # 的說明）。
+                    if epoch != self._epoch:
+                        continue
+                    self._stopping.clear()
+                    started = self._backend.start(item)
+                if not started:
                     continue
                 while self._backend.is_busy() and not self._stopping.is_set():
                     time.sleep(_POLL_INTERVAL_S)
                 if self._stopping.is_set():
                     self._backend.stop()
+                else:
+                    with self._lock:
+                        # 循環播放：播完再排一次自己。停止是由 stop() 清掉
+                        # _loop_path 達成的，因此不需要另一個旗標；用鎖讓這
+                        # 個判斷跟 stop() 的清空互斥，見 stop() 的說明。
+                        if self._loop_path == item and epoch == self._epoch:
+                            self._queue.put((self._epoch, item))
             except Exception:  # noqa: BLE001, S112 - 背景執行緒不得讓遊戲掛掉
                 continue
             finally:

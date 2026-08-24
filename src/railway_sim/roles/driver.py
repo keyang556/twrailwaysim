@@ -28,6 +28,7 @@ from railway_sim.simulation.clock import SIMULATION_TICK_S, SimulationClock
 from railway_sim.simulation.physics import step as physics_step
 from railway_sim.simulation.position import describe_position
 from railway_sim.simulation.train import Train, TrainType
+from railway_sim.timetable.door_side import DoorSideRule
 from railway_sim.timetable.service import Service
 from railway_sim.timetable.stop_pattern import resolve_stop_kind
 
@@ -197,6 +198,9 @@ class DriverSession:
     _previous_stop_id: str | None = field(default=None, init=False, repr=False)
     """最近停妥過的停靠站。廣播用它判斷「從哪裡來」與目前在哪一個區間。"""
 
+    _unscheduled_stop_announced: bool = field(default=False, init=False, repr=False)
+    """這一次站外停車的臨停廣播是否已播過。重新起動後歸零。"""
+
     _aligning_stop: StationProgress | None = field(default=None, init=False, repr=False)
     """剛停妥、還可以前進修正停車位置的那一站。離開停車範圍後歸零。"""
 
@@ -276,6 +280,11 @@ class DriverSession:
             "enabled": self.spec.has_broadcast,
             "line_id": self.route.line_id,
             "called_station_ids": tuple(self.service.stop_station_ids),
+            "rolling_stock_id": self.spec.id,
+            "boarding_notice": self.spec.boarding_notice,
+            "door_sides": DoorSideRule.from_services(
+                self.data.services.values()
+            ).sides_for(self.service),
         }
         style = self.data.line(self.route.line_id).announcement_style
         if not style:
@@ -486,6 +495,40 @@ class DriverSession:
         """鳴笛（Enter）。"""
         self.announcer.announce(msg.horn(), Priority.ACTION)
         self.bus.publish("horn")
+
+    # ------------------------------------------------------------------
+    # 方向把手（F／V，取自 OpenBVE 的 REVERSER_FORWARD／REVERSER_BACKWARD）
+    # ------------------------------------------------------------------
+    def reverser_forward(self) -> None:
+        """方向把手往前進方向移動一段（F）。"""
+        self._move_reverser(1)
+
+    def reverser_backward(self) -> None:
+        """方向把手往後退方向移動一段（V）。
+
+        停過頭時退回停車位置就是靠這個鍵：先停妥、把手退到後退位、加電門，
+        列車就會往回走。
+        """
+        self._move_reverser(-1)
+
+    def _move_reverser(self, step: int) -> None:
+        result = braking.move_reverser(self.train, step)
+        if not result.accepted and result.reason == "not_stopped":
+            self.announcer.announce(
+                msg.reverser_blocked_by_movement(), Priority.SAFETY
+            )
+            return
+        if not result.accepted:
+            self.announcer.announce(
+                msg.reverser_at_end(self.train.reverser),
+                Priority.ACTION,
+                dedupe_key="reverser_end",
+            )
+            return
+        self.announcer.announce(
+            msg.reverser_position(self.train.reverser), Priority.ACTION
+        )
+        self.bus.publish("reverser", position=self.train.reverser)
 
     # ------------------------------------------------------------------
     # 自動駕駛（Alt+Shift+U，§20.3）
@@ -713,6 +756,7 @@ class DriverSession:
                 self.train.brake_notch,
                 self.train.emergency_brake,
                 self.train.direction,
+                self.train.reverser,
             )
 
         if code == "doors":
@@ -780,6 +824,7 @@ class DriverSession:
         self._update_occupancy()
         self._handle_stations()
         self._handle_realignment()
+        self._handle_unscheduled_stop()
         self._handle_broadcast()
         self._refresh_stop_target()
 
@@ -839,9 +884,19 @@ class DriverSession:
         保留給 :meth:`_handle_realignment`，讓還沒離站的前進修正仍能算出
         正確的誤差。
         """
-        if self._aligning_stop is not None and not self._departed_aligning_stop:
-            return self._aligning_stop
-        return self.next_scheduled_stop()
+        aligning = self.aligning_at()
+        return aligning if aligning is not None else self.next_scheduled_stop()
+
+    def aligning_at(self) -> StationProgress | None:
+        """還在對準停車位置的那一站；車頭通過停車位置之後為 ``None``。
+
+        「還在對位」與「已經離站」的界線是車頭有沒有通過停車位置，不是列車
+        有沒有在動：停短了往前推一點也會動。廣播據此判斷該不該播「下一站」
+        （issue #12）。
+        """
+        if self._aligning_stop is None or self._departed_aligning_stop:
+            return None
+        return self._aligning_stop
 
     def _refresh_stop_target(self) -> None:
         """把下一個停車站設為 ATP 的停車點（§14.1 前方停車點距離）。"""
@@ -1041,6 +1096,7 @@ class DriverSession:
         here = self.stopped_at()
         final = self.final_stop()
         origin = self.first_stop()
+        aligning = self.aligning_at()
         return RunState(
             speed_kmh=self.train.current_speed_kmh,
             at_station_id=here.station_id if here is not None else None,
@@ -1053,7 +1109,38 @@ class DriverSession:
             origin_id=origin.station_id if origin is not None else "",
             terminus_id=final.station_id if final is not None else "",
             service_class=self.service.train_type,
+            aligning_at_id=aligning.station_id if aligning is not None else None,
         )
+
+    def at_platform(self) -> bool:
+        """車頭是否還在某一座月台的範圍內。
+
+        停靠站與通過站都算：月台就是月台，列車停在通過站的月台邊仍然是停在
+        月台，不是站外。範圍取 :data:`PLATFORM_ZONE_M`（以停車位置為中心）。
+        """
+        return any(
+            abs(self.train.position_m - progress.position_m) <= PLATFORM_ZONE_M
+            for progress in self.stations
+        )
+
+    def _handle_unscheduled_stop(self) -> None:
+        """站外臨時停車的廣播（§20.2）。
+
+        號誌、前方列車或事故讓列車停在月台以外的地方時，旅客只知道車忽然不
+        動了，需要一句話說明這是臨時停車。停在月台範圍內不算——那是正常到站
+        或正常通過時的停等，已經有到站廣播交代。
+
+        旗標在列車重新起動時歸零，因此同一趟裡可以臨停很多次，但停著不動的
+        每一個步長不會一直重播。
+        """
+        if not self.train.is_stopped:
+            self._unscheduled_stop_announced = False
+            return
+        if self._unscheduled_stop_announced or self.at_platform():
+            return
+        self._unscheduled_stop_announced = True
+        self.broadcast.announce_unscheduled_stop()
+        self.bus.publish("unscheduled_stop", position_m=self.train.position_m)
 
     def _handle_broadcast(self) -> None:
         """把目前狀況交給廣播系統，由它決定要播什麼。
@@ -1332,6 +1419,8 @@ class DriverSession:
             "emergency_brake": self.emergency_brake,
             "release_emergency": self.release_emergency,
             "horn": self.horn,
+            "reverser_forward": self.reverser_forward,
+            "reverser_backward": self.reverser_backward,
             "doors_left": self.toggle_left_doors,
             "doors_right": self.toggle_right_doors,
             "toggle_ato": self.toggle_ato,

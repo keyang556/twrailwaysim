@@ -6,8 +6,14 @@ import pytest
 
 from railway_sim.data_loader import GameData
 from railway_sim.simulation import physics
-from railway_sim.simulation.braking import notch_down, power_up
-from railway_sim.simulation.train import Train, TrainType
+from railway_sim.simulation.braking import move_reverser, notch_down, power_up
+from railway_sim.simulation.train import (
+    REVERSER_BACKWARD,
+    REVERSER_FORWARD,
+    REVERSER_NEUTRAL,
+    Train,
+    TrainType,
+)
 
 
 class TestPowerNotch:
@@ -204,3 +210,80 @@ class TestRealStockPerformance:
             game_data.train_type("DR1000").max_speed_kmh
             < game_data.train_type("EMU3000").max_speed_kmh
         )
+
+
+class TestReverser:
+    """方向把手（F／V，取自 OpenBVE 的 REVERSER_FORWARD／REVERSER_BACKWARD）。"""
+
+    def test_default_is_forward(self, train: Train) -> None:
+        """工作階段從「列車已備妥」開始，把手一開始就在行車方向上。"""
+        assert train.reverser == REVERSER_FORWARD
+
+    def test_one_notch_at_a_time_down_to_reverse(self, train: Train) -> None:
+        assert move_reverser(train, -1).accepted
+        assert train.reverser == REVERSER_NEUTRAL
+        assert move_reverser(train, -1).accepted
+        assert train.reverser == REVERSER_BACKWARD
+
+    def test_it_stops_at_the_ends(self, train: Train) -> None:
+        assert not move_reverser(train, 1).accepted
+        assert move_reverser(train, 1).reason == "at_end"
+        assert train.reverser == REVERSER_FORWARD
+
+    def test_it_cannot_move_while_running(self, train: Train) -> None:
+        train.current_speed_kmh = 20.0
+        result = move_reverser(train, -1)
+        assert not result.accepted
+        assert result.reason == "not_stopped"
+        assert train.reverser == REVERSER_FORWARD
+
+    def test_neutral_cuts_traction(self, train: Train, train_spec: TrainType) -> None:
+        """把手在「切」時電門不產生牽引力——那正是方向把手的作用。"""
+        move_reverser(train, -1)
+        train.power_notch = 5
+        physics.step(train, train_spec, 1.0)
+        assert train.current_speed_kmh == 0.0
+        assert train.position_m == 0.0
+
+    def test_reverse_moves_the_train_backwards(
+        self, train: Train, train_spec: TrainType
+    ) -> None:
+        train.position_m = 500.0
+        move_reverser(train, -1)
+        move_reverser(train, -1)
+        train.power_notch = 5
+        for _ in range(10):
+            physics.step(train, train_spec, 0.1)
+        assert train.position_m < 500.0
+        assert train.current_speed_kmh > 0.0
+        assert train.distance_travelled_m == pytest.approx(500.0 - train.position_m)
+
+    def test_it_does_not_run_off_the_start_of_the_route(
+        self, train: Train, train_spec: TrainType
+    ) -> None:
+        """路線起點之前沒有路：退到零就停住，里程不可為負。"""
+        train.position_m = 2.0
+        move_reverser(train, -1)
+        move_reverser(train, -1)
+        train.power_notch = 5
+        for _ in range(100):
+            physics.step(train, train_spec, 0.1)
+        assert train.position_m == 0.0
+        assert train.current_speed_kmh == 0.0
+
+    def test_moving_to_neutral_does_not_flip_the_direction(
+        self, train: Train, train_spec: TrainType
+    ) -> None:
+        """滑行中把手回「切」只是失去牽引力，列車不會就此往回走。"""
+        train.position_m = 500.0
+        move_reverser(train, -1)
+        move_reverser(train, -1)
+        train.power_notch = 5
+        for _ in range(10):
+            physics.step(train, train_spec, 0.1)
+        rolling_back_to = train.position_m
+
+        train.reverser = REVERSER_NEUTRAL  # 行進中由外部強制（把手連鎖之外）
+        train.power_notch = 0
+        physics.step(train, train_spec, 0.1)
+        assert train.position_m < rolling_back_to

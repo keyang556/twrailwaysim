@@ -498,10 +498,80 @@ def _resolve_parallel_names(
                             name = candidate
                             break
                 resolved.append(
-                    ParsedStop(name, stop.time_text, stop.stops)
+                    ParsedStop(
+                        name,
+                        stop.time_text,
+                        stop.stops,
+                        arrival_text=stop.arrival_text,
+                    )
                 )
             block.services[index] = replace(service, stops=tuple(resolved))
     return unresolved
+
+
+#: 一天的分鐘數。跨日班次要靠它把時刻攤成連續的時間軸。
+_DAY_MINUTES = 24 * 60
+
+
+def _absolute_minutes(group: list[ParsedService]) -> dict[str, int]:
+    """把同一車次散在各來源檔的時刻攤成一條連續的時間軸。
+
+    直接照 ``HH:MM`` 大小排序會把跨日班次拆散：樹林 23:57 開、繞東部幹線到
+    臺東、再走南迴到新左營 07:52 的普悠瑪，玉里 04:19 會排到樹林 23:57
+    前面，起訖站因此完全錯掉。改用兩層還原：
+
+    1. **同一份表格內**，站序本來就是正確的行車順序，因此時刻只要一往回走
+       就表示過了午夜，往後加一天。
+    2. **不同表格之間**，以共同停靠的車站對齊。同一班車在兩份表印出的時刻
+       一定相同，差的只會是整數天。
+
+    Returns:
+        ``{站名: 自首站起算的絕對分鐘數}``，只含印出時刻的車站。
+    """
+    timelines: list[dict[str, int]] = []
+    for service in group:
+        timeline: dict[str, int] = {}
+        previous: int | None = None
+        offset = 0
+        for stop in service.stops:
+            minutes = stop.minutes
+            if minutes is None:
+                continue
+            value = minutes + offset
+            while previous is not None and value < previous:
+                offset += _DAY_MINUTES
+                value += _DAY_MINUTES
+            previous = value
+            timeline.setdefault(stop.station_name, value)
+        if timeline:
+            timelines.append(timeline)
+
+    if not timelines:
+        return {}
+
+    # 站數最多的那一份當基準，其餘依共同車站逐一接上；接得上的越多，下一輪
+    # 能對齊的就越多，因此要反覆掃到沒有進展為止。
+    timelines.sort(key=len, reverse=True)
+    absolute = dict(timelines[0])
+    pending = timelines[1:]
+    while pending:
+        remaining: list[dict[str, int]] = []
+        for timeline in pending:
+            shared = next((name for name in timeline if name in absolute), None)
+            if shared is None:
+                remaining.append(timeline)
+                continue
+            days = round((absolute[shared] - timeline[shared]) / _DAY_MINUTES)
+            for name, value in timeline.items():
+                absolute.setdefault(name, value + days * _DAY_MINUTES)
+        if len(remaining) == len(pending):
+            # 沒有一份接得上（來源之間毫無共同車站），只能照原樣併入。
+            for timeline in remaining:
+                for name, value in timeline.items():
+                    absolute.setdefault(name, value)
+            break
+        pending = remaining
+    return absolute
 
 
 def _merge_services(blocks: list[SourceBlock]) -> dict[str, ParsedService]:
@@ -517,33 +587,32 @@ def _merge_services(blocks: list[SourceBlock]) -> dict[str, ParsedService]:
 
     merged: dict[str, ParsedService] = {}
     for number, group in grouped.items():
-        stops: dict[str, tuple[int, bool, str]] = {}
+        # 同一站可能在好幾份表出現，取資訊最完整的那一份：有時刻的勝過只
+        # 標「通過」的，另外印了到達時刻的（大站）又勝過只有一個時刻的，
+        # 否則先掃到的區間車時刻表會把對號表印出來的停站時間蓋掉。
+        stops: dict[str, tuple[bool, str, str]] = {}
         for service in group:
             for stop in service.stops:
-                minutes = stop.minutes
                 previous = stops.get(stop.station_name)
-                if previous is None or (minutes is not None and previous[0] < 0):
+                if (
+                    previous is None
+                    or (stop.time_text and not previous[1])
+                    or (stop.arrival_text and not previous[2])
+                ):
                     stops[stop.station_name] = (
-                        minutes if minutes is not None else -1,
                         stop.stops,
                         stop.time_text,
+                        stop.arrival_text,
                     )
 
-        # 依時刻排序，跨日的班次把凌晨時段往後推一天。
-        timed = [(name, data) for name, data in stops.items() if data[0] >= 0]
-        timed.sort(key=lambda item: item[1][0])
-        if timed and timed[-1][1][0] - timed[0][1][0] > 12 * 60:
-            timed.sort(
-                key=lambda item: item[1][0] + (24 * 60 if item[1][0] < 4 * 60 else 0)
-            )
-
         primary = max(group, key=lambda s: len(s.stops))
-        order = [name for name, _ in timed]
+        absolute = _absolute_minutes(group)
+        order = sorted(absolute, key=lambda name: absolute[name])
         # 沒有時刻的通過站，插回它在原始表中的相對位置。
         for service in group:
             names = [s.station_name for s in service.stops]
             for index, name in enumerate(names):
-                if name in order or stops[name][0] >= 0:
+                if name in order:
                     continue
                 anchor = next((n for n in names[index + 1 :] if n in order), None)
                 position = order.index(anchor) if anchor else len(order)
@@ -553,7 +622,13 @@ def _merge_services(blocks: list[SourceBlock]) -> dict[str, ParsedService]:
             train_number=number,
             train_class=primary.train_class,
             stops=tuple(
-                ParsedStop(name, stops[name][2], stops[name][1]) for name in order
+                ParsedStop(
+                    name,
+                    stops[name][1],
+                    stops[name][0],
+                    arrival_text=stops[name][2],
+                )
+                for name in order
             ),
             origin_name=order[0] if order else "",
             destination_name=order[-1] if order else "",
@@ -779,8 +854,10 @@ def build_dataset(source_dir: str | Path, data_dir: str | Path) -> BuildResult:
                 stop_ids.append(station_id)
                 served_names.add(stop.station_name)
                 if stop.time_text:
+                    # 時刻表印的是開車時刻；只有大站另外印了到達時刻，其餘
+                    # 車站的停站時間無從得知，到達與開車只能是同一個值。
                     departure[station_id] = stop.time_text
-                    arrival[station_id] = stop.time_text
+                    arrival[station_id] = stop.arrival_text or stop.time_text
             elif node in on_path:
                 # 來源標為通過、且確實在本班次路徑上的車站才列入通過站。
                 pass_ids.append(station_id)
@@ -948,6 +1025,12 @@ def build_dataset(source_dir: str | Path, data_dir: str | Path) -> BuildResult:
             "stop_rule_note": (
                 "停靠與通過一律以本班次的停靠表為準，"
                 "不得由「列車行駛於這條路線」推論（規格 §9.1）。"
+            ),
+            "time_note": (
+                "來源時刻表印的是開車時刻（終點站為到達時刻）。只有花蓮、"
+                "臺北、高雄、臺東這幾個大站在對號列車時刻表裡另外印了到達"
+                "時刻，因此只有這些站的 arrival_times 與 departure_times "
+                "不同；其餘車站的停站時間無公開來源，兩者一律相同。"
             ),
             "provenance": provenance,
         },

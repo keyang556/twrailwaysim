@@ -8,30 +8,39 @@
     "legacy_note": "profile driver_legacy 保留先前依 chat.md 訂下的 D 電門／A 制軔配置，可用 --keymap-profile driver_legacy 選用。",
     "console_note": "終端機無法區分 Ctrl 與 Ctrl+Shift，主控台介面把控制字元一律視為 Ctrl+Shift+字母。因此每個播報動作都另外保留一個單鍵別名，任何介面都能操作。",
     "ato_note": "自動駕駛（toggle_ato、ato_depart）只有捷運有；在臺鐵按下會回覆「本系統沒有自動駕駛功能」，不會靜靜地沒反應（規格 §7.2）。",
-    "braille_note": "toggle_braille_monitor 需要 NVDA 才會真的送出點字；沒有 NVDA 時按下去會說明原因，不會靜靜地沒反應（規格 §7.2）。終端機收不到 Alt 組合鍵，因此主控台改由暫停選單提供同一個功能。"
+    "braille_note": "toggle_braille_monitor 需要 NVDA 才會真的送出點字；沒有 NVDA 時按下去會說明原因，不會靜靜地沒反應（規格 §7.2）。終端機收不到 Alt 組合鍵，因此主控台改由暫停選單提供同一個功能。",
+    "reverser_note": "方向把手 F／V 取自 OpenBVE 的 REVERSER_FORWARD／REVERSER_BACKWARD，一次移動一段（後退 → 切 → 前進）。列車必須停妥才能改變。"
   },
   "profiles": {
     "global": {
       "show_help": {
-        "keys": ["F1"],
+        "keys": [
+          "F1"
+        ],
         "label": "開啟快捷鍵說明",
         "category": "system",
         "source": "規格 §7.1（OpenBVE 無對應指令，F1 在 OpenBVE 為車內視角）"
       },
       "repeat_last": {
-        "keys": ["F2"],
+        "keys": [
+          "F2"
+        ],
         "label": "重複播報最近一則訊息",
         "category": "system",
         "source": "規格 §2.1 重要訊息需支援重複播報（OpenBVE 無對應指令）"
       },
       "pause_menu": {
-        "keys": ["ESC"],
+        "keys": [
+          "ESC"
+        ],
         "label": "開啟暫停選單（含離開遊戲）",
         "category": "system",
         "source": "OpenBVE MENU_ACTIVATE, keyboard, Escape, 0；與規格 §7.1 一致"
       },
       "toggle_braille_monitor": {
-        "keys": ["Alt+Shift+T"],
+        "keys": [
+          "Alt+Shift+T"
+        ],
         "label": "開啟或關閉點字即時顯示（距離下一站）",
         "category": "system",
         "source": "使用者指定：Alt+Shift+T 開啟點字顯示器，即時顯示距離下一站的距離。OpenBVE 沒有對應功能（它沒有點字輸出），因此不沿用其鍵位。"
@@ -39,115 +48,175 @@
     },
     "driver": {
       "power_up": {
-        "keys": ["Z"],
+        "keys": [
+          "Z"
+        ],
         "label": "增加電門段位",
         "category": "driving",
         "source": "OpenBVE POWER_INCREASE, keyboard, Z, 0"
       },
       "notch_down": {
-        "keys": ["A", "COMMA"],
+        "keys": [
+          "A",
+          "COMMA"
+        ],
         "label": "回到惰行或降低控制段位",
         "category": "driving",
         "source": "OpenBVE POWER_DECREASE, keyboard, A, 0 與 BRAKE_DECREASE, keyboard, Comma, 0。本專案的減段是單一動作（降低目前作用中的控制），因此兩個鍵都對應到它。"
       },
       "brake_up": {
-        "keys": ["PERIOD"],
+        "keys": [
+          "PERIOD"
+        ],
         "label": "增加常用制軔段位",
         "category": "driving",
         "source": "OpenBVE BRAKE_INCREASE, keyboard, Period, 0"
       },
       "single_brake": {
-        "keys": ["Q"],
+        "keys": [
+          "Q"
+        ],
         "label": "單手把減速一段（先減電門，電門為零後加制軔）",
         "category": "driving",
         "source": "OpenBVE SINGLE_BRAKE, keyboard, Q, 0。行為取自 OpenBVE source/TrainManager/Handles/CabHandles.cs：有電門時減電門，否則加制軔。"
       },
       "doors_left": {
-        "keys": ["F5"],
+        "keys": [
+          "F5"
+        ],
         "label": "開關左側車門",
         "category": "driving",
         "source": "OpenBVE DOORS_LEFT, keyboard, F5, 0"
       },
       "doors_right": {
-        "keys": ["F6"],
+        "keys": [
+          "F6"
+        ],
         "label": "開關右側車門",
         "category": "driving",
         "source": "OpenBVE DOORS_RIGHT, keyboard, F6, 0"
       },
       "toggle_ato": {
-        "keys": ["Alt+Shift+U"],
+        "keys": [
+          "Alt+Shift+U"
+        ],
         "label": "啟動或解除自動駕駛（僅捷運）",
         "category": "driving",
         "source": "使用者指定：Alt+Shift+U 切換自動駕駛（ATO）。OpenBVE 沒有對應功能，因此不沿用其鍵位。"
       },
       "ato_depart": {
-        "keys": ["F4"],
+        "keys": [
+          "F4"
+        ],
         "label": "自動駕駛發車（關門後啟動列車）",
         "category": "driving",
         "source": "本專案自訂。自動駕駛下也可直接按電門鍵發車，兩者作用相同。"
       },
       "emergency_brake": {
-        "keys": ["SLASH"],
+        "keys": [
+          "SLASH"
+        ],
         "label": "緊急制軔",
         "category": "driving",
         "source": "OpenBVE BRAKE_EMERGENCY, keyboard, Slash, 0（仍是獨立按鍵，符合 chat.md）"
       },
       "release_brake": {
-        "keys": ["R"],
+        "keys": [
+          "R"
+        ],
         "label": "鬆軔",
         "category": "driving",
         "source": "規格 §8.4。OpenBVE 只有逐段緩解（BRAKE_DECREASE），沒有一次鬆軔的指令，故沿用 R。"
       },
       "release_emergency": {
-        "keys": ["E"],
+        "keys": [
+          "E"
+        ],
         "label": "解除緊急制軔（須列車停妥）",
         "category": "driving",
         "source": "規格 §8.3。OpenBVE 無對應指令（其 E 為 ENGINE_START，本專案沒有這項功能）。"
       },
       "horn": {
-        "keys": ["ENTER"],
+        "keys": [
+          "ENTER"
+        ],
         "label": "鳴笛",
         "category": "driving",
         "source": "OpenBVE HORN_PRIMARY, keyboard, Enter, 0"
       },
+      "reverser_forward": {
+        "keys": [
+          "F"
+        ],
+        "label": "方向把手往前進方向移動一段",
+        "category": "driving",
+        "source": "OpenBVE REVERSER_FORWARD, keyboard, F, 0"
+      },
+      "reverser_backward": {
+        "keys": [
+          "V"
+        ],
+        "label": "方向把手往後退方向移動一段（倒退）",
+        "category": "driving",
+        "source": "OpenBVE REVERSER_BACKWARD, keyboard, V, 0"
+      },
       "announce_speed": {
-        "keys": ["CTRL+SHIFT+S", "V"],
+        "keys": [
+          "CTRL+SHIFT+S",
+          "S"
+        ],
         "label": "播報目前速度與允許速度",
         "category": "query",
-        "source": "OpenBVE ACCESSIBILITY_CURRENT_SPEED, keyboard, S, 3（Shift+Ctrl）；V 為主控台可用的單鍵別名"
+        "source": "OpenBVE ACCESSIBILITY_CURRENT_SPEED, keyboard, S, 3（Shift＋Ctrl，assets/Controls/Default.controls）；主控台無法區分 Ctrl 與 Ctrl+Shift，因此另留單鍵別名 S——與 OpenBVE 的基礎鍵同一個字母。原本的單鍵別名 V 已讓給 REVERSER_BACKWARD。"
       },
       "announce_signal": {
-        "keys": ["CTRL+SHIFT+A", "G"],
+        "keys": [
+          "CTRL+SHIFT+A",
+          "G"
+        ],
         "label": "播報前方號誌",
         "category": "query",
         "source": "OpenBVE ACCESSIBILITY_NEXT_SIGNAL, keyboard, A, 3（Shift+Ctrl）；G 為單鍵別名"
       },
       "announce_next_station": {
-        "keys": ["CTRL+SHIFT+T", "N"],
+        "keys": [
+          "CTRL+SHIFT+T",
+          "N"
+        ],
         "label": "播報下一站與停靠別",
         "category": "query",
         "source": "OpenBVE ACCESSIBILITY_NEXT_STATION, keyboard, T, 3（Shift+Ctrl）；N 為單鍵別名"
       },
       "announce_stop_point": {
-        "keys": ["CTRL+D", "CTRL+SHIFT+D", "D"],
+        "keys": [
+          "CTRL+D",
+          "CTRL+SHIFT+D",
+          "D"
+        ],
         "label": "播報距離停車位置多遠",
         "category": "query",
         "source": "OpenBVE MISC_DIST_NEXT_STATION, keyboard, D, 2（Ctrl）。另加 Ctrl+Shift+D 與單鍵 D：終端機無法區分 Ctrl 與 Ctrl+Shift，主控台把控制字元一律視為 Ctrl+Shift+字母，因此兩種寫法都要收。"
       },
       "announce_position": {
-        "keys": ["P"],
+        "keys": [
+          "P"
+        ],
         "label": "播報目前位置",
         "category": "query",
         "source": "規格 §7.1。OpenBVE 最接近的 MISC_DIST_NEXT_STATION（Ctrl+D）報的是距下一站的距離，與本功能不同，故不沿用。"
       },
       "announce_train_status": {
-        "keys": ["T"],
+        "keys": [
+          "T"
+        ],
         "label": "播報列車狀態",
         "category": "query",
         "source": "規格 §7.1（OpenBVE 無對應指令）"
       },
       "announce_doors": {
-        "keys": ["B"],
+        "keys": [
+          "B"
+        ],
         "label": "播報車門狀態",
         "category": "query",
         "source": "規格 §16.2 出發流程需確認車門狀態。OpenBVE 無對應的無障礙指令（其 ACCESSIBILITY_* 只有速度、號誌、車站與速限）。"
@@ -155,115 +224,170 @@
     },
     "driver_legacy": {
       "power_up": {
-        "keys": ["D"],
+        "keys": [
+          "D"
+        ],
         "label": "增加電門段位",
         "category": "driving",
         "source": "chat.md：保持 D 鍵電門（與規格 §7.1 一致）"
       },
       "brake_up": {
-        "keys": ["A"],
+        "keys": [
+          "A"
+        ],
         "label": "增加常用制軔段位",
         "category": "driving",
         "source": "chat.md：保持 A 鍵制軔（與規格 §7.1 一致）"
       },
       "notch_down": {
-        "keys": ["S"],
+        "keys": [
+          "X"
+        ],
         "label": "回到惰行或降低控制段位",
         "category": "driving",
-        "source": "規格 §7.1"
+        "source": "規格 §7.1 原為 S；S 已讓給播報速度（與 driver 配置一致），改用 X。"
       },
       "single_brake": {
-        "keys": ["Q"],
+        "keys": [
+          "Q"
+        ],
         "label": "單手把減速一段（先減電門，電門為零後加制軔）",
         "category": "driving",
         "source": "OpenBVE SINGLE_BRAKE, keyboard, Q, 0。舊配置沒有這個功能，沿用 OpenBVE 的鍵，與 driver 配置一致。"
       },
       "doors_left": {
-        "keys": ["F5"],
+        "keys": [
+          "F5"
+        ],
         "label": "開關左側車門",
         "category": "driving",
         "source": "OpenBVE DOORS_LEFT, keyboard, F5, 0"
       },
       "doors_right": {
-        "keys": ["F6"],
+        "keys": [
+          "F6"
+        ],
         "label": "開關右側車門",
         "category": "driving",
         "source": "OpenBVE DOORS_RIGHT, keyboard, F6, 0"
       },
       "toggle_ato": {
-        "keys": ["Alt+Shift+U"],
+        "keys": [
+          "Alt+Shift+U"
+        ],
         "label": "啟動或解除自動駕駛（僅捷運）",
         "category": "driving",
         "source": "使用者指定：Alt+Shift+U 切換自動駕駛（ATO）。OpenBVE 沒有對應功能，因此不沿用其鍵位。"
       },
       "ato_depart": {
-        "keys": ["F4"],
+        "keys": [
+          "F4"
+        ],
         "label": "自動駕駛發車（關門後啟動列車）",
         "category": "driving",
         "source": "本專案自訂。自動駕駛下也可直接按電門鍵發車，兩者作用相同。"
       },
       "emergency_brake": {
-        "keys": ["SPACE"],
+        "keys": [
+          "SPACE"
+        ],
         "label": "緊急制軔",
         "category": "driving",
         "source": "chat.md：緊急制軔使用獨立按鍵；規格 §7.1 指定為 Space"
       },
       "release_emergency": {
-        "keys": ["E"],
+        "keys": [
+          "E"
+        ],
         "label": "解除緊急制軔（須列車停妥）",
         "category": "driving",
         "source": "規格 §8.3 必須有明確解除流程"
       },
       "release_brake": {
-        "keys": ["R"],
+        "keys": [
+          "R"
+        ],
         "label": "鬆軔",
         "category": "driving",
         "source": "規格 §7.1、§8.4"
       },
       "horn": {
-        "keys": ["H"],
+        "keys": [
+          "H"
+        ],
         "label": "鳴笛",
         "category": "driving",
         "source": "規格 §7.1"
       },
+      "reverser_forward": {
+        "keys": [
+          "F"
+        ],
+        "label": "方向把手往前進方向移動一段",
+        "category": "driving",
+        "source": "OpenBVE REVERSER_FORWARD, keyboard, F, 0"
+      },
+      "reverser_backward": {
+        "keys": [
+          "V"
+        ],
+        "label": "方向把手往後退方向移動一段（倒退）",
+        "category": "driving",
+        "source": "OpenBVE REVERSER_BACKWARD, keyboard, V, 0"
+      },
       "announce_speed": {
-        "keys": ["V"],
+        "keys": [
+          "S"
+        ],
         "label": "播報目前速度與允許速度",
         "category": "query",
-        "source": "規格 §7.1"
+        "source": "規格 §7.1 原為 V；V 已讓給 OpenBVE 的 REVERSER_BACKWARD，改用 S（speed）。本配置的減段鍵在 S，因此一併移到 X。"
       },
       "announce_position": {
-        "keys": ["P"],
+        "keys": [
+          "P"
+        ],
         "label": "播報目前位置",
         "category": "query",
         "source": "規格 §7.1"
       },
       "announce_next_station": {
-        "keys": ["N"],
+        "keys": [
+          "N"
+        ],
         "label": "播報下一站與停靠別",
         "category": "query",
         "source": "規格 §7.1"
       },
       "announce_stop_point": {
-        "keys": ["CTRL+SHIFT+D", "C"],
+        "keys": [
+          "CTRL+SHIFT+D",
+          "C"
+        ],
         "label": "播報距離停車位置多遠",
         "category": "query",
         "source": "與 driver 配置同一個功能。本配置的 D 是電門，單鍵別名因此改用 C（停車）。"
       },
       "announce_signal": {
-        "keys": ["G"],
+        "keys": [
+          "G"
+        ],
         "label": "播報前方號誌",
         "category": "query",
         "source": "規格 §7.1"
       },
       "announce_train_status": {
-        "keys": ["T"],
+        "keys": [
+          "T"
+        ],
         "label": "播報列車狀態",
         "category": "query",
         "source": "規格 §7.1"
       },
       "announce_doors": {
-        "keys": ["B"],
+        "keys": [
+          "B"
+        ],
         "label": "播報車門狀態",
         "category": "query",
         "source": "規格 §16.2 出發流程需確認車門狀態"

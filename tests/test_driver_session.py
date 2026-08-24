@@ -71,7 +71,7 @@ class TestKeyboardOnlyOperation:
         self, dispatcher: KeyDispatcher, local_session: DriverSession
     ) -> None:
         """驗收第 8 項：查詢速度。"""
-        dispatcher.dispatch("V")
+        dispatcher.dispatch("S")
         assert any("目前速度" in t for t in spoken(local_session))
 
     def test_query_position_by_key(
@@ -129,10 +129,77 @@ class TestKeyboardOnlyOperation:
         self, dispatcher: KeyDispatcher, local_session: DriverSession
     ) -> None:
         """規格 §7.2：每次按鍵都應提供文字回饋。"""
-        for key in ("Z", ".", "A", "R", "ENTER", "V", "P", "N", "G", "T", "/"):
+        for key in ("Z", ".", "A", "R", "ENTER", "S", "P", "N", "G", "T", "/", "F", "V"):
             local_session.announcer.clear_history()
             dispatcher.dispatch(key)
             assert spoken(local_session), f"按鍵 {key} 沒有任何文字回饋"
+
+
+class TestReverserKeys:
+    """方向把手 F／V（OpenBVE 的 REVERSER_FORWARD／REVERSER_BACKWARD）。"""
+
+    def test_v_steps_back_one_notch_at_a_time(
+        self, dispatcher: KeyDispatcher, local_session: DriverSession
+    ) -> None:
+        dispatcher.dispatch("V")
+        assert local_session.train.reverser == 0
+        assert "方向把手，切。" in spoken(local_session)
+
+        local_session.announcer.clear_history()
+        dispatcher.dispatch("V")
+        assert local_session.train.reverser == -1
+        assert "方向把手，後退。" in spoken(local_session)
+
+    def test_f_steps_back_towards_forward(
+        self, dispatcher: KeyDispatcher, local_session: DriverSession
+    ) -> None:
+        dispatcher.dispatch("V")
+        dispatcher.dispatch("V")
+        local_session.announcer.clear_history()
+        dispatcher.dispatch("F")
+        assert local_session.train.reverser == 0
+        dispatcher.dispatch("F")
+        assert local_session.train.reverser == 1
+        assert "方向把手，前進。" in spoken(local_session)
+
+    def test_reversing_takes_the_train_backwards(
+        self, dispatcher: KeyDispatcher, local_session: DriverSession
+    ) -> None:
+        """停過頭時退回停車位置：停妥、把手退到後退位、加電門。"""
+        local_session.train.position_m = 400.0
+        dispatcher.dispatch("V")
+        dispatcher.dispatch("V")
+        dispatcher.dispatch("Z")
+        for _ in range(30):
+            local_session.tick(local_session.clock.tick_s)
+        assert local_session.train.position_m < 400.0
+
+    def test_it_is_blocked_while_running(
+        self, dispatcher: KeyDispatcher, local_session: DriverSession
+    ) -> None:
+        local_session.train.current_speed_kmh = 40.0
+        local_session.announcer.clear_history()
+        dispatcher.dispatch("V")
+        assert local_session.train.reverser == 1
+        assert any("停妥後才可改變方向把手" in t for t in spoken(local_session))
+
+    def test_neutral_means_power_does_nothing(
+        self, dispatcher: KeyDispatcher, local_session: DriverSession
+    ) -> None:
+        dispatcher.dispatch("V")
+        dispatcher.dispatch("Z")
+        for _ in range(20):
+            local_session.tick(local_session.clock.tick_s)
+        assert local_session.train.current_speed_kmh == 0.0
+
+    def test_train_status_says_where_the_handle_is(
+        self, dispatcher: KeyDispatcher, local_session: DriverSession
+    ) -> None:
+        """看不見手把的司機只能靠這一句確認它在哪一格。"""
+        dispatcher.dispatch("V")
+        local_session.announcer.clear_history()
+        dispatcher.dispatch("T")
+        assert any("方向把手切" in t for t in spoken(local_session))
 
 
 class TestEmergencyBrakeFlow:

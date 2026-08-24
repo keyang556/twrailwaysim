@@ -46,6 +46,7 @@ from dataclasses import dataclass, field
 
 from railway_sim.simulation.braking import required_decel_ms2, service_brake_notch_for
 from railway_sim.simulation.train import Train, TrainType
+from railway_sim.timetable.door_side import DEFAULT_DOOR_SIDE as _DEFAULT_DOOR_SIDE
 
 __all__ = [
     "CRUISE_MARGIN_KMH",
@@ -91,8 +92,10 @@ DWELL_S = 20.0
 #: 無人駕駛開哪一側車門。
 #:
 #: 維基百科的車站表沒有月台配置與開門方向（規格 §22、§27：查不到的欄位不得
-#: 自行推測），因此固定用左側並明說這是測試值，而不是假裝知道每一站的方向。
-DEFAULT_DOOR_SIDE = "left"
+#: 自行推測），因此固定用預設側並明說這是測試值，而不是假裝知道每一站的
+#: 方向。值本身與到站廣播用的同一個，定義在
+#: :mod:`railway_sim.timetable.door_side`。
+DEFAULT_DOOR_SIDE = _DEFAULT_DOOR_SIDE
 
 
 @dataclass(frozen=True)
