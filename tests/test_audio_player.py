@@ -7,6 +7,7 @@
 
 from __future__ import annotations
 
+import threading
 import time
 from pathlib import Path
 
@@ -38,6 +39,34 @@ class SilentBackend:
 
     def close(self) -> None:
         self.closed += 1
+
+
+class SlowStartBackend:
+    """``start()`` 故意卡住一段時間，讓測試能準確把 ``stop()`` 對準它
+    正在執行的那個時間點，驗證兩者是不是真的互斥。"""
+
+    name = "slow"
+
+    def __init__(self, start_delay_s: float) -> None:
+        self.started: list[str] = []
+        self.stop_calls = 0
+        self._start_delay_s = start_delay_s
+        self.start_call_began = threading.Event()
+
+    def start(self, path: Path) -> bool:
+        self.start_call_began.set()
+        time.sleep(self._start_delay_s)
+        self.started.append(path.name)
+        return True
+
+    def is_busy(self) -> bool:
+        return False
+
+    def stop(self) -> None:
+        self.stop_calls += 1
+
+    def close(self) -> None:
+        pass
 
 
 class TestCreatePlayer:
@@ -181,6 +210,33 @@ class TestLooping:
                 time.sleep(0.01)
             assert len(backend.started) >= 3
             assert set(backend.started) == {"NOTICE.do_not_board.ogg"}
+        finally:
+            player.close()
+
+    def test_stop_waits_out_an_in_flight_start_then_stops_it(
+        self, tmp_path: Path
+    ) -> None:
+        """核對世代跟呼叫 backend.start() 是不是真的鎖在同一段：如果
+        stop() 跟 backend.start() 撞在一起，stop() 必須等 start() 做完
+        才能返回——不然核對通過的項目還是可能在 stop() 宣告完成之後才
+        真正開始播（見 stop() 的說明）。"""
+        clip = tmp_path / "NOTICE.do_not_board.ogg"
+        clip.write_bytes(b"clip")
+        backend = SlowStartBackend(start_delay_s=0.2)
+        player = AudioPlayer(backend)  # type: ignore[arg-type]
+        try:
+            player.play(clip, loop=True)
+            assert backend.start_call_began.wait(timeout=1.0)
+            before = time.monotonic()
+            player.stop()
+            elapsed = time.monotonic() - before
+            # 空檔存在的話 stop() 幾乎會立刻返回；真的鎖在同一段才會等。
+            assert elapsed >= 0.15
+            assert backend.started == ["NOTICE.do_not_board.ogg"]
+            player._queue.join()
+            assert player.looping is False
+            time.sleep(0.05)
+            assert backend.started == ["NOTICE.do_not_board.ogg"]
         finally:
             player.close()
 

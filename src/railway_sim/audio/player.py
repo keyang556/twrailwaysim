@@ -267,10 +267,13 @@ class AudioPlayer:
         ``get()`` 把某一項目取出、正要開始播，這時項目早就不在佇列裡，
         清空佇列完全碰不到它。因此另外用一個世代編號（``_epoch``）標記——
         每次 :meth:`play` 排入的項目都記下當時的世代，``stop()`` 一定會把
-        世代加一；:meth:`_run` 真正要開始播之前會重新核對世代是否還一致，
-        不一致就代表排入之後、開始播之前這段時間被 ``stop()`` 作廢了，直接
-        丟棄，不會播出來。這一步跟世代加一、清掉 ``_loop_path`` 用同一把鎖，
-        兩者才不會交錯。
+        世代加一；:meth:`_run` 核對世代跟真正呼叫 ``backend.start()`` 是
+        同一把鎖護住的同一段，中間不留空檔，因此世代一旦不一致就保證還
+        沒開始播，直接丟棄。代價是萬一 ``stop()`` 剛好在 :meth:`_run` 正
+        要開始播的那一瞬間撞上，會等它把這一則播出去之後才繼續（不會等到
+        播完，只等 ``backend.start()`` 這一步返回），隨即立刻補上
+        ``backend.stop()``；比起讓一則已經作廢的廣播整輪播完甚至繼續循環，
+        這個等待很短，可以接受。
         """
         with self._lock:
             self._epoch += 1
@@ -309,14 +312,18 @@ class AudioPlayer:
                     return
                 epoch, item = queued
                 with self._lock:
-                    # 開始播之前重新核對世代：不一致代表 stop() 已經在這個
-                    # 項目排入之後、被取出之前把它作廢了，直接丟棄不播（見
-                    # stop() 的說明），不能只看 _stopping 這個旗標——那個旗標
-                    # 會在下一行被清掉，蓋掉 stop() 剛留下的訊號。
+                    # 核對世代、清 _stopping、呼叫 backend.start() 三步都在
+                    # 同一把鎖裡做完，這樣「核對通過」跟「真的開始播」中間
+                    # 不會留一個空檔讓 stop() 插進來——stop() 一樣要拿這把
+                    # 鎖才能把世代加一，撞在一起時只會等這裡做完才繼續，
+                    # 隨後立刻呼叫 backend.stop()，不會有作廢的項目在核對
+                    # 通過之後才被 stop() 取消掉、卻還是播了出來（見 stop()
+                    # 的說明）。
                     if epoch != self._epoch:
                         continue
                     self._stopping.clear()
-                if not self._backend.start(item):
+                    started = self._backend.start(item)
+                if not started:
                     continue
                 while self._backend.is_busy() and not self._stopping.is_set():
                     time.sleep(_POLL_INTERVAL_S)
