@@ -158,8 +158,15 @@ class TestSpeedLimits:
 #: 各車輛型式來源標示的性能，用來擋住資料被改回無來源的測試值。
 #:
 #: 值為 ``(營運速度, 常用減速度 km/h/s, 緊急減速度 km/h/s)``；減速度沒有
-#: 來源的車型（EMU900、CK）以 ``None`` 表示不檢查。
+#: 來源的車型（EMU900、CK）以 ``None`` 表示不檢查。EMU600 的來源印的是數值
+#: 對、單位錯的減速度，改由
+#: :meth:`TestRealStockPerformance.test_emu600_brake_figures_are_unit_corrected`
+#: 單獨驗，這裡也用 ``None``。
 SOURCED_PERFORMANCE = {
+    "EMU500": (110.0, 2.84, 3.12),
+    "EMU600": (110.0, None, None),
+    "EMU700": (110.0, 2.88, 3.6),
+    "EMU800": (130.0, 4.32, 4.68),
     "EMU3000": (130.0, 3.6, 4.32),
     "EMU900": (130.0, None, None),
     "TEMU1000": (130.0, 3.6, 4.32),
@@ -203,6 +210,33 @@ class TestRealStockPerformance:
         for _ in range(15 * 60 * 10):  # 15 分鐘、每步 0.1 秒
             physics.step(train, spec, 0.1)
         assert train.current_speed_kmh == pytest.approx(spec.max_speed_kmh, abs=0.1)
+
+    def test_emu600_brake_figures_are_unit_corrected(
+        self, game_data: GameData
+    ) -> None:
+        """EMU600 的減速度以 m/s² 解讀，不照來源標示的 km/h/s。
+
+        來源印的 0.79／0.868「km/h/s」若照字面採用，從 110 公里煞到停要超過兩
+        公里，任何車站都停不進去；同一組數字當成 m/s² 恰好等於同廠同級的
+        EMU500（見 ``trains.json`` 的 meta.known_source_conflict_emu600）。
+        """
+        spec = game_data.train_type("EMU600")
+        assert spec.max_service_brake_ms2 == pytest.approx(0.79, abs=0.001)
+        assert spec.emergency_brake_ms2 == pytest.approx(0.868, abs=0.001)
+        emu500 = game_data.train_type("EMU500")
+        assert spec.max_service_brake_ms2 == pytest.approx(
+            emu500.max_service_brake_ms2, abs=0.005
+        )
+
+    def test_commuter_stock_brakes_are_ordered_by_generation(
+        self, game_data: GameData
+    ) -> None:
+        """新一代通勤電聯車煞得比舊的兇，資料弄反時會被擋下。"""
+        assert (
+            game_data.train_type("EMU500").max_service_brake_ms2
+            < game_data.train_type("EMU700").max_service_brake_ms2
+            < game_data.train_type("EMU800").max_service_brake_ms2
+        )
 
     def test_branch_stock_is_slower_than_trunk_stock(self, game_data: GameData) -> None:
         """柴油客車的最高速度低於城際電聯車，資料弄反時會被擋下。"""

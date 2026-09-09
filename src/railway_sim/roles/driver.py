@@ -179,6 +179,14 @@ class DriverSession:
     player: AudioPlayer | None = None
     """播放廣播音檔的後端；``None`` 表示這台機器放不出聲音（§20.1）。"""
 
+    rolling_stock_id: str = ""
+    """本次運轉實際擔當的車輛型式。留空時由共通運用規則決定當天派哪一型。
+
+    區間車與區間快是共通運用，同一個車次今天開哪一型不是固定的（見
+    :meth:`GameData.rolling_stock_id_for`）。這裡留一個欄位而不是每次都自己算，
+    是為了讓測試與「重開同一班」能指定同一型車。
+    """
+
     route: Route = field(init=False)
     spec: TrainType = field(init=False)
     train: Train = field(init=False)
@@ -221,7 +229,9 @@ class DriverSession:
     # ------------------------------------------------------------------
     def __post_init__(self) -> None:
         self.route = self.data.route(self.service.route_id)
-        self.spec = self.data.train_type(self.service.rolling_stock_id)
+        if not self.rolling_stock_id:
+            self.rolling_stock_id = self.data.rolling_stock_id_for(self.service)
+        self.spec = self.data.train_type(self.rolling_stock_id)
 
         self.train = Train(
             id=f"T{self.service.train_number}",

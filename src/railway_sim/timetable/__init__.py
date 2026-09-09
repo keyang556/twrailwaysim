@@ -1,5 +1,11 @@
 """時刻表與停靠模式。"""
 
+from railway_sim.timetable.rolling_stock import (
+    RollingStockPools,
+    RollingStockRule,
+    pinned_service_day,
+    service_day,
+)
 from railway_sim.timetable.service import Service
 from railway_sim.timetable.stop_pattern import (
     STOP_KINDS,
@@ -8,4 +14,14 @@ from railway_sim.timetable.stop_pattern import (
     validate_service,
 )
 
-__all__ = ["STOP_KINDS", "Service", "StopKind", "resolve_stop_kind", "validate_service"]
+__all__ = [
+    "STOP_KINDS",
+    "RollingStockPools",
+    "RollingStockRule",
+    "Service",
+    "StopKind",
+    "resolve_stop_kind",
+    "pinned_service_day",
+    "service_day",
+    "validate_service",
+]

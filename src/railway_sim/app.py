@@ -117,12 +117,15 @@ def scenario_for_service(data: GameData, train_number: str) -> Scenario:
     service = data.service(train_number)
     class_name = data.service_class_name(service.train_type)
     route = data.routes.get(service.route_id)
-    stock = data.train_types.get(service.rolling_stock_id)
+    # 車輛型式問的是「今天這一班派哪一型」而不是時刻表上印的那一個值：區間車
+    # 與區間快是共通運用，選單裡看到的必須就是等一下真的會開到的那一台。
+    stock_id = data.rolling_stock_id_for(service)
+    stock = data.train_types.get(stock_id)
     return Scenario(
         id=f"{SERVICE_KEY_PREFIX}{train_number}",
         name_zh_tw=f"{class_name}{train_number}次：{route.name_zh_tw if route else ''}",
         service_number=train_number,
-        description=f"車輛型式：{stock.name_zh_tw if stock else service.rolling_stock_id}",
+        description=f"車輛型式：{stock.name_zh_tw if stock else stock_id}",
     )
 
 
@@ -205,7 +208,8 @@ def start_choices(data: GameData) -> list:
         service = data.services[number]
         class_name = data.service_class_name(service.train_type)
         route = data.routes.get(service.route_id)
-        stock = data.train_types.get(service.rolling_stock_id)
+        stock_id = data.rolling_stock_id_for(service)
+        stock = data.train_types.get(stock_id)
         stops = service.stop_station_ids
         origin = names.get(stops[0], "") if stops else ""
         destination = names.get(stops[-1], "") if stops else ""
@@ -213,7 +217,7 @@ def start_choices(data: GameData) -> list:
             names.get(sid, "")
             for sid in (*service.stop_station_ids, *service.pass_station_ids)
         )
-        stock_name = stock.name_zh_tw if stock else service.rolling_stock_id
+        stock_name = stock.name_zh_tw if stock else stock_id
         # 捷運沒有對外公布的車次，玩家認的是「哪一條線的哪一種營運模式」，
         # 因此直接用班次名稱；臺鐵維持「車種＋車次」的既有寫法。
         label = (
@@ -265,7 +269,7 @@ def service_menu_lines(data: GameData, keyword: str = "") -> list[str]:
         # 路線名稱只寫起訖站（「頂埔至鶯桃福德」），不含線名。
         line_name = data.line_names.get(route.line_id, "") if route else ""
         line = (
-            f"{number}\t{class_name}\t{service.rolling_stock_id}\t"
+            f"{number}\t{class_name}\t{data.rolling_stock_id_for(service)}\t"
             f"{origin}－{destination}\t{route.name_zh_tw if route else ''}\t{line_name}"
         )
         if keyword:
@@ -367,10 +371,11 @@ def _ask_service(data: GameData) -> str | None:
     print(f"===== 選擇{data.system.name_zh_tw}營運模式 =====", flush=True)
     for index, number in enumerate(numbers, start=1):
         service = data.services[number]
-        stock = data.train_types.get(service.rolling_stock_id)
+        stock_id = data.rolling_stock_id_for(service)
+        stock = data.train_types.get(stock_id)
         print(
             f"{index}：{number}　{service.name_zh_tw}　"
-            f"{stock.name_zh_tw if stock else service.rolling_stock_id}",
+            f"{stock.name_zh_tw if stock else stock_id}",
             flush=True,
         )
     prompt = f"請輸入 1 到 {len(numbers)}，或直接輸入車次（按 Enter 離開）："

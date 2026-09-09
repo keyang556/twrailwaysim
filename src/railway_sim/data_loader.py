@@ -24,6 +24,7 @@ import os
 import shutil
 import sys
 from dataclasses import dataclass, field
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -34,6 +35,7 @@ from railway_sim.railway.station import Station
 from railway_sim.railway.track import Network
 from railway_sim.simulation.train import TrainType
 from railway_sim.systems import DEFAULT_SYSTEM, SYSTEMS, RailSystem, system_data_dir
+from railway_sim.timetable.rolling_stock import RollingStockPools
 from railway_sim.timetable.service import Service
 from railway_sim.timetable.stop_pattern import validate_service
 
@@ -213,6 +215,15 @@ class GameData:
     broadcast_rules: MrtBroadcastRules = field(default_factory=MrtBroadcastRules.empty)
     """捷運廣播的播放規則。臺鐵沒有這個檔案，空的規則即為「照臺鐵那一套」。"""
 
+    rolling_stock_pools: RollingStockPools = field(
+        default_factory=RollingStockPools.empty
+    )
+    """區間車與區間快的共通運用規則（見 :mod:`railway_sim.timetable.rolling_stock`）。
+
+    空的規則是合法狀態：捷運資料與舊版 ``trains.json`` 沒有這個區段，那代表
+    「每一班都照時刻表指定的車輛型式行駛」，不是資料錯誤。
+    """
+
     issues: list[str] = field(default_factory=list)
 
     # ------------------------------------------------------------------
@@ -237,6 +248,26 @@ class GameData:
         except KeyError:
             raise KeyError(f"沒有車輛型式：{type_id}") from None
 
+    def rolling_stock_id_for(self, service: Service, *, day: date | None = None) -> str:
+        """某一班次在 *day* 這一天實際擔當的車輛型式。
+
+        區間車與區間快是**共通運用**：同一個車次今天由哪一型車擔當不是固定的，
+        因此時刻表裡的值只當作「屬於共通運用池」的標記，真正開哪一型由
+        ``trains.json`` 的 ``rolling_stock_pools`` 逐日抽籤決定（見
+        :mod:`railway_sim.timetable.rolling_stock`）。不在池裡的班次（對號列車、
+        非電氣化支線的柴油客車）原封不動回傳時刻表指定的型式。
+
+        同一天問幾次都得到同一個答案，因此車次選單與駕駛畫面一定一致（§25.5）。
+        """
+        route = self.routes.get(service.route_id)
+        return self.rolling_stock_pools.select(
+            service_class_id=service.train_type,
+            line_ids=route.line_ids if route is not None else (),
+            train_number=service.train_number,
+            rolling_stock_id=service.rolling_stock_id,
+            day=day,
+        )
+
     def service_class_name(self, class_id: str) -> str:
         return self.service_classes.get(class_id, class_id)
 
@@ -254,6 +285,43 @@ class GameData:
         """有資料問題時擲出例外，供正式啟動時 fail fast。"""
         if self.issues:
             raise ValueError("資料驗證未通過：\n" + "\n".join(f"- {i}" for i in self.issues))
+
+
+def _validate_rolling_stock_pools(
+    pools: RollingStockPools,
+    train_types: dict[str, TrainType],
+    service_classes: dict[str, str],
+) -> list[str]:
+    """檢查共通運用規則指到的車輛型式與車種都存在。
+
+    抽籤結果會直接拿去查 ``train_types``，指到不存在的型式會在開車那一刻才爆
+    出來，而且只有抽到的那一天會爆——這種錯誤必須在載入時就攔下。
+    """
+    issues: list[str] = []
+    for stock_id in sorted(pools.managed_rolling_stock_ids):
+        if stock_id not in train_types:
+            issues.append(f"共通運用池參照到不存在的車輛型式：{stock_id}")
+        if stock_id not in pools.fleet_cars:
+            issues.append(f"共通運用池的 {stock_id} 沒有登記現役車輛數")
+    for rule in pools.rules:
+        for class_id in sorted(rule.service_class_ids):
+            if class_id not in service_classes:
+                issues.append(f"運用規則 {rule.id} 參照到不存在的車種：{class_id}")
+        if not rule.rolling_stock_ids:
+            issues.append(f"運用規則 {rule.id} 沒有列出任何車輛型式")
+        for stock_id in rule.rolling_stock_ids:
+            if stock_id not in train_types:
+                issues.append(
+                    f"運用規則 {rule.id} 參照到不存在的車輛型式：{stock_id}"
+                )
+            elif stock_id not in pools.managed_rolling_stock_ids:
+                issues.append(
+                    f"運用規則 {rule.id} 的 {stock_id} 不在 "
+                    "managed_rolling_stock_ids 裡，永遠不會被抽到"
+                )
+        if not pools.weights(rule):
+            issues.append(f"運用規則 {rule.id} 的權重全為 0，抽不出任何車輛型式")
+    return issues
 
 
 def _read_keymap(directory: Path, root: Path) -> dict[str, Any]:
@@ -343,6 +411,12 @@ def load_game_data(
     service_classes = {
         raw["id"]: raw["name_zh_tw"] for raw in trains_raw.get("service_classes", ())
     }
+    rolling_stock_pools = RollingStockPools.from_dict(
+        trains_raw.get("rolling_stock_pools")
+    )
+    issues.extend(
+        _validate_rolling_stock_pools(rolling_stock_pools, train_types, service_classes)
+    )
 
     # --- 班次 ---------------------------------------------------------
     timetables_raw = _read_json(directory / "timetables.json")
@@ -364,6 +438,21 @@ def load_game_data(
             )
         route = routes.get(service.route_id)
         if route is not None:
+            # 標記為共通運用的班次一定要有規則接得住。沒有規則時 select() 會
+            # 原封不動退回時刻表寫的型式，遊戲照跑、載入照樣成功，只是這一班
+            # 悄悄退出了共通運用——改點或新增車種時最容易發生，而且不會有任何
+            # 徵兆，因此在載入時就點名。
+            if (
+                service.rolling_stock_id
+                in rolling_stock_pools.managed_rolling_stock_ids
+                and rolling_stock_pools.rule_for(service.train_type, route.line_ids)
+                is None
+            ):
+                issues.append(
+                    f"班次 {service.train_number}（{service.train_type}）的車輛型式"
+                    f" {service.rolling_stock_id} 屬於共通運用池，卻沒有任何運用規則"
+                    "適用"
+                )
             unknown = [
                 sid
                 for sid in (*service.stop_station_ids, *service.pass_station_ids)
@@ -406,5 +495,6 @@ def load_game_data(
         keymap_raw=keymap_raw,
         broadcasts=broadcasts,
         broadcast_rules=broadcast_rules,
+        rolling_stock_pools=rolling_stock_pools,
         issues=issues,
     )

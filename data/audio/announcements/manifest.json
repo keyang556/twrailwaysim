@@ -1,7 +1,7 @@
 {
   "meta": {
     "description": "由 railway_sim.audio.importer 產生的匯入紀錄，僅供追溯。遊戲執行時是掃描資料夾建立索引，不讀本檔，因此手動增刪音檔不需要同步修改這裡。",
-    "count": 546
+    "count": 557
   },
   "entries": [
     {
@@ -625,14 +625,104 @@
       "sha256": "bf85f8cdb0494720b3deb41e77bc727044a2f03d88b976f81612a8c4cae7ef4d"
     },
     {
+      "file": "common/DOOR.close.emu3000.ogg",
+      "station_id": "DOOR",
+      "station_name": "DOOR",
+      "kind": "close",
+      "variant": "emu3000",
+      "source_name": "3000關門.ogg",
+      "source_dir": "開關門",
+      "sha256": "1b1d8a173a57633ee171cfcc26acbc8c4a30d4a5ac0118cfd68f94003984d487"
+    },
+    {
+      "file": "common/DOOR.close.emu500.ogg",
+      "station_id": "DOOR",
+      "station_name": "DOOR",
+      "kind": "close",
+      "variant": "emu500",
+      "source_name": "500關門.ogg",
+      "source_dir": "開關門",
+      "sha256": "c888c1fcfdb84d4cf44cbb84f44c5d1f38b7d59bde3d3cc03441030301df7e3c"
+    },
+    {
+      "file": "common/DOOR.close.emu700.ogg",
+      "station_id": "DOOR",
+      "station_name": "DOOR",
+      "kind": "close",
+      "variant": "emu700",
+      "source_name": "700關門.ogg",
+      "source_dir": "開關門",
+      "sha256": "46f77a441f74601e9c691c0c5f1f862392b3e2172004b80de7dad941d8bfbdba"
+    },
+    {
+      "file": "common/DOOR.close.emu800.ogg",
+      "station_id": "DOOR",
+      "station_name": "DOOR",
+      "kind": "close",
+      "variant": "emu800",
+      "source_name": "800關門.ogg",
+      "source_dir": "開關門",
+      "sha256": "f9cf8096e8ab939e19e26057622f349f3b082e5600db4e2616ab0e6384c523ba"
+    },
+    {
       "file": "common/DOOR.close.emu900.ogg",
       "station_id": "DOOR",
       "station_name": "DOOR",
       "kind": "close",
       "variant": "emu900",
       "source_name": "900關門.ogg",
-      "source_dir": "0其他",
+      "source_dir": "開關門",
       "sha256": "4f2988b4e0ec4358b55003f72395f3e1cf9862a35f8802997dfe5767654346a2"
+    },
+    {
+      "file": "common/DOOR.close.pp.ogg",
+      "station_id": "DOOR",
+      "station_name": "DOOR",
+      "kind": "close",
+      "variant": "pp",
+      "source_name": "pp關門.ogg",
+      "source_dir": "開關門",
+      "sha256": "5db7ae9a113f9f1ccf1447369f60e332a335e166ed5827441fed1f1989079df8"
+    },
+    {
+      "file": "common/DOOR.close.temu2000.ogg",
+      "station_id": "DOOR",
+      "station_name": "DOOR",
+      "kind": "close",
+      "variant": "temu2000",
+      "source_name": "普悠瑪關門.ogg",
+      "source_dir": "開關門",
+      "sha256": "1605cc6fe07e5051c684022fdbbb582fe50c0906370682eac2ba676552cdeabc"
+    },
+    {
+      "file": "common/DOOR.open.emu500.ogg",
+      "station_id": "DOOR",
+      "station_name": "DOOR",
+      "kind": "open",
+      "variant": "emu500",
+      "source_name": "500開門.ogg",
+      "source_dir": "開關門",
+      "sha256": "6d60deafea94711d82f841de2e643a3df4f2169cc74b871fc6c324f5a24251d6"
+    },
+    {
+      "file": "common/DOOR.open.emu700.ogg",
+      "station_id": "DOOR",
+      "station_name": "DOOR",
+      "kind": "open",
+      "variant": "emu700",
+      "source_name": "700開門.ogg",
+      "source_dir": "開關門",
+      "sha256": "e603a2170a8d5497c59fb58f0ae76667963c516c51edd3eb51ed8db947753232"
+    },
+    {
+      "file": "common/DOOR.open.emu800.ogg",
+      "station_id": "DOOR",
+      "station_name": "DOOR",
+      "kind": "open",
+      "variant": "emu800",
+      "source_name": "800開門.ogg",
+      "source_dir": "開關門",
+      "sha256": "034239692b14480fe7dd35a122b2836f143da6d0aeef43cccfa393a58340191b"
     },
     {
       "file": "common/DOOR.open.emu900.ogg",
@@ -641,8 +731,28 @@
       "kind": "open",
       "variant": "emu900",
       "source_name": "900開門.ogg",
-      "source_dir": "0其他",
+      "source_dir": "開關門",
       "sha256": "0cf3d73569c5d2a784c8d58ae18046eda4f781d1ce7c89ba75fa8efa9183549b"
+    },
+    {
+      "file": "common/DOOR.open.pp.ogg",
+      "station_id": "DOOR",
+      "station_name": "DOOR",
+      "kind": "open",
+      "variant": "pp",
+      "source_name": "pp開門.ogg",
+      "source_dir": "開關門",
+      "sha256": "5666e6fd18ce773bbc537d3890a55cd5a6084b261005bb2f975988a6ba773201"
+    },
+    {
+      "file": "common/DOOR.open.temu2000.ogg",
+      "station_id": "DOOR",
+      "station_name": "DOOR",
+      "kind": "open",
+      "variant": "temu2000",
+      "source_name": "普悠瑪開門.ogg",
+      "source_dir": "開關門",
+      "sha256": "dfa4f2e4d5d181499ce580f1c5bdc27d8151db5dabd26b97a88a00318b0a83b9"
     },
     {
       "file": "common/DOOR.side.left.ogg",
