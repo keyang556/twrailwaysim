@@ -270,3 +270,71 @@ class TestShippedData:
     def test_terminus_clips_are_indexed(self, game_data: GameData) -> None:
         for station_id in ("KEELUNG", "QIDU", "SHULIN", "TAICHUNG", "FENGYUAN", "HOULI"):
             assert game_data.broadcasts.has(station_id, "terminus")
+
+
+class TestShippedDoorClips:
+    """開關門聲（``common/DOOR.<open|close>.<車輛型式>``）。
+
+    版本字串必須是**小寫的車輛型式代碼**，因為查詢時直接把 ``spec.id`` 當版本
+    傳進去。這裡真正要防的是打錯字：檔名寫成 ``emu5000`` 不會有任何錯誤訊息，
+    只會安安靜靜地不出聲，光聽是分不出「這型沒錄」與「檔名打錯」的。
+    """
+
+    def _door_clips(self, game_data: GameData) -> list:
+        return [
+            clip
+            for clip in game_data.broadcasts.clips.values()
+            if clip.station_id == "DOOR" and clip.kind in ("open", "close")
+        ]
+
+    def test_every_variant_is_a_real_train_type(self, game_data: GameData) -> None:
+        known = {type_id.lower() for type_id in game_data.train_types}
+        unknown = sorted(
+            {
+                clip.variant
+                for clip in self._door_clips(game_data)
+                if clip.variant and clip.variant not in known
+            }
+        )
+        assert unknown == [], f"開關門聲的版本不是任何車輛型式：{unknown}"
+
+    def test_the_recorded_types_have_both_directions(
+        self, game_data: GameData
+    ) -> None:
+        """已經錄到的車型，開門與關門要成對，缺一邊等於少一半的回饋。
+
+        EMU3000 目前只有關門聲，來源就只給了那一則，因此列為已知缺口而不是
+        測試失敗；其餘車型都必須成對。
+        """
+        by_variant: dict[str, set[str]] = {}
+        for clip in self._door_clips(game_data):
+            by_variant.setdefault(clip.variant, set()).add(clip.kind)
+        incomplete = sorted(
+            variant
+            for variant, kinds in by_variant.items()
+            if kinds != {"open", "close"} and variant != "emu3000"
+        )
+        assert incomplete == [], f"這些車型只錄到單邊：{incomplete}"
+
+    def test_lookup_uses_the_train_type_id_as_the_variant(
+        self, game_data: GameData
+    ) -> None:
+        """用 ``spec.id`` 查得到，才表示播放時真的會找到這些檔案。"""
+        for type_id in ("EMU500", "EMU700", "EMU800", "EMU900", "PP", "TEMU2000"):
+            for kind in ("open", "close"):
+                clip = game_data.broadcasts.find(
+                    "DOOR", kind, line_id="common", variant=type_id
+                )
+                assert clip is not None, f"{type_id} 找不到{kind}門聲"
+                assert clip.variant == type_id.lower()
+
+    def test_a_type_without_a_recording_is_silent_not_an_error(
+        self, game_data: GameData
+    ) -> None:
+        """沒錄到的車型查不到就是查不到，不可以拿別型的聲音頂替。"""
+        assert (
+            game_data.broadcasts.find(
+                "DOOR", "open", line_id="common", variant="EMU600"
+            )
+            is None
+        )

@@ -30,8 +30,19 @@ data/audio/announcements/
     mountain/
         TAICHUNG.next.ogg
     common/                       不屬於任何車站的廣播
+        DOOR.open.emu500.ogg      開關門聲以車輛型式當版本
+        DOOR.close.emu500.ogg
+        DOOR.open.emu700.ogg
+        DOOR.close.emu700.ogg
+        DOOR.open.emu800.ogg
+        DOOR.close.emu800.ogg
         DOOR.open.emu900.ogg
         DOOR.close.emu900.ogg
+        DOOR.close.emu3000.ogg    只錄到關門聲
+        DOOR.open.pp.ogg
+        DOOR.close.pp.ogg
+        DOOR.open.temu2000.ogg
+        DOOR.close.temu2000.ogg
         DOOR.side.left.ogg
         DOOR.side.right.ogg
         NOTICE.do_not_board.ogg
@@ -60,9 +71,26 @@ data/audio/announcements/
 | `NOTICE.do_not_board` | 請勿上車 | 全車對號列車開門中**持續**播放 |
 | `NOTICE.unscheduled_stop` | 臨停 | 停在月台以外的地方時 |
 
-**開關門聲每一型車不一樣**，因此以車輛型式當版本（`DOOR.open.emu900`）。查不到
-該型的版本時退回通用的 `DOOR.open`，不會因為多了一型反而整個播不出來——與方向
-版本同一套退回規則。新增一型只要把音檔放進 `common/`，程式不必改。
+**開關門聲每一型車不一樣**，因此以車輛型式當版本（`DOOR.open.emu900`）。版本字串
+是**小寫的車輛型式代碼**，因為查詢時直接把 `spec.id` 當版本傳進去。查不到該型的
+版本時退回通用的 `DOOR.open`，通用檔也沒有就不出聲——不會因為多了一型反而整個
+播不出來，也不會拿別型的聲音頂替。新增一型只要把音檔放進 `common/`，程式不必改。
+
+目前錄到的車型：
+
+| 車輛型式 | 開門 | 關門 |
+|---|---|---|
+| EMU500 | ✓ | ✓ |
+| EMU600 | — | — |
+| EMU700 | ✓ | ✓ |
+| EMU800 | ✓ | ✓ |
+| EMU900 | ✓ | ✓ |
+| EMU3000 | — | ✓ |
+| TEMU2000（普悠瑪） | ✓ | ✓ |
+| PP（推拉式自強號） | ✓ | ✓ |
+| TEMU1000、DR1000、DR3100、CK | — | — |
+
+沒有音檔的車型開關門時只有文字播報，沒有聲音；這是正常狀態，不是錯誤。
 
 **請勿上車**要在整段開門時間裡一直播（提醒月台上沒有買這班列車車票的旅客），
 因此播放器支援循環：播完自己再排一次，關門動作一開始就立即停止，不等這一輪
@@ -108,7 +136,9 @@ python -m railway_sim.audio import --dry-run "…/台鐵廣播/1縱貫北" "…/
 | `1縱貫北/1基隆終點.ogg` | `west_north/KEELUNG.terminus.ogg` |
 | `1縱貫北/3八堵(往基隆).ogg` | `west_north/BADU.next.keelung.ogg` |
 | `2山線/15經舞蹈站.ogg` | `mountain/JINGWU.arrive.ogg` |
-| `0其他/900開門.ogg` | `common/DOOR.open.emu900.ogg` |
+| `開關門/900開門.ogg` | `common/DOOR.open.emu900.ogg` |
+| `開關門/普悠瑪關門.ogg` | `common/DOOR.close.temu2000.ogg` |
+| `開關門/pp開門.ogg` | `common/DOOR.open.pp.ogg` |
 | `0其他/左側.ogg` | `common/DOOR.side.left.ogg` |
 | `5屏東縣+南迴/23枋山.ogg` | `south_link/FANGSHAN.next.ogg` |
 

@@ -42,6 +42,13 @@ OVERSPEED_EMERGENCY_KMH = 15.0
 #: 提前警告的反應時間餘裕（秒）。
 WARNING_REACTION_S = 3.0
 
+#: 計算提前警告距離時採用的常用制軔比例。
+#:
+#: 不用滿制軔算：滿制軔是「已經來不及了」的那一段，警告要在還可以從容減速時
+#: 就發出來。各車輛型式的制軔能力差很多（EMU800 的常用減速度是 EMU600 的 1.5
+#: 倍），因此警告距離一律由本比例乘上該型車的常用減速度算出，不寫死公尺數。
+WARNING_BRAKE_RATIO = 0.7
+
 #: 尋找前方速限變化的最大距離（公尺）。
 RESTRICTION_LOOKAHEAD_M = 5000.0
 
@@ -266,7 +273,7 @@ class AtpMonitor:
             needed = braking_distance_m(
                 train.current_speed_kmh,
                 target.limit_kmh,
-                self.spec.max_service_brake_ms2 * 0.7,
+                self.spec.max_service_brake_ms2 * WARNING_BRAKE_RATIO,
                 reaction_time_s=WARNING_REACTION_S,
             )
             if needed >= target_distance and train.current_speed_kmh > target.limit_kmh:

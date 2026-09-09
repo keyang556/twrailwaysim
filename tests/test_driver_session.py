@@ -22,6 +22,8 @@ from railway_sim.roles.driver import (
     STATUS_ITEM_LABELS,
     DriverSession,
 )
+from railway_sim.simulation.atp import WARNING_BRAKE_RATIO, WARNING_REACTION_S
+from railway_sim.simulation.braking import braking_distance_m
 
 
 @pytest.fixture
@@ -394,9 +396,18 @@ class TestApproachAnnouncements:
         """接近停車點的警告要說出地點，不可播成「前方速限零公里」。"""
         daqing = local_session.route.stop_for_station("DAQING")
         assert daqing is not None
-        # 80 公里／小時的制動距離約 440 公尺，因此在 400 公尺處必定已發出警告。
-        local_session.train.position_m = daqing.position_m - 400.0
-        local_session.train.current_speed_kmh = 80.0
+        # 距離由這一班實際派到的車算，不寫死公尺數：區間車是共通運用，同一個
+        # 車次今天可能是常用減速度 1.2 的 EMU800、明天是 0.789 的 EMU600，
+        # 制動距離差了將近一半，寫死的公尺數只會在某幾天剛好通過。
+        speed_kmh = 80.0
+        needed_m = braking_distance_m(
+            speed_kmh,
+            0.0,
+            local_session.spec.max_service_brake_ms2 * WARNING_BRAKE_RATIO,
+            reaction_time_s=WARNING_REACTION_S,
+        )
+        local_session.train.position_m = daqing.position_m - needed_m * 0.9
+        local_session.train.current_speed_kmh = speed_kmh
         local_session.tick(0.1)
 
         warnings = [t for t in spoken(local_session) if "請減速" in t]

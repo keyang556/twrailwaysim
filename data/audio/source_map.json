@@ -6,7 +6,8 @@
     "alias_policy": "station_aliases 只收「來源檔名的站名與官方站名不一致」的項目，其餘一律由 stations.json 的 name_zh_tw 直接比對。台／臺為異體字，程式已自動正規化，不需要列在這裡。",
     "update_policy": "新增一條線只要在 line_ids 加一筆；修正一個錯字只要在 station_aliases 加一筆。程式不寫死任何站名對應。",
     "clip_map_note": "clip_map 是逐檔對照，用在靠檔名規則接不上的情形：站序編號本身就是檔名（900開門）、不屬於任何車站的廣播（左側、臨停、請勿上車）、以及一個資料夾橫跨兩條線（「5屏東縣+南迴」的後十站屬於南迴線）。目標可加上「<線別>/」前綴，把該則放到別條線的資料夾。",
-    "special_clip_note": "不屬於任何車站的廣播沿用「車站代碼」欄位當保留字：DOOR.open／DOOR.close 是開關門聲（可加車輛型式版本，例如 DOOR.open.emu900），DOOR.side.left／DOOR.side.right 是到站廣播之後的開門側提醒，NOTICE.do_not_board 是對號列車開門中持續播放的「請勿上車」，NOTICE.unscheduled_stop 是站外臨時停車的廣播。"
+    "special_clip_note": "不屬於任何車站的廣播沿用「車站代碼」欄位當保留字：DOOR.open／DOOR.close 是開關門聲（以車輛型式當版本，例如 DOOR.open.emu900），DOOR.side.left／DOOR.side.right 是到站廣播之後的開門側提醒，NOTICE.do_not_board 是對號列車開門中持續播放的「請勿上車」，NOTICE.unscheduled_stop 是站外臨時停車的廣播。",
+    "door_clip_note": "開關門聲每一型車不一樣，來源檔名以車型的數字或簡稱表示（900開門、pp關門、普悠瑪開門），對應到小寫的車輛型式代碼版本（emu900、pp、temu2000）。只錄到單邊的車型（EMU3000 目前只有關門聲）就只登記那一則：查不到的那一邊會退回通用的 DOOR.open／DOOR.close，通用檔也沒有時就不出聲，這是正常狀態。"
   },
   "line_ids": {
     "0其他": "common",
@@ -21,7 +22,8 @@
     "7北迴": "north_link",
     "8台東": "taitung",
     "9南迴": "south_link",
-    "共用": "common"
+    "共用": "common",
+    "開關門": "common"
   },
   "kind_suffixes": {
     "到站": "arrive",
@@ -103,6 +105,19 @@
     "0其他/沙崙到站": "shalun/SHALUN.arrive",
     "0其他/長榮大學": "shalun/CHANGRONGDAXUE.next",
     "0其他/長榮大學到站": "shalun/CHANGRONGDAXUE.arrive",
-    "2山線/CHANGHUA.terminus": "mountain/CHANGHUA.terminus"
+    "2山線/CHANGHUA.terminus": "mountain/CHANGHUA.terminus",
+    "開關門/500開門": "common/DOOR.open.emu500",
+    "開關門/500關門": "common/DOOR.close.emu500",
+    "開關門/700開門": "common/DOOR.open.emu700",
+    "開關門/700關門": "common/DOOR.close.emu700",
+    "開關門/800開門": "common/DOOR.open.emu800",
+    "開關門/800關門": "common/DOOR.close.emu800",
+    "開關門/900開門": "common/DOOR.open.emu900",
+    "開關門/900關門": "common/DOOR.close.emu900",
+    "開關門/3000關門": "common/DOOR.close.emu3000",
+    "開關門/pp開門": "common/DOOR.open.pp",
+    "開關門/pp關門": "common/DOOR.close.pp",
+    "開關門/普悠瑪開門": "common/DOOR.open.temu2000",
+    "開關門/普悠瑪關門": "common/DOOR.close.temu2000"
   }
 }

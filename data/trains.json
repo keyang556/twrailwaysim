@@ -33,6 +33,34 @@
         ]
       },
       {
+        "title": "台鐵EMU500型電聯車",
+        "publisher": "維基百科",
+        "used_for": [
+          "EMU500"
+        ]
+      },
+      {
+        "title": "台鐵EMU600型電聯車",
+        "publisher": "維基百科",
+        "used_for": [
+          "EMU600"
+        ]
+      },
+      {
+        "title": "台鐵EMU700型電聯車",
+        "publisher": "維基百科",
+        "used_for": [
+          "EMU700"
+        ]
+      },
+      {
+        "title": "台鐵EMU800型電聯車",
+        "publisher": "維基百科",
+        "used_for": [
+          "EMU800"
+        ]
+      },
+      {
         "title": "台鐵EMU900型電聯車",
         "publisher": "維基百科",
         "used_for": [
@@ -61,7 +89,8 @@
         ]
       }
     ],
-    "known_source_conflict": "DR3100 型的來源同時標示「起動加速度 0.5 km/h/s」與「營運速度 110 公里」，兩者互相矛盾：0.5 km/h/s（0.139 m/s²）在 110 公里時產生的牽引力小於同速度下的行駛阻力，列車根本到不了 110 公里。因此 DR1000 與 DR3100 的起動加速度改由同一份來源的引擎出力與編組重量推算，標記 derived_from_source。"
+    "known_source_conflict": "DR3100 型的來源同時標示「起動加速度 0.5 km/h/s」與「營運速度 110 公里」，兩者互相矛盾：0.5 km/h/s（0.139 m/s²）在 110 公里時產生的牽引力小於同速度下的行駛阻力，列車根本到不了 110 公里。因此 DR1000 與 DR3100 的起動加速度改由同一份來源的引擎出力與編組重量推算，標記 derived_from_source。",
+    "known_source_conflict_emu600": "EMU600 型的來源把常用減速度標成「0.79 km/h/s」、緊急減速度標成「0.868 km/h/s」，單位顯然有誤：0.79 km/h/s 從 110 公里煞到停要 139 秒、超過 2 公里，任何車站都停不進去。同一組數字換成 m/s² 恰好等於同廠同級的 EMU500 型（2.84 與 3.12 km/h/s ＝ 0.789 與 0.867 m/s²），因此本檔以 m/s² 解讀這兩個數值，標記 derived_from_source。"
   },
   "service_classes": [
     {
@@ -89,7 +118,296 @@
       "name_zh_tw": "普快車"
     }
   ],
+  "rolling_stock_pools": {
+    "description": "區間車與區間快的共通運用池。同一個車次今天由哪一型車擔當**不是固定的**：五型通勤電聯車在同一段路線上混合運用，今天跑 2712 次的可能是 EMU800，明天換成 EMU500。因此車輛型式不寫死在 timetables.json 裡，改由本表逐日抽籤決定。",
+    "scope_note": "只有 managed_rolling_stock_ids 裡的車輛型式會被改派。時刻表匯入時把電氣化區間的區間車與區間快一律填成 EMU900（見 dataset/build.py 的 ROLLING_STOCK_BY_CLASS），那個值在這裡只當作「這一班屬於共通運用池」的標記；非電氣化支線的 DR1000 與各種對號列車不在池內，永遠照時刻表指定的型式行駛。",
+    "selection_note": "抽籤以「日期＋車次」為種子，因此同一天之內車次選單、行前提要與駕駛中查詢到的一定是同一型車，隔天才會重抽；不是每按一次就換一台。日期取執行當下的本地日期。",
+    "line_match_note": "規則由上而下比對，第一條符合的勝出。line_ids 的意思是「本班次的行駛路徑**經過**其中任何一條線」，不是「這一班屬於哪一條線」——新竹至六家的區間車同時經過縱貫線北段與六家線，六家線的限制仍然適用，因此限定車型的規則一律排在前面。",
+    "weight_note": "抽中某一型的權重 ＝ fleet_cars（該型現役車輛數）× 該規則的 multipliers。以車輛數而不是編組數當底，是因為各型的編組長度不同（EMU500／600 為 4 輛、EMU700／800 為 8 輛、EMU900 為 10 輛），能開出來的班次數比較接近車輛數的比例。倍率代表各路段的配屬差異，沒有公開來源，屬測試值（規格 §27）。",
+    "fleet_cars": {
+      "EMU500": 336,
+      "EMU600": 56,
+      "EMU700": 160,
+      "EMU800": 344,
+      "EMU900": 520
+    },
+    "fleet_cars_status": {
+      "EMU500": "official",
+      "EMU600": "official",
+      "EMU700": "official",
+      "EMU800": "official",
+      "EMU900": "test_data"
+    },
+    "fleet_cars_note": "EMU500 取來源的「車輛總數 84 組 336 輛」（現存數，不是產量 86 組 344 輛）；EMU600 為 14 組 56 輛；EMU700 為 20 列 160 輛；EMU800 為 86 組 344 輛。EMU900 沒有對應的技術諸元來源檔，520 輛是依採購案（52 列 ×10 輛）推定的，因此標為 test_data，取得來源後應更正。",
+    "managed_rolling_stock_ids": [
+      "EMU500",
+      "EMU600",
+      "EMU700",
+      "EMU800",
+      "EMU900"
+    ],
+    "rules": [
+      {
+        "id": "taitung_local",
+        "name_zh_tw": "花東線（臺東線）的區間車與區間快",
+        "service_class_ids": [
+          "local",
+          "local_express"
+        ],
+        "line_ids": [
+          "taitung"
+        ],
+        "rolling_stock_ids": [
+          "EMU500"
+        ],
+        "multipliers": {},
+        "note": "花東線的區間車與區間快只由 EMU500 型擔當，沒有其他型式可抽。"
+      },
+      {
+        "id": "shalun_local",
+        "name_zh_tw": "沙崙線的區間車與區間快",
+        "service_class_ids": [
+          "local",
+          "local_express"
+        ],
+        "line_ids": [
+          "shalun"
+        ],
+        "rolling_stock_ids": [
+          "EMU500",
+          "EMU600"
+        ],
+        "multipliers": {},
+        "note": "沙崙線只有 EMU500 與 EMU600 兩型運用，比例照現役車輛數。"
+      },
+      {
+        "id": "liujia_local",
+        "name_zh_tw": "六家線的區間車與區間快",
+        "service_class_ids": [
+          "local",
+          "local_express"
+        ],
+        "line_ids": [
+          "neiwan"
+        ],
+        "rolling_stock_ids": [
+          "EMU500",
+          "EMU600"
+        ],
+        "multipliers": {},
+        "note": "六家線（竹中至六家）只有 EMU500 與 EMU600 兩型運用。line_id 為 neiwan 的另一半是未電氣化的內灣線（竹中至內灣），那些班次的車輛型式是 DR1000，不在 managed_rolling_stock_ids 裡，因此根本不會走到這條規則。"
+      },
+      {
+        "id": "local_express_any",
+        "name_zh_tw": "區間快（前面幾條限定車型的路線除外）",
+        "service_class_ids": [
+          "local_express"
+        ],
+        "line_ids": [],
+        "rolling_stock_ids": [
+          "EMU500",
+          "EMU600",
+          "EMU700",
+          "EMU800",
+          "EMU900"
+        ],
+        "multipliers": {
+          "EMU900": 2.5,
+          "EMU500": 0.5,
+          "EMU600": 0.5
+        },
+        "note": "區間快停站少、表定速度高，優先派最新最快的 EMU900；營運速度只有 110 公里的 EMU500／600 相對少見。"
+      },
+      {
+        "id": "local_west_north",
+        "name_zh_tw": "經過縱貫線北段的區間車",
+        "service_class_ids": [
+          "local"
+        ],
+        "line_ids": [
+          "west_north"
+        ],
+        "rolling_stock_ids": [
+          "EMU500",
+          "EMU600",
+          "EMU700",
+          "EMU800",
+          "EMU900"
+        ],
+        "multipliers": {
+          "EMU900": 2.0
+        },
+        "note": "EMU900 主要配屬北部，只要行駛路徑經過縱貫線北段就提高它的權重。"
+      },
+      {
+        "id": "local_other",
+        "name_zh_tw": "其他路段的區間車",
+        "service_class_ids": [
+          "local"
+        ],
+        "line_ids": [],
+        "rolling_stock_ids": [
+          "EMU500",
+          "EMU600",
+          "EMU700",
+          "EMU800",
+          "EMU900"
+        ],
+        "multipliers": {
+          "EMU800": 1.8,
+          "EMU700": 2.5,
+          "EMU500": 0.9,
+          "EMU900": 0.4
+        },
+        "note": "北部以外以 EMU800 與 EMU700 為主力，EMU900 相對少見。"
+      }
+    ]
+  },
   "train_types": [
+    {
+      "id": "EMU500",
+      "name_zh_tw": "EMU500型電聯車",
+      "service_class_ids": [
+        "local",
+        "local_express"
+      ],
+      "formation": "4輛編組（EMC-EP-ET-EM）",
+      "max_speed_kmh": 110,
+      "length_m": 81.32,
+      "max_traction_ms2": 0.8,
+      "power_corner_speed_kmh": 45,
+      "max_service_brake_ms2": 0.789,
+      "emergency_brake_ms2": 0.867,
+      "power_notches": 5,
+      "brake_notches": 7,
+      "resistance_ms2": [
+        0.0147,
+        0.000529,
+        4.44e-05
+      ],
+      "verification_status": "official_with_test_data",
+      "note": "營運速度與設計最高速度同為 110 公里。長度 20.330 公尺 ×4 ＝ 81.32 公尺，取來源標示的**一組**編組：本型車常態以兩組重聯成 8 輛行駛幹線區間車，支線與東部則多為單組 4 輛，重聯與否逐日逐班不同且無公開來源，因此不模擬重聯，一律以一組計。起動加速度 2.88 km/h/s；來源沒有標示定加速度區的轉折速度，沿用本檔的預設值 45 公里（測試值）。常用減速度 2.84 km/h/s、緊急減速度 3.12 km/h/s。",
+      "field_status": {
+        "max_speed_kmh": "official",
+        "length_m": "derived_from_source",
+        "max_traction_ms2": "official",
+        "power_corner_speed_kmh": "test_data",
+        "max_service_brake_ms2": "official",
+        "emergency_brake_ms2": "official",
+        "resistance_ms2": "test_data",
+        "power_notches": "test_data",
+        "brake_notches": "test_data"
+      },
+      "boarding_notice": false
+    },
+    {
+      "id": "EMU600",
+      "name_zh_tw": "EMU600型電聯車",
+      "service_class_ids": [
+        "local",
+        "local_express"
+      ],
+      "formation": "4輛編組（EMC-EP-ET-EM）",
+      "max_speed_kmh": 110,
+      "length_m": 81.32,
+      "max_traction_ms2": 0.8,
+      "power_corner_speed_kmh": 45,
+      "max_service_brake_ms2": 0.79,
+      "emergency_brake_ms2": 0.868,
+      "power_notches": 5,
+      "brake_notches": 7,
+      "resistance_ms2": [
+        0.0147,
+        0.000529,
+        4.44e-05
+      ],
+      "verification_status": "official_with_test_data",
+      "note": "營運速度與設計最高速度同為 110 公里。長度 20.330 公尺 ×4 ＝ 81.32 公尺，與 EMU500 型同尺寸，同樣不模擬重聯（見 EMU500 的說明）。起動加速度 2.88 km/h/s；來源沒有標示轉折速度，沿用預設值 45 公里（測試值）。常用與緊急減速度直接採用來源印出的數值 0.79 與 0.868，但**單位以 m/s² 解讀**，不照來源標示的 km/h/s（見 meta.known_source_conflict_emu600）。",
+      "field_status": {
+        "max_speed_kmh": "official",
+        "length_m": "derived_from_source",
+        "max_traction_ms2": "official",
+        "power_corner_speed_kmh": "test_data",
+        "max_service_brake_ms2": "derived_from_source",
+        "emergency_brake_ms2": "derived_from_source",
+        "resistance_ms2": "test_data",
+        "power_notches": "test_data",
+        "brake_notches": "test_data"
+      },
+      "boarding_notice": false
+    },
+    {
+      "id": "EMU700",
+      "name_zh_tw": "EMU700型電聯車",
+      "service_class_ids": [
+        "local",
+        "local_express"
+      ],
+      "formation": "8輛編組（4M4T）",
+      "max_speed_kmh": 110,
+      "length_m": 163.28,
+      "max_traction_ms2": 0.7,
+      "power_corner_speed_kmh": 50,
+      "max_service_brake_ms2": 0.8,
+      "emergency_brake_ms2": 1.0,
+      "power_notches": 5,
+      "brake_notches": 7,
+      "resistance_ms2": [
+        0.0147,
+        0.000529,
+        4.44e-05
+      ],
+      "verification_status": "official_with_test_data",
+      "note": "營運速度 110 公里（設計最高 120）。長度由來源車輛長度算出：EMC 車 20.741 公尺 ×2 ＋ 其它 20.300 公尺 ×6 ＝ 163.28 公尺。起動加速度 0～50 公里為 2.52 km/h/s，因此定加速度區的轉折速度取 50 公里。常用減速度 2.88 km/h/s、緊急減速度 3.6 km/h/s。",
+      "field_status": {
+        "max_speed_kmh": "official",
+        "length_m": "derived_from_source",
+        "max_traction_ms2": "official",
+        "power_corner_speed_kmh": "official",
+        "max_service_brake_ms2": "official",
+        "emergency_brake_ms2": "official",
+        "resistance_ms2": "test_data",
+        "power_notches": "test_data",
+        "brake_notches": "test_data"
+      },
+      "boarding_notice": false
+    },
+    {
+      "id": "EMU800",
+      "name_zh_tw": "EMU800型電聯車",
+      "service_class_ids": [
+        "local",
+        "local_express"
+      ],
+      "formation": "8輛編組（4M4T）",
+      "max_speed_kmh": 130,
+      "length_m": 164.3,
+      "max_traction_ms2": 0.7,
+      "power_corner_speed_kmh": 50,
+      "max_service_brake_ms2": 1.2,
+      "emergency_brake_ms2": 1.3,
+      "power_notches": 5,
+      "brake_notches": 7,
+      "resistance_ms2": [
+        0.0147,
+        0.000529,
+        4.44e-05
+      ],
+      "verification_status": "official_with_test_data",
+      "note": "營運速度 130 公里（設計最高 140）。長度由來源車輛長度算出：ED 車 21.250 公尺 ×2 ＋ 其它 20.300 公尺 ×6 ＝ 164.3 公尺。起動加速度 0～50 公里為 2.52 km/h/s，因此定加速度區的轉折速度取 50 公里。常用減速度 4.32 km/h/s、緊急減速度 4.68 km/h/s——本檔減速度最強的車輛型式。",
+      "field_status": {
+        "max_speed_kmh": "official",
+        "length_m": "derived_from_source",
+        "max_traction_ms2": "official",
+        "power_corner_speed_kmh": "official",
+        "max_service_brake_ms2": "official",
+        "emergency_brake_ms2": "official",
+        "resistance_ms2": "test_data",
+        "power_notches": "test_data",
+        "brake_notches": "test_data"
+      },
+      "boarding_notice": false
+    },
     {
       "id": "EMU900",
       "name_zh_tw": "EMU900型電聯車",
