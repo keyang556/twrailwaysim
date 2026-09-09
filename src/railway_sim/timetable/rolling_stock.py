@@ -20,6 +20,10 @@
 做雜湊：同一天之內、同一個車次，不管問幾次、由哪一個介面問，答案都一樣；換一天
 才會重抽。這也正是使用者要的「今天這班和明天可能不同車型」。
 
+「哪一天」則由 :func:`pinned_service_day` 在本次執行第一次抽籤時決定，之後不
+再看時鐘——否則玩家在午夜前打開車次選單、午夜後才按下開始，兩次抽籤會落在
+不同的日期，開到的車與選單所寫的不一樣。
+
 用 :mod:`hashlib` 而不是 :func:`hash`：Python 的字串雜湊每次啟動都會加鹽，
 同一天重開程式就會換一台車。
 """
@@ -35,13 +39,31 @@ from typing import Any
 __all__ = [
     "RollingStockPools",
     "RollingStockRule",
+    "pinned_service_day",
     "service_day",
 ]
+
+#: 本次執行採用的營運日，由 :func:`pinned_service_day` 在第一次抽籤時填入。
+_pinned_day: date | None = None
 
 
 def service_day() -> date:
     """抽籤用的「今天」。獨立成一個函式，測試才能換掉它。"""
     return date.today()
+
+
+def pinned_service_day() -> date:
+    """本次執行從頭到尾採用的營運日。
+
+    車次選單、行前提要與駕駛畫面各自都會問一次「今天派哪一型」。若每次都重新
+    看時鐘，跨過午夜的那一刻答案就會變：玩家在午夜前挑好的車次，午夜後啟動時
+    會換成另一型，長度、性能與開關門聲全都和選單上寫的對不上。因此第一次問的
+    時候就把日期定下來，本次執行沿用同一個答案，重新啟動遊戲才換成新的一天。
+    """
+    global _pinned_day
+    if _pinned_day is None:
+        _pinned_day = service_day()
+    return _pinned_day
 
 
 def _as_str_tuple(value: Any) -> tuple[str, ...]:
@@ -189,7 +211,7 @@ class RollingStockPools:
             return rolling_stock_id
 
         total = sum(weight for _, weight in weights)
-        threshold = _fraction(day or service_day(), train_number) * total
+        threshold = _fraction(day or pinned_service_day(), train_number) * total
         cumulative = 0.0
         for stock_id, weight in weights:
             cumulative += weight

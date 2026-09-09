@@ -15,19 +15,21 @@ import collections
 import json
 import os
 import pathlib
+import shutil
 import subprocess
 import sys
 import textwrap
 from datetime import date, timedelta
 
 import pytest
-from conftest import REFERENCE_DAY, make_session
+from conftest import REAL_PINNED_SERVICE_DAY, REFERENCE_DAY, make_session
 
 import railway_sim
 from railway_sim import app
 from railway_sim.accessibility.announcer import Announcer
-from railway_sim.data_loader import GameData
+from railway_sim.data_loader import GameData, default_data_dir, load_game_data
 from railway_sim.roles.driver import DriverSession
+from railway_sim.timetable import rolling_stock
 from railway_sim.timetable.service import Service
 
 #: 五型通勤電聯車。
@@ -213,6 +215,20 @@ class TestDeterminism:
         ]
         assert changed
 
+    def test_the_draw_day_is_pinned_for_the_whole_run(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """跨過午夜也不換車。
+
+        車次選單、行前提要與駕駛畫面各自都會問一次。若每次都重新看時鐘，玩家
+        在午夜前挑好車次、午夜後才按下開始，開到的就會是另一型。
+        """
+        monkeypatch.setattr(rolling_stock, "_pinned_day", None)
+        clock = iter([REFERENCE_DAY, REFERENCE_DAY + timedelta(days=1)])
+        monkeypatch.setattr(rolling_stock, "service_day", lambda: next(clock))
+        assert REAL_PINNED_SERVICE_DAY() == REFERENCE_DAY
+        assert REAL_PINNED_SERVICE_DAY() == REFERENCE_DAY
+
     def test_it_survives_a_restart(self, game_data: GameData) -> None:
         """換一個行程跑要得到同一個答案。
 
@@ -287,3 +303,43 @@ class TestSessionUsesTheDrawnType:
             if line.split("\t")[0] == "2115"
         )
         assert make_session(game_data, "2115").rolling_stock_id in line
+
+
+class TestRuleCoverage:
+    """每一班進了運用池的班次都要有規則接得住。"""
+
+    def test_the_real_data_covers_every_pooled_service(
+        self, game_data: GameData
+    ) -> None:
+        pools = game_data.rolling_stock_pools
+        for service in game_data.services.values():
+            if service.rolling_stock_id not in pools.managed_rolling_stock_ids:
+                continue
+            route = game_data.routes.get(service.route_id)
+            rule = pools.rule_for(
+                service.train_type, route.line_ids if route is not None else ()
+            )
+            assert rule is not None, service.train_number
+
+    def test_a_gap_in_the_rules_is_reported_at_load_time(
+        self, tmp_path: pathlib.Path
+    ) -> None:
+        """拿掉兜底規則後，載入就要點名沒人接的班次。
+
+        沒有這道檢查的話，這些班次會安靜地退回時刻表上寫的型式、退出共通
+        運用，資料照樣載入成功、遊戲照樣開得起來——改點或新增車種時完全不會
+        有徵兆。
+        """
+        target = tmp_path / "data"
+        shutil.copytree(default_data_dir(), target)
+        trains_file = target / "trains.json"
+        trains = json.loads(trains_file.read_text(encoding="utf-8"))
+        pools = trains["rolling_stock_pools"]
+        pools["rules"] = [r for r in pools["rules"] if r["id"] != "local_other"]
+        trains_file.write_text(
+            json.dumps(trains, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+
+        issues = load_game_data(target).issues
+        assert [i for i in issues if "沒有任何運用規則適用" in i]

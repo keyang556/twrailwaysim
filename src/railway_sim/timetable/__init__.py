@@ -3,6 +3,7 @@
 from railway_sim.timetable.rolling_stock import (
     RollingStockPools,
     RollingStockRule,
+    pinned_service_day,
     service_day,
 )
 from railway_sim.timetable.service import Service
@@ -20,6 +21,7 @@ __all__ = [
     "Service",
     "StopKind",
     "resolve_stop_kind",
+    "pinned_service_day",
     "service_day",
     "validate_service",
 ]

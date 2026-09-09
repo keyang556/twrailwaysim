@@ -438,6 +438,21 @@ def load_game_data(
             )
         route = routes.get(service.route_id)
         if route is not None:
+            # 標記為共通運用的班次一定要有規則接得住。沒有規則時 select() 會
+            # 原封不動退回時刻表寫的型式，遊戲照跑、載入照樣成功，只是這一班
+            # 悄悄退出了共通運用——改點或新增車種時最容易發生，而且不會有任何
+            # 徵兆，因此在載入時就點名。
+            if (
+                service.rolling_stock_id
+                in rolling_stock_pools.managed_rolling_stock_ids
+                and rolling_stock_pools.rule_for(service.train_type, route.line_ids)
+                is None
+            ):
+                issues.append(
+                    f"班次 {service.train_number}（{service.train_type}）的車輛型式"
+                    f" {service.rolling_stock_id} 屬於共通運用池，卻沒有任何運用規則"
+                    "適用"
+                )
             unknown = [
                 sid
                 for sid in (*service.stop_station_ids, *service.pass_station_ids)

@@ -20,6 +20,10 @@ from railway_sim.timetable import rolling_stock
 #: 某一天失敗。因此整個測試工作階段固定在時刻表的實施日。
 REFERENCE_DAY = date(2026, 7, 1)
 
+#: 未被夾具替換掉的原始函式。夾具會把模組層的 ``pinned_service_day`` 換成常數，
+#: 「日期只決定一次」這個行為本身就沒東西可驗了，因此先留一份參照。
+REAL_PINNED_SERVICE_DAY = rolling_stock.pinned_service_day
+
 
 @pytest.fixture(scope="session", autouse=True)
 def fixed_service_day() -> date:
@@ -31,6 +35,9 @@ def fixed_service_day() -> date:
     """
     patcher = pytest.MonkeyPatch()
     patcher.setattr(rolling_stock, "service_day", lambda: REFERENCE_DAY)
+    # 連 pinned_service_day 一起換掉：它會把第一次問到的日期記下來，只換
+    # service_day 的話，先前若已經有人抽過籤，記下的就是真正的今天。
+    patcher.setattr(rolling_stock, "pinned_service_day", lambda: REFERENCE_DAY)
     yield REFERENCE_DAY
     patcher.undo()
 
